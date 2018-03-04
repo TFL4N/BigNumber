@@ -385,6 +385,54 @@ class BigNumberTests: XCTestCase {
     }
     
     func testIntMultiplication() {
+        let result = "1219253925"
+        
+        let bint1: BigInt = 12345
+        let bint2: BigInt = 98765
+        
+        let int1 = 12345
+        let int2 = 98765
+        
+        let uint1 = 12345
+        let uint2 = 98765
+        
+        // *(lhs: BigInt, rhs: BigInt)
+        var temp = bint1 * bint2
+        XCTAssertEqual(result, temp.toString(), "*(lhs: BigInt, rhs: BigInt) failed")
+        
+        // *(lhs: BigInt, rhs: Int)
+        temp = bint1 * int2
+        XCTAssertEqual(result, temp.toString(), "*(lhs: BigInt, rhs: Int) failed")
+        
+        // *(lhs: Int, rhs: BigInt)
+        temp = int1 * bint2
+        XCTAssertEqual(result, temp.toString(), "*(lhs: Int, rhs: BigInt) failed")
+        
+        // *(lhs: BigInt, rhs: UInt)
+        temp = bint1 * uint2
+        XCTAssertEqual(result, temp.toString(), "*(lhs: BigInt, rhs: UInt) failed")
+        
+        // *(lhs: UInt, rhs: BigInt)
+        temp = uint1 * bint2
+        XCTAssertEqual(result, temp.toString(), "*(lhs: UInt, rhs: BigInt) failed")
+        
+        // *=(lhs: inout BigInt, rhs: BigInt)
+        temp = BigInt(bint1)
+        temp *= bint2
+        XCTAssertEqual(result, temp.toString(), "*=(lhs: inout BigInt, rhs: BigInt) failed")
+        
+        // *=(lhs: inout BigInt, rhs: Int)
+        temp = BigInt(bint1)
+        temp *= int2
+        XCTAssertEqual(result, temp.toString(), "*=(lhs: inout BigInt, rhs: Int) failed")
+        
+        // *=(lhs: inout BigInt, rhs: UInt)
+        temp = BigInt(bint1)
+        temp *= uint2
+        XCTAssertEqual(result, temp.toString(), "*=(lhs: inout BigInt, rhs: UInt) failed")
+    }
+    
+    func testIntBitwise() {
         
     }
 }
