@@ -83,7 +83,7 @@ extension BigInt {
         }
     }
     
-    public func toString() -> String {
+    public func toString() -> String? {
         return self.toString(base: 10)
     }
     

@@ -83,27 +83,268 @@ class BigNumberTests: XCTestCase {
     }
     
     func testIntComparableIsEqual() {
+        let bint1 = BigInt(12345)
+        let bint10 = BigInt(12345)
+        let bint2 = BigInt(9876)
         
+        let dbl1: Double = 12345
+        let int1: Int = 12345
+        let uint1: UInt = 12345
+        
+        // ==(lhs: BigInt, rhs: BigInt)
+        XCTAssertTrue(bint1 == bint10, "==(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertFalse(bint1 == bint2, "==(lhs: BigInt, rhs: BigInt) failed")
+        
+        // ==(lhs: BigInt, rhs: Double)
+        XCTAssertTrue(bint1 == dbl1, "==(lhs: BigInt, rhs: Double) failed")
+        XCTAssertFalse(bint2 == dbl1, "==(lhs: BigInt, rhs: Double) failed")
+        
+        // ==(lhs: Double, rhs: BigInt)
+        XCTAssertTrue(dbl1 == bint1, "==(lhs: Double, rhs: BigInt) failed")
+        XCTAssertFalse(dbl1 == bint2, "==(lhs: Double, rhs: BigInt) failed")
+        
+        // ==(lhs: BigInt, rhs: Int)
+        XCTAssertTrue(bint1 == int1, "==(lhs: BigInt, rhs: Int) failed")
+        XCTAssertFalse(bint2 == int1, "==(lhs: BigInt, rhs: Int) failed")
+        
+        // ==(lhs: Int, rhs: BigInt)
+        XCTAssertTrue(int1 == bint1, "==(lhs: Int, rhs: BigInt) failed")
+        XCTAssertFalse(int1 == bint2, "==(lhs: Int, rhs: BigInt) failed")
+        
+        // ==(lhs: BigInt, rhs: UInt)
+        XCTAssertTrue(bint1 == uint1, "==(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertFalse(bint2 == uint1, "==(lhs: BigInt, rhs: UInt) failed")
+        
+        // ==(lhs: UInt, rhs: BigInt)
+        XCTAssertTrue(uint1 == bint1, "==(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertFalse(uint1 == bint2, "==(lhs: UInt, rhs: BigInt) failed")
     }
     
     func testIntComparableIsLessThan() {
+        let bint1 = BigInt(9876)
+        let bint10 = BigInt(9876)
+        let bint2 = BigInt(12345)
         
+        let dbl1: Double = 9876
+        let dbl2: Double = 12345
+        
+        let int1: Int = 9876
+        let int2: Int = 12345
+        
+        let uint1: UInt = 9876
+        let uint2: UInt = 12345
+        
+        // <(lhs: BigInt, rhs: BigInt)
+        XCTAssertTrue(bint1 < bint2, "<(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertFalse(bint1 < bint10, "<(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertFalse(bint2 < bint1, "<(lhs: BigInt, rhs: BigInt) failed")
+        
+        // <(lhs: BigInt, rhs: Double)
+        XCTAssertTrue(bint1 < dbl2, "<(lhs: BigInt, rhs: Double) failed")
+        XCTAssertFalse(bint1 < dbl1, "<(lhs: BigInt, rhs: Double) failed")
+        XCTAssertFalse(bint2 < dbl1, "<(lhs: BigInt, rhs: Double) failed")
+        
+        // <(lhs: Double, rhs: BigInt)
+        XCTAssertTrue(dbl1 < bint2, "<(lhs: Double, rhs: BigInt) failed")
+        XCTAssertFalse(dbl1 < bint1, "<(lhs: Double, rhs: BigInt) failed")
+        XCTAssertFalse(dbl2 < bint1, "<(lhs: Double, rhs: BigInt) failed")
+        
+        // <(lhs: BigInt, rhs: Int)
+        XCTAssertTrue(bint1 < int2, "<(lhs: BigInt, rhs: Int) failed")
+        XCTAssertFalse(bint1 < int1, "<(lhs: BigInt, rhs: Int) failed")
+        XCTAssertFalse(bint2 < int1, "<(lhs: BigInt, rhs: Int) failed")
+        
+        // <(lhs: Int, rhs: BigInt)
+        XCTAssertTrue(int1 < bint2, "<(lhs: Int, rhs: BigInt) failed")
+        XCTAssertFalse(int1 < bint1, "<(lhs: Int, rhs: BigInt) failed")
+        XCTAssertFalse(int2 < bint1, "<(lhs: Int, rhs: BigInt) failed")
+        
+        // <(lhs: BigInt, rhs: UInt)
+        XCTAssertTrue(bint1 < uint2, "<(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertFalse(bint1 < uint1, "<(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertFalse(bint2 < uint1, "<(lhs: BigInt, rhs: UInt) failed")
+        
+        // <(lhs: UInt, rhs: BigInt)
+        XCTAssertTrue(uint1 < bint2, "<(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertFalse(uint1 < bint1, "<(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertFalse(uint2 < bint1, "<(lhs: UInt, rhs: BigInt) failed")
     }
     
     func testIntComparableIsLessThanOrEqual() {
+        let bint1 = BigInt(9876)
+        let bint10 = BigInt(9876)
+        let bint2 = BigInt(12345)
         
+        let dbl1: Double = 9876
+        let dbl2: Double = 12345
+        
+        let int1: Int = 9876
+        let int2: Int = 12345
+        
+        let uint1: UInt = 9876
+        let uint2: UInt = 12345
+        
+        // <=(lhs: BigInt, rhs: BigInt)
+        XCTAssertTrue(bint1 <= bint2, "<=(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertTrue(bint1 <= bint10, "<=(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertFalse(bint2 <= bint1, "<=(lhs: BigInt, rhs: BigInt) failed")
+        
+        // <=(lhs: BigInt, rhs: Double)
+        XCTAssertTrue(bint1 <= dbl2, "<=(lhs: BigInt, rhs: Double) failed")
+        XCTAssertTrue(bint1 <= dbl1, "<=(lhs: BigInt, rhs: Double) failed")
+        XCTAssertFalse(bint2 <= dbl1, "<=(lhs: BigInt, rhs: Double) failed")
+        
+        // <=(lhs: Double, rhs: BigInt)
+        XCTAssertTrue(dbl1 <= bint2, "<=(lhs: Double, rhs: BigInt) failed")
+        XCTAssertTrue(dbl1 <= bint1, "<=(lhs: Double, rhs: BigInt) failed")
+        XCTAssertFalse(dbl2 <= bint1, "<=(lhs: Double, rhs: BigInt) failed")
+        
+        // <=(lhs: BigInt, rhs: Int)
+        XCTAssertTrue(bint1 <= int2, "<=(lhs: BigInt, rhs: Int) failed")
+        XCTAssertTrue(bint1 <= int1, "<=(lhs: BigInt, rhs: Int) failed")
+        XCTAssertFalse(bint2 <= int1, "<=(lhs: BigInt, rhs: Int) failed")
+        
+        // <=(lhs: Int, rhs: BigInt)
+        XCTAssertTrue(int1 <= bint2, "<=(lhs: Int, rhs: BigInt) failed")
+        XCTAssertTrue(int1 <= bint1, "<=(lhs: Int, rhs: BigInt) failed")
+        XCTAssertFalse(int2 <= bint1, "<=(lhs: Int, rhs: BigInt) failed")
+        
+        // <=(lhs: BigInt, rhs: UInt)
+        XCTAssertTrue(bint1 <= uint2, "<=(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertTrue(bint1 <= uint1, "<=(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertFalse(bint2 <= uint1, "<=(lhs: BigInt, rhs: UInt) failed")
+        
+        // <=(lhs: UInt, rhs: BigInt)
+        XCTAssertTrue(uint1 <= bint2, "<=(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertTrue(uint1 <= bint1, "<=(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertFalse(uint2 <= bint1, "<=(lhs: UInt, rhs: BigInt) failed")
     }
     
     func testIntComparableIsGreaterThan() {
+        let bint1 = BigInt(9876)
+        let bint10 = BigInt(9876)
+        let bint2 = BigInt(12345)
         
+        let dbl1: Double = 9876
+        let dbl2: Double = 12345
+        
+        let int1: Int = 9876
+        let int2: Int = 12345
+        
+        let uint1: UInt = 9876
+        let uint2: UInt = 12345
+        
+        // >(lhs: BigInt, rhs: BigInt)
+        XCTAssertFalse(bint1 > bint2, ">(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertFalse(bint1 > bint10, ">(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertTrue(bint2 > bint1, ">(lhs: BigInt, rhs: BigInt) failed")
+        
+        // >(lhs: BigInt, rhs: Double)
+        XCTAssertFalse(bint1 > dbl2, ">(lhs: BigInt, rhs: Double) failed")
+        XCTAssertFalse(bint1 > dbl1, ">(lhs: BigInt, rhs: Double) failed")
+        XCTAssertTrue(bint2 > dbl1, ">(lhs: BigInt, rhs: Double) failed")
+        
+        // >(lhs: Double, rhs: BigInt)
+        XCTAssertFalse(dbl1 > bint2, ">(lhs: Double, rhs: BigInt) failed")
+        XCTAssertFalse(dbl1 > bint1, ">(lhs: Double, rhs: BigInt) failed")
+        XCTAssertTrue(dbl2 > bint1, ">(lhs: Double, rhs: BigInt) failed")
+        
+        // >(lhs: BigInt, rhs: Int)
+        XCTAssertFalse(bint1 > int2, ">(lhs: BigInt, rhs: Int) failed")
+        XCTAssertFalse(bint1 > int1, ">(lhs: BigInt, rhs: Int) failed")
+        XCTAssertTrue(bint2 > int1, ">(lhs: BigInt, rhs: Int) failed")
+        
+        // >(lhs: Int, rhs: BigInt)
+        XCTAssertFalse(int1 > bint2, ">(lhs: Int, rhs: BigInt) failed")
+        XCTAssertFalse(int1 > bint1, ">(lhs: Int, rhs: BigInt) failed")
+        XCTAssertTrue(int2 > bint1, ">(lhs: Int, rhs: BigInt) failed")
+        
+        // >(lhs: BigInt, rhs: UInt)
+        XCTAssertFalse(bint1 > uint2, ">(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertFalse(bint1 > uint1, ">(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertTrue(bint2 > uint1, ">(lhs: BigInt, rhs: UInt) failed")
+        
+        // >(lhs: UInt, rhs: BigInt)
+        XCTAssertFalse(uint1 > bint2, ">(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertFalse(uint1 > bint1, ">(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertTrue(uint2 > bint1, ">(lhs: UInt, rhs: BigInt) failed")
     }
     
     func testIntComparableIsGreaterThanOrEqual() {
+        let bint1 = BigInt(9876)
+        let bint10 = BigInt(9876)
+        let bint2 = BigInt(12345)
         
+        let dbl1: Double = 9876
+        let dbl2: Double = 12345
+        
+        let int1: Int = 9876
+        let int2: Int = 12345
+        
+        let uint1: UInt = 9876
+        let uint2: UInt = 12345
+        
+        // >=(lhs: BigInt, rhs: BigInt)
+        XCTAssertFalse(bint1 >= bint2, ">=(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertTrue(bint1 >= bint10, ">=(lhs: BigInt, rhs: BigInt) failed")
+        XCTAssertTrue(bint2 >= bint1, ">=(lhs: BigInt, rhs: BigInt) failed")
+        
+        // >=(lhs: BigInt, rhs: Double)
+        XCTAssertFalse(bint1 >= dbl2, ">=(lhs: BigInt, rhs: Double) failed")
+        XCTAssertTrue(bint1 >= dbl1, ">=(lhs: BigInt, rhs: Double) failed")
+        XCTAssertTrue(bint2 >= dbl1, ">=(lhs: BigInt, rhs: Double) failed")
+        
+        // >=(lhs: Double, rhs: BigInt)
+        XCTAssertFalse(dbl1 >= bint2, ">=(lhs: Double, rhs: BigInt) failed")
+        XCTAssertTrue(dbl1 >= bint1, ">=(lhs: Double, rhs: BigInt) failed")
+        XCTAssertTrue(dbl2 >= bint1, ">=(lhs: Double, rhs: BigInt) failed")
+        
+        // >=(lhs: BigInt, rhs: Int)
+        XCTAssertFalse(bint1 >= int2, ">=(lhs: BigInt, rhs: Int) failed")
+        XCTAssertTrue(bint1 >= int1, ">=(lhs: BigInt, rhs: Int) failed")
+        XCTAssertTrue(bint2 >= int1, ">=(lhs: BigInt, rhs: Int) failed")
+        
+        // >=(lhs: Int, rhs: BigInt)
+        XCTAssertFalse(int1 >= bint2, ">=(lhs: Int, rhs: BigInt) failed")
+        XCTAssertTrue(int1 >= bint1, ">=(lhs: Int, rhs: BigInt) failed")
+        XCTAssertTrue(int2 >= bint1, ">=(lhs: Int, rhs: BigInt) failed")
+        
+        // >=(lhs: BigInt, rhs: UInt)
+        XCTAssertFalse(bint1 >= uint2, ">=(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertTrue(bint1 >= uint1, ">=(lhs: BigInt, rhs: UInt) failed")
+        XCTAssertTrue(bint2 >= uint1, ">=(lhs: BigInt, rhs: UInt) failed")
+        
+        // >=(lhs: UInt, rhs: BigInt)
+        XCTAssertFalse(uint1 >= bint2, ">=(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertTrue(uint1 >= bint1, ">=(lhs: UInt, rhs: BigInt) failed")
+        XCTAssertTrue(uint2 >= bint1, ">=(lhs: UInt, rhs: BigInt) failed")
     }
 
     func testIntAddition() {
+        let bint1 = BigInt(12345)
+        let bint2 = BigInt(98765)
         
+        let int1: Int = 12345
+        let int2: Int = 98765
+        let result: Int = int1 + int2
+        
+        let uint1: UInt = 12345
+        let uint2: UInt = 98765
+        
+        // +(lhs: BigInt, rhs: BigInt)
+        var temp: BigInt = bint1 + bint2
+        XCTAssertEqual("\(result)", temp.toString(), "+(lhs: BigInt, rhs: BigInt) failed")
+        
+        // +(lhs: BigInt, rhs: UInt)
+        temp = bint1 + uint2
+        XCTAssertEqual("\(result)", temp.toString(), "+(lhs: BigInt, rhs: UInt) failed")
+        
+        // +(lhs: UInt, rhs: BigInt)
+        temp = uint1 + bint2
+        XCTAssertEqual("\(result)", temp.toString(), "+(lhs: UInt, rhs: BigInt) failed")
+        
+        // +=(lhs: inout BigInt, rhs: BigInt)
+        // +=(lhs: inout BigInt, rhs: UInt)
     }
     
     func testIntSubtraction() {
