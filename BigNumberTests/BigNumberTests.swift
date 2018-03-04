@@ -433,6 +433,13 @@ class BigNumberTests: XCTestCase {
     }
     
     func testIntBitwise() {
+        let bint1: BigInt = 9
+        let uint1: UInt = 3
         
+        var temp = bint1 >> uint1
+        XCTAssertEqual("\(9>>3)", temp.toString(), ">>(lhs: BigInt, rhs: UInt) failed")
+        
+        temp = bint1 << uint1
+        XCTAssertEqual("\(9<<3)", temp.toString(), "<<(lhs: BigInt, rhs: UInt) failed")
     }
 }
