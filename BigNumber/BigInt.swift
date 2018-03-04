@@ -327,6 +327,49 @@ extension BigInt {
     }
     
     //
+    // Subtraction
+    //
+    public static func -(lhs: BigInt, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_sub(&result.integer, &lhs.integer, &rhs.integer)
+        
+        return result
+    }
+    
+    public static func -(lhs: BigInt, rhs: UInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_sub_ui(&result.integer, &lhs.integer, rhs)
+        
+        return result
+    }
+    
+    public static func -(lhs: UInt, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_ui_sub(&result.integer, lhs,  &rhs.integer)
+        
+        return result
+    }
+    
+    public static func -=(lhs: inout BigInt, rhs: BigInt) {
+        let result = BigInt()
+        
+        __gmpz_sub(&result.integer, &lhs.integer, &rhs.integer)
+        
+        __gmpz_set(&lhs.integer, &result.integer)
+    }
+    
+    public static func -=(lhs: inout BigInt, rhs: UInt) {
+        let result = BigInt()
+        
+        __gmpz_sub_ui(&result.integer, &lhs.integer, rhs)
+        
+        __gmpz_set(&lhs.integer, &result.integer)
+    }
+    
+    //
     // Multipication
     //
     public static func *(lhs: BigInt, rhs: BigInt) -> BigInt {

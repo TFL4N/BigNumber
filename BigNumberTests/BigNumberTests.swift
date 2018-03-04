@@ -381,7 +381,34 @@ class BigNumberTests: XCTestCase {
     }
     
     func testIntSubtraction() {
+        let bint1 = BigInt(12345)
+        let bint2 = BigInt(98765)
         
+        let uint1: UInt = 12345
+        let uint2: UInt = 98765
+        let result: UInt = uint2 - uint1
+        
+        // -(lhs: BigInt, rhs: BigInt)
+        var temp: BigInt = bint2 - bint1
+        XCTAssertEqual("\(result)", temp.toString(), "-(lhs: BigInt, rhs: BigInt) failed")
+        
+        // -(lhs: BigInt, rhs: UInt)
+        temp = bint2 - uint1
+        XCTAssertEqual("\(result)", temp.toString(), "-(lhs: BigInt, rhs: UInt) failed")
+        
+        // -(lhs: UInt, rhs: BigInt)
+        temp = uint2 - bint1
+        XCTAssertEqual("\(result)", temp.toString(), "-(lhs: UInt, rhs: BigInt) failed")
+        
+        // -=(lhs: inout BigInt, rhs: BigInt)
+        temp = BigInt(bint2)
+        temp -= bint1
+        XCTAssertEqual("\(result)", temp.toString(), "-=(lhs: inout BigInt, rhs: BigInt) failed")
+        
+        // -=(lhs: inout BigInt, rhs: UInt)
+        temp = BigInt(bint2)
+        temp -= uint1
+        XCTAssertEqual("\(result)", temp.toString(), "-=(lhs: inout BigInt, rhs: UInt) failed")
     }
     
     func testIntMultiplication() {
