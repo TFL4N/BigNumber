@@ -380,7 +380,29 @@ class BigNumberTests: XCTestCase {
         XCTAssertEqual("\(result)", temp.toString(), "+=(lhs: inout BigInt, rhs: UInt) failed")
     }
     
-    func testIntSubtraction() {
+    func testAdditionWithInts() {
+        let bint1 = BigInt(12345)
+        
+        let int1: Int = 12345
+        let int2: Int = 98765
+        let int3: Int = -3456
+        
+        let result = int1 + int2
+        
+        // +(lhs: BigInt, rhs: Int)
+        var temp = bint1 + int2
+        var temp2 = bint1 + int3
+        XCTAssertEqual("\(result)", temp.toString(), "+(lhs: BigInt, rhs: Int) failed")
+        XCTAssertEqual("\(int1 + int3)", temp2.toString(), "+(lhs: BigInt, rhs: Int) with negative Int failed")
+        
+        // -(lhs: Int, rhs: BigInt)
+        temp = bint1 + int2
+        temp2 = int3 + bint1
+        XCTAssertEqual("\(result)", temp.toString(), "+(lhs: Int, rhs: BigInt) failed")
+        XCTAssertEqual("\(int3 + int1)", temp2.toString(), "+(lhs: Int, rhs: BigInt) with negative Int failed")
+    }
+    
+    func testIntSubtractionWithUInts() {
         let bint1 = BigInt(12345)
         let bint2 = BigInt(98765)
         
@@ -409,6 +431,28 @@ class BigNumberTests: XCTestCase {
         temp = BigInt(bint2)
         temp -= uint1
         XCTAssertEqual("\(result)", temp.toString(), "-=(lhs: inout BigInt, rhs: UInt) failed")
+    }
+    
+    func testSubtractionWithInts() {
+        let bint1 = BigInt(12345)
+        
+        let int1: Int = 12345
+        let int2: Int = 98765
+        let int3: Int = -3456
+        
+        let result = int1 - int2
+        
+        // -(lhs: BigInt, rhs: Int)
+        var temp = bint1 - int2
+        var temp2 = bint1 - int3
+        XCTAssertEqual("\(result)", temp.toString(), "-(lhs: BigInt, rhs: Int) failed")
+        XCTAssertEqual("\(int1 - int3)", temp2.toString(), "-(lhs: BigInt, rhs: Int) with negative Int failed")
+        
+        // -(lhs: Int, rhs: BigInt)
+        temp = bint1 - int2
+        temp2 = int3 - bint1
+        XCTAssertEqual("\(result)", temp.toString(), "-(lhs: Int, rhs: BigInt) failed")
+        XCTAssertEqual("\(int3 - int1)", temp2.toString(), "-(lhs: Int, rhs: BigInt) with negative Int failed")
     }
     
     func testIntMultiplication() {

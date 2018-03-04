@@ -294,6 +294,34 @@ extension BigInt {
         return result
     }
     
+    public static func +(lhs: BigInt, rhs: Int) -> BigInt {
+        let result = BigInt()
+        let uint = UInt(abs(rhs))
+        
+        if rhs.signum() == -1 {
+            // negative value
+            __gmpz_sub_ui(&result.integer, &lhs.integer, uint)
+        } else {
+            __gmpz_add_ui(&result.integer, &lhs.integer, uint)
+        }
+        
+        return result
+    }
+    
+    public static func +(lhs: Int, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        let uint = UInt(abs(lhs))
+        
+        if lhs.signum() == -1 {
+            // negative value
+            __gmpz_sub_ui(&result.integer, &rhs.integer, uint)
+        } else {
+            __gmpz_add_ui(&result.integer, &rhs.integer, uint)
+        }
+        
+        return result
+    }
+    
     public static func +(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt()
         
@@ -333,6 +361,35 @@ extension BigInt {
         let result = BigInt()
         
         __gmpz_sub(&result.integer, &lhs.integer, &rhs.integer)
+        
+        return result
+    }
+    
+    public static func -(lhs: BigInt, rhs: Int) -> BigInt {
+        let result = BigInt()
+        let uint = UInt(abs(rhs))
+        
+        if rhs.signum() == -1 {
+            // negative value
+            __gmpz_add_ui(&result.integer, &lhs.integer, uint)
+        } else {
+            __gmpz_sub_ui(&result.integer, &lhs.integer, uint)
+        }
+        
+        return result
+    }
+    
+    public static func -(lhs: Int, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        let uint = UInt(abs(lhs))
+        
+        if lhs.signum() == -1 {
+            // negative value
+            __gmpz_add_ui(&result.integer, &rhs.integer, uint)
+            __gmpz_neg(&result.integer, &result.integer)
+        } else {
+            __gmpz_ui_sub(&result.integer, uint,  &rhs.integer)
+        }
         
         return result
     }
