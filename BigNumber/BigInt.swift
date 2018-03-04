@@ -24,12 +24,17 @@ public class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
     //
     public required init() {
         self.integer = mpz_t()
-        __gmpz_init_set_si(&self.integer, 0)
+        __gmpz_init(&self.integer)
     }
     
     public required init(integerLiteral value: BigInt.IntegerLiteralType) {
         self.integer = mpz_t()
         __gmpz_init_set_si(&self.integer, value)
+    }
+    
+    public convenience init(_ integer: BigInt) {
+        self.init()
+        __gmpz_set(&self.integer, &integer.integer)
     }
     
     public convenience init(_ integer: UInt) {
@@ -40,6 +45,16 @@ public class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
     public convenience init(_ integer: Int) {
         self.init()
         __gmpz_set_si(&self.integer, integer)
+    }
+    
+    public convenience init(_ double: Double) {
+        self.init()
+        __gmpz_set_d(&self.integer, double)
+    }
+    
+    public convenience init(_ rational: Rational) {
+        self.init()
+        __gmpz_set_q(&self.integer, &rational.rational)
     }
     
     public required convenience init?(_ string: String) {

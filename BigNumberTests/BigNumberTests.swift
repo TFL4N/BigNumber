@@ -49,6 +49,35 @@ class BigNumberTests: XCTestCase {
         XCTAssertEqual(i4.toString(), "\(int4)", "BigInt(UInt) failed")
     }
     
+    func testIntInitFromRational() {
+        let dbl_1: Double = 2.0
+        let dbl_2: Double = 2.4
+        let dbl_3: Double = 2.5
+        
+        let i1 = BigInt(dbl_1)
+        XCTAssertEqual("2", i1.toString(), "BigInt(Double) failed")
+        
+        let i2 = BigInt(dbl_2)
+        XCTAssertEqual("2", i2.toString(), "BigInt(Double) failed")
+        
+        let i3 = BigInt(dbl_3)
+        XCTAssertEqual("2", i3.toString(), "BigInt(Double) failed")
+        
+        // init(Rational)
+        let rat_1: Rational = 2.0
+        let rat_2: Rational = 2.4
+        let rat_3: Rational = 2.5
+        
+        let i4 = BigInt(rat_1)
+        XCTAssertEqual("2", i4.toString(), "BigInt(Rational) failed")
+        
+        let i5 = BigInt(rat_2)
+        XCTAssertEqual("2", i5.toString(), "BigInt(Rational) failed")
+        
+        let i6 = BigInt(rat_3)
+        XCTAssertEqual("2", i6.toString(), "BigInt(Rational) failed")
+    }
+    
     func testIntInitFromString() {
         //
         // Possible Improvements
@@ -324,12 +353,9 @@ class BigNumberTests: XCTestCase {
         let bint1 = BigInt(12345)
         let bint2 = BigInt(98765)
         
-        let int1: Int = 12345
-        let int2: Int = 98765
-        let result: Int = int1 + int2
-        
         let uint1: UInt = 12345
         let uint2: UInt = 98765
+        let result: UInt = uint1 + uint2
         
         // +(lhs: BigInt, rhs: BigInt)
         var temp: BigInt = bint1 + bint2
@@ -344,7 +370,14 @@ class BigNumberTests: XCTestCase {
         XCTAssertEqual("\(result)", temp.toString(), "+(lhs: UInt, rhs: BigInt) failed")
         
         // +=(lhs: inout BigInt, rhs: BigInt)
+        temp = BigInt(bint1)
+        temp += bint2
+        XCTAssertEqual("\(result)", temp.toString(), "+=(lhs: inout BigInt, rhs: BigInt) failed")
+        
         // +=(lhs: inout BigInt, rhs: UInt)
+        temp = BigInt(bint1)
+        temp += uint2
+        XCTAssertEqual("\(result)", temp.toString(), "+=(lhs: inout BigInt, rhs: UInt) failed")
     }
     
     func testIntSubtraction() {

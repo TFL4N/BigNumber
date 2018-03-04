@@ -8,11 +8,12 @@
 
 import GMP
 
-public class Rational: ExpressibleByIntegerLiteral, LosslessStringConvertible {
+public class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, LosslessStringConvertible {
     //
     // constants
     //
     public typealias IntegerLiteralType = Int
+    public typealias FloatLiteralType = Double
     
     //
     // ivars
@@ -62,9 +63,23 @@ public class Rational: ExpressibleByIntegerLiteral, LosslessStringConvertible {
         __gmpq_canonicalize(&self.rational)
     }
     
+    public required init(floatLiteral value: Rational.FloatLiteralType) {
+        self.rational = mpq_t()
+        __gmpq_init(&self.rational)
+        __gmpq_set_d(&self.rational, value)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public convenience init(_ value: Rational) {
+        self.init()
+        __gmpq_set(&self.rational, &value.rational)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
     public convenience init(_ value: BigInt) {
         self.init()
         __gmpq_set_z(&self.rational, &value.integer)
+        __gmpq_canonicalize(&self.rational)
     }
     
     public convenience init(_ numerator: BigInt, _ denominator: BigInt) {
