@@ -8,7 +8,7 @@
 
 import GMP
 
-public class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, LosslessStringConvertible {
+public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, LosslessStringConvertible {
     //
     // constants
     //
@@ -82,6 +82,18 @@ public class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, L
         __gmpq_canonicalize(&self.rational)
     }
     
+    public convenience init(_ value: Int) {
+        self.init()
+        __gmpq_set_si(&self.rational, value, 1)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public convenience init(_ value: UInt) {
+        self.init()
+        __gmpq_set_ui(&self.rational, value, 1)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
     public convenience init(_ numerator: BigInt, _ denominator: BigInt) {
         self.init()
         __gmpq_set_num(&self.rational, &numerator.integer)
@@ -131,6 +143,55 @@ public class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, L
         return self.toString(base: 10) ?? ""
     }
 }
+
+//
+// SignedNumeric
+//
+extension Rational: SignedNumeric {
+    // Sign Numeric
+    prefix public static func -(operand: Rational) -> Rational {
+        let result = Rational(operand)
+        
+        __gmpq_neg(&result.rational, &result.rational)
+        
+        return result
+    }
+    
+    public func negate() {
+        __gmpq_neg(&self.rational, &self.rational)
+    }
+    
+    // Numeric
+    public typealias Magnitude = Rational
+    
+    public convenience init?<T>(exactly source: T) where T : BinaryInteger {
+        if let s = source as? BigInt {
+            self.init(s)
+            return
+        } else if let s = source as? Int {
+            self.init(s)
+            return
+        } else if let s = source as? UInt {
+            self.init(s)
+            return
+        }
+        
+        return nil
+    }
+    
+    public var magnitude: Rational {
+        let result = Rational(self)
+        
+        __gmpq_abs(&result.rational, &result.rational)
+        
+        return result
+    }
+    
+    prefix public static func +(x: Rational) -> Rational {
+        return x
+    }
+}
+
 
 //
 // Convertibles
@@ -227,6 +288,25 @@ extension Rational {
         let result = Rational()
         
         __gmpq_add(&result.rational, &lhs.rational, &rhs.rational)
+        
+        __gmpq_set(&lhs.rational, &result.rational)
+    }
+    
+    //
+    // Subtraction
+    //
+    public static func -(lhs: Rational, rhs: Rational) -> Rational {
+        let result = Rational()
+        
+        __gmpq_sub(&result.rational, &lhs.rational, &rhs.rational)
+        
+        return result
+    }
+    
+    public static func -=(lhs: inout Rational, rhs: Rational) {
+        let result = Rational()
+        
+        __gmpq_sub(&result.rational, &lhs.rational, &rhs.rational)
         
         __gmpq_set(&lhs.rational, &result.rational)
     }

@@ -87,7 +87,7 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
 }
 
 //
-// MARK: Integer
+// MARK: SignNumeric
 //
 extension BigInt: SignedNumeric {
     // Sign Numeric
@@ -132,8 +132,10 @@ extension BigInt: SignedNumeric {
     prefix public static func +(x: BigInt) -> BigInt {
         return x
     }
-    
-    // Hashable
+}
+
+// Hashable
+extension BigInt: Hashable {
     public var hashValue: Int {
         return Int(__gmpz_getlimbn(&self.integer, 0))
     }
