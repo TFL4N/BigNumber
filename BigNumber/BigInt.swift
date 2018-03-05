@@ -8,7 +8,7 @@
 
 import GMP
 
-public class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
+public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
     //
     // constants
     //
@@ -31,7 +31,7 @@ public class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
         self.integer = mpz_t()
         __gmpz_init_set_si(&self.integer, value)
     }
-    
+
     public convenience init(_ integer: BigInt) {
         self.init()
         __gmpz_set(&self.integer, &integer.integer)
@@ -87,7 +87,60 @@ public class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
 }
 
 //
-// Convertibles
+// MARK: Integer
+//
+extension BigInt: SignedNumeric {
+    // Sign Numeric
+    prefix public static func -(operand: BigInt) -> BigInt {
+        let result = BigInt(operand)
+        
+        __gmpz_neg(&result.integer, &result.integer)
+        
+        return result
+    }
+    
+    public func negate() {
+        __gmpz_neg(&self.integer, &self.integer)
+    }
+    
+    // Numeric
+    public typealias Magnitude = BigInt
+    
+    public convenience init?<T>(exactly source: T) where T : BinaryInteger {
+        if let s = source as? BigInt {
+            self.init(s)
+            return
+        } else if let s = source as? Int {
+            self.init(s)
+            return
+        } else if let s = source as? UInt {
+            self.init(s)
+            return
+        }
+        
+        return nil
+    }
+    
+    public var magnitude: BigInt {
+        let result = BigInt(self)
+        
+        __gmpz_abs(&result.integer, &result.integer)
+        
+        return result
+    }
+    
+    prefix public static func +(x: BigInt) -> BigInt {
+        return x
+    }
+    
+    // Hashable
+    public var hashValue: Int {
+        return Int(__gmpz_getlimbn(&self.integer, 0))
+    }
+}
+
+//
+// MARK: Convertibles
 //
 extension BigInt {
     public func toString(base: Int32) -> String? {
@@ -120,7 +173,7 @@ extension BigInt {
 }
 
 //
-// Comparable/ Equatable
+// MARK: Comparable/ Equatable
 //
 extension BigInt: Comparable, Equatable {
     //
@@ -280,7 +333,7 @@ extension BigInt: Comparable, Equatable {
 }
 
 //
-// Numeric
+// MARK: Arithmetic
 //
 extension BigInt {
     //
@@ -504,6 +557,10 @@ extension BigInt {
         return result
     }
     
+    public static func <<=(lhs: inout BigInt, rhs: UInt) {
+        __gmpz_mul_2exp(&lhs.integer, &lhs.integer, rhs)
+    }
+    
     public static func >>(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt()
         
@@ -511,10 +568,14 @@ extension BigInt {
         
         return result
     }
+    
+    public static func >>=(lhs: inout BigInt, rhs: UInt) {
+        __gmpz_tdiv_q_2exp(&lhs.integer, &lhs.integer, rhs)
+    }
 }
 
 //
-// Exponentiation
+// MARK: Exponentiation
 //
 precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
 infix operator ** : PowerPrecedence
