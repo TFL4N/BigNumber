@@ -205,6 +205,10 @@ extension Rational {
         }
     }
     
+    public func toString() -> String {
+        return self.toString(base: 10)!
+    }
+    
     public func toDouble() -> Double? {
         return __gmpq_get_d(&self.rational)
     }
@@ -223,6 +227,17 @@ extension Rational: Comparable, Equatable {
     
     public static func ==(lhs: Rational, rhs: BigInt) -> Bool {
         return __gmpq_cmp_z(&lhs.rational, &rhs.integer) == 0
+    }
+    
+    //
+    // isNotEqual
+    //
+    public static func !=(lhs: Rational, rhs: Rational) -> Bool {
+        return __gmpq_equal(&lhs.rational, &rhs.rational) == 0
+    }
+    
+    public static func !=(lhs: Rational, rhs: BigInt) -> Bool {
+        return __gmpq_cmp_z(&lhs.rational, &rhs.integer) != 0
     }
     
     //

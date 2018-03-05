@@ -15,6 +15,8 @@
 		6533D1C31F48FB3500831742 /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6533D1C21F48FB3500831742 /* BigInt.swift */; };
 		6533D1C81F48FC3100831742 /* gmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1C51F48FC3100831742 /* gmp.h */; };
 		6533D1C91F48FC3100831742 /* gmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6533D1C61F48FC3100831742 /* gmp.dylib */; };
+		65B70FD7204DBA6D005EA455 /* Rational+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */; };
+		65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B70FD8204DE0F9005EA455 /* RationalTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +42,8 @@
 		6533D1C51F48FC3100831742 /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		6533D1C61F48FC3100831742 /* gmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = gmp.dylib; sourceTree = "<group>"; };
 		6533D1C71F48FC3100831742 /* module.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.map; sourceTree = "<group>"; };
+		65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rational+Utils.swift"; sourceTree = "<group>"; };
+		65B70FD8204DE0F9005EA455 /* RationalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RationalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +93,7 @@
 				6533D1C21F48FB3500831742 /* BigInt.swift */,
 				6501AFAC1F534E530052F040 /* Rational.swift */,
 				6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */,
+				65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */,
 			);
 			path = BigNumber;
 			sourceTree = "<group>";
@@ -98,6 +103,7 @@
 			children = (
 				6533D1B61F48FADD00831742 /* BigNumberTests.swift */,
 				6533D1B81F48FADD00831742 /* Info.plist */,
+				65B70FD8204DE0F9005EA455 /* RationalTests.swift */,
 			);
 			path = BigNumberTests;
 			sourceTree = "<group>";
@@ -228,6 +234,7 @@
 				6501AFAB1F493E5D0052F040 /* BigInt+Utils.swift in Sources */,
 				6533D1C31F48FB3500831742 /* BigInt.swift in Sources */,
 				6501AFAD1F534E530052F040 /* Rational.swift in Sources */,
+				65B70FD7204DBA6D005EA455 /* Rational+Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6533D1B71F48FADD00831742 /* BigNumberTests.swift in Sources */,
+				65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

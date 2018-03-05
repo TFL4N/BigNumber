@@ -153,8 +153,8 @@ extension BigInt {
         }
     }
     
-    public func toString() -> String? {
-        return self.toString(base: 10)
+    public func toString() -> String {
+        return self.toString(base: 10)!
     }
     
     public func toInt() -> Int? {
@@ -207,6 +207,37 @@ extension BigInt: Comparable, Equatable {
     
     public static func ==(lhs: UInt, rhs: BigInt) -> Bool {
         return __gmpz_cmp_ui(&rhs.integer, lhs) == 0
+    }
+    
+    //
+    // isNotEqual
+    //
+    public static func !=(lhs: BigInt, rhs: BigInt) -> Bool {
+        return __gmpz_cmp(&lhs.integer, &rhs.integer) != 0
+    }
+    
+    public static func !=(lhs: BigInt, rhs: Double) -> Bool {
+        return __gmpz_cmp_d(&lhs.integer, rhs) != 0
+    }
+    
+    public static func !=(lhs: Double, rhs: BigInt) -> Bool {
+        return __gmpz_cmp_d(&rhs.integer, lhs) != 0
+    }
+    
+    public static func !=(lhs: BigInt, rhs: Int) -> Bool {
+        return __gmpz_cmp_si(&lhs.integer, rhs) != 0
+    }
+    
+    public static func !=(lhs: Int, rhs: BigInt) -> Bool {
+        return __gmpz_cmp_si(&rhs.integer, lhs) != 0
+    }
+    
+    public static func !=(lhs: BigInt, rhs: UInt) -> Bool {
+        return __gmpz_cmp_ui(&lhs.integer, rhs) != 0
+    }
+    
+    public static func !=(lhs: UInt, rhs: BigInt) -> Bool {
+        return __gmpz_cmp_ui(&rhs.integer, lhs) != 0
     }
     
     //

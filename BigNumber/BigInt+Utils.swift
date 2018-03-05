@@ -53,19 +53,23 @@ extension BigInt {
     
     public static func factorial(_ n: UInt) -> BigInt {
         // alloc vars
-        var result = mpz_t()
-        __gmpz_init_set_ui(&result, 0)
+        let output: BigInt = 0
         
         // perform factorial
-        __gmpz_fac_ui(&result, n)
-        
-        // create output
-        let output = BigInt()
-        __gmpz_set(&output.integer, &result)
-        
-        // clear vars
-        __gmpz_clear(&result)
+        __gmpz_fac_ui(&output.integer, n)
         
         return output
+    }
+    
+    public static func getString(_ n: inout mpz_t, base: Int32) -> String? {
+        if let r = __gmpz_get_str(nil, base, &n) {
+            return String(cString: r)
+        } else {
+            return nil
+        }
+    }
+    
+    public static func getString(_ n: inout mpz_t) -> String {
+        return self.getString(&n, base: 10)!
     }
 }
