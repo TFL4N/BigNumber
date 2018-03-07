@@ -433,11 +433,18 @@ extension BigInt {
     }
     
     public static func +=(lhs: inout BigInt, rhs: UInt) {
-        let result = BigInt()
+        __gmpz_add_ui(&lhs.integer, &lhs.integer, rhs)
+    }
+    
+    public static func +=(lhs: inout BigInt, rhs: Int) {
+        let uint = UInt(abs(rhs))
         
-        __gmpz_add_ui(&result.integer, &lhs.integer, rhs)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        if rhs.signum() == -1 {
+            // negative value
+            __gmpz_sub_ui(&lhs.integer, &lhs.integer, uint)
+        } else {
+            __gmpz_add_ui(&lhs.integer, &lhs.integer, uint)
+        }
     }
     
     //
@@ -604,6 +611,32 @@ extension BigInt {
     
     public static func >>=(lhs: inout BigInt, rhs: UInt) {
         __gmpz_tdiv_q_2exp(&lhs.integer, &lhs.integer, rhs)
+    }
+    
+    //
+    // MARK: Primality
+    //
+    public enum Primality: Int32, ExpressibleByIntegerLiteral {
+        case definitePrime = 2
+        case probablePrime = 1
+        case notPrime = 0
+        
+        public typealias IntegerLiteralType = Int32
+        
+        public init(integerLiteral value: Primality.IntegerLiteralType) {
+            if 0...2 ~= value {
+                self.init(rawValue: value)!
+            } else {
+                self.init(rawValue: 0)!
+            }
+        }
+    }
+    public func isPrime() -> Primality {
+        return self.isPrime(reps: 15)
+    }
+    
+    public func isPrime(reps: Int32) -> Primality {
+        return Primality(integerLiteral: __gmpz_probab_prime_p(&self.integer, reps))
     }
 }
 

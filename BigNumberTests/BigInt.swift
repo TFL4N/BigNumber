@@ -9,7 +9,7 @@
 import XCTest
 @testable import BigNumber
 
-class BigNumberTests: XCTestCase {
+class BigIntTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
@@ -400,6 +400,9 @@ class BigNumberTests: XCTestCase {
         temp2 = int3 + bint1
         XCTAssertEqual("\(result)", temp.toString(), "+(lhs: Int, rhs: BigInt) failed")
         XCTAssertEqual("\(int3 + int1)", temp2.toString(), "+(lhs: Int, rhs: BigInt) with negative Int failed")
+        
+        // +=(lhs: inout BigInt, rhs: Int)
+        
     }
     
     func testIntSubtractionWithUInts() {

@@ -10,7 +10,7 @@
 		6501AFAB1F493E5D0052F040 /* BigInt+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */; };
 		6501AFAD1F534E530052F040 /* Rational.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6501AFAC1F534E530052F040 /* Rational.swift */; };
 		6533D1B21F48FADD00831742 /* BigNumber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6533D1A81F48FADD00831742 /* BigNumber.framework */; };
-		6533D1B71F48FADD00831742 /* BigNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6533D1B61F48FADD00831742 /* BigNumberTests.swift */; };
+		6533D1B71F48FADD00831742 /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6533D1B61F48FADD00831742 /* BigInt.swift */; };
 		6533D1B91F48FADD00831742 /* BigNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1AB1F48FADD00831742 /* BigNumber.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6533D1C31F48FB3500831742 /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6533D1C21F48FB3500831742 /* BigInt.swift */; };
 		6533D1C81F48FC3100831742 /* gmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1C51F48FC3100831742 /* gmp.h */; };
@@ -36,7 +36,7 @@
 		6533D1AB1F48FADD00831742 /* BigNumber.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BigNumber.h; sourceTree = "<group>"; };
 		6533D1AC1F48FADD00831742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6533D1B11F48FADD00831742 /* BigNumberTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BigNumberTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6533D1B61F48FADD00831742 /* BigNumberTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigNumberTests.swift; sourceTree = "<group>"; };
+		6533D1B61F48FADD00831742 /* BigInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigInt.swift; sourceTree = "<group>"; };
 		6533D1B81F48FADD00831742 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6533D1C21F48FB3500831742 /* BigInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BigInt.swift; sourceTree = "<group>"; };
 		6533D1C51F48FC3100831742 /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
@@ -101,7 +101,7 @@
 		6533D1B51F48FADD00831742 /* BigNumberTests */ = {
 			isa = PBXGroup;
 			children = (
-				6533D1B61F48FADD00831742 /* BigNumberTests.swift */,
+				6533D1B61F48FADD00831742 /* BigInt.swift */,
 				6533D1B81F48FADD00831742 /* Info.plist */,
 				65B70FD8204DE0F9005EA455 /* RationalTests.swift */,
 			);
@@ -242,7 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6533D1B71F48FADD00831742 /* BigNumberTests.swift in Sources */,
+				6533D1B71F48FADD00831742 /* BigInt.swift in Sources */,
 				65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
