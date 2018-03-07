@@ -113,6 +113,22 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
         __gmpq_canonicalize(&self.rational)
     }
     
+    public convenience init(_ numerator: Int, _ denominator: Int) {
+        var num = abs(numerator)
+        let dem = UInt(abs(denominator))
+        
+        let is_num_neg = numerator < 0
+        let is_den_neg = denominator < 0
+        
+        if is_num_neg != is_den_neg {
+            num.negate()
+        }
+        
+        self.init()
+        __gmpq_set_si(&self.rational, num, dem)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
     public required convenience init?(_ description: String) {
         self.init(string: description, base: 10)
     }
