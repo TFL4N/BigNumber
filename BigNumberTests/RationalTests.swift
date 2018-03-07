@@ -34,11 +34,21 @@ class RationalTests: XCTestCase {
     }
     
     func testRationalToString() {
-        let rat1 = Rational(1,7)
+        var str = Rational(1,7).toFloatString(decimalPlaces: 10)
+        XCTAssertEqual("0.1428571428", str, "(1/7)[10].toFloatString failed")
         
-        let str = rat1.toFloatString(decimalPlaces: 10)
+        str = Rational(1,999).toFloatString(decimalPlaces: 9)
+        XCTAssertEqual("0.001001001", str, "(1/999)[9].toFloatString failed")
         
-        print(str)
+        str = Rational(1,689).toFloatString(decimalPlaces: 22)
+        XCTAssertEqual("0.0014513788098693759071", str, "(1/689)[22].toFloatString failed")
+        
+        str = Rational(1,748).toFloatString(decimalPlaces: 22)
+        XCTAssertEqual("0.0013368983957219251336", str, "(1/748)[22].toFloatString failed")
+        
+        
+        
+        
     }
 
 }

@@ -74,7 +74,6 @@ extension Rational {
                 
                 if adjustment > 0 {
                     for _ in 1..<adjustment {
-                        decimal_str += "0"
                         decimal_count += 1
                     }
                 }
