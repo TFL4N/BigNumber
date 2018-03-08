@@ -638,6 +638,59 @@ extension BigInt {
     public func isPrime(reps: Int32) -> Primality {
         return Primality(integerLiteral: __gmpz_probab_prime_p(&self.integer, reps))
     }
+    
+    public func nextPrime() -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_nextprime(&result.integer, &self.integer)
+        
+        return result
+    }
+    
+    public func moveToNextPrime() {
+        __gmpz_nextprime(&self.integer, &self.integer)
+    }
+    
+    //
+    // MARK: Factor
+    //
+    public func primeFactorization() -> [BigInt] {
+        var working = BigInt(self)
+        
+        // check self.isPrime
+        if self.isPrime() != .notPrime {
+            return [working]
+        }
+        
+        // find prime factors
+        var factors: [BigInt] = []
+        while working > 1 {
+            // check if prime
+            if working.isPrime() != .notPrime {
+                factors.append(working)
+                working = 1
+                continue
+            }
+            
+            // find next factor
+            var test: BigInt = 1
+            repeat {
+                test = test.nextPrime()
+                
+                var q = mpz_t()
+                var r = mpz_t()
+                
+                __gmpz_fdiv_qr(&q, &r, &working.integer, &test.integer)
+                if __gmpz_cmp_ui(&r, 0) == 0 {
+                    factors.append(test)
+                    __gmpz_swap(&working.integer, &q)
+                    break
+                }
+            } while test < working
+        }
+        
+        return factors
+    }
 }
 
 //
