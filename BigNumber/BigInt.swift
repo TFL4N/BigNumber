@@ -587,6 +587,74 @@ extension BigInt {
     }
     
     //
+    // Divison
+    //
+    public static func /(lhs: BigInt, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        
+       __gmpz_fdiv_q(&result.integer, &lhs.integer, &rhs.integer)
+        
+        return result
+    }
+    
+    public static func /(lhs: BigInt, rhs: Int) -> BigInt {
+        let result = BigInt(rhs)
+        
+        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
+        
+        return result
+    }
+    
+    public static func /(lhs: Int, rhs: BigInt) -> BigInt {
+        let result = BigInt(lhs)
+        
+        __gmpz_fdiv_q(&result.integer, &result.integer, &rhs.integer)
+        
+        return result
+    }
+    
+    public static func /(lhs: BigInt, rhs: UInt) -> BigInt {
+        let result = BigInt(rhs)
+        
+        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
+        
+        return result
+    }
+    
+    public static func /(lhs: UInt, rhs: BigInt) -> BigInt {
+        let result = BigInt(lhs)
+        
+        __gmpz_fdiv_q(&result.integer, &result.integer, &rhs.integer)
+        
+        return result
+    }
+    
+    public static func /=(lhs: inout BigInt, rhs: BigInt) {
+        let result = BigInt()
+        
+        __gmpz_fdiv_q(&result.integer, &lhs.integer, &rhs.integer)
+        
+        __gmpz_set(&lhs.integer, &result.integer)
+    }
+    
+    public static func /=(lhs: inout BigInt, rhs: Int) {
+        let result = BigInt(rhs)
+        
+        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
+        
+        __gmpz_set(&lhs.integer, &result.integer)
+    }
+    
+    public static func /=(lhs: inout BigInt, rhs: UInt) {
+        let result = BigInt(rhs)
+        
+        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
+        
+        __gmpz_set(&lhs.integer, &result.integer)
+    }
+    
+    
+    //
     // Bitwise
     //
     public static func <<(lhs: BigInt, rhs: UInt) -> BigInt {

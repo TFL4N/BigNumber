@@ -9,6 +9,21 @@
 import GMP
 
 extension BigInt {
+    // n! / r!(n-r)!
+    public static func combinations(from n: UInt, choose r: UInt) -> BigInt {
+        if n == 0 {
+            return 0
+        } else if r == 1 {
+            return BigInt(n)
+        }
+        
+        let n_fact = BigInt.factorial(n)
+        let r_fact = BigInt.factorial(r)
+        let nr_fact = BigInt.factorial(n-r)
+        
+        return n_fact / (r_fact * nr_fact)
+    }
+    
     public func digitalSum() -> BigInt {
         // alloc and init vars
         var result = mpz_t()
@@ -20,21 +35,10 @@ extension BigInt {
         var remainder = mpz_t()
         __gmpz_init_set_ui(&remainder, 0)
         
-        var quotient = mpz_t()
-        __gmpz_init_set_ui(&quotient, 0)
-        
-        var temp =  mpz_t()
-        __gmpz_init_set_ui(&temp, 0)
-        
         // calc digital sum
         while __gmpz_cmp_ui(&working, 0) > 0 {
-            __gmpz_fdiv_qr_ui(&quotient, &remainder, &working, 10)
-            
-            __gmpz_set_ui(&temp, 0)
-            __gmpz_add(&temp, &remainder, &result)
-            
-            __gmpz_set(&result, &temp)
-            __gmpz_set(&working, &quotient)
+            __gmpz_fdiv_qr_ui(&working, &remainder, &working, 10)
+            __gmpz_add(&result, &remainder, &result)
         }
         
         // create output
@@ -45,8 +49,6 @@ extension BigInt {
         __gmpz_clear(&result)
         __gmpz_clear(&working)
         __gmpz_clear(&remainder)
-        __gmpz_clear(&quotient)
-        __gmpz_clear(&temp)
         
         return output
     }
