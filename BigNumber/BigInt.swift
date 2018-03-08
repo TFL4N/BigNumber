@@ -8,6 +8,15 @@
 
 import GMP
 
+//
+// MARK: Exponentiation
+//
+precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
+infix operator ** : PowerPrecedence
+
+//
+// BigInt
+//
 public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
     //
     // constants
@@ -83,6 +92,20 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     //
     public var description: String {
         return self.toString(base: 10) ?? ""
+    }
+    
+    //
+    // Custom Operators
+    //
+    public static func **(radix: BigInt, power: UInt) -> BigInt {
+        var result = mpz_t()
+        __gmpz_init_set_ui(&result, 0)
+        
+        __gmpz_pow_ui(&result, &radix.integer, power)
+        
+        let output = BigInt()
+        __gmpz_set(&output.integer, &result)
+        return output
     }
 }
 
@@ -761,21 +784,4 @@ extension BigInt {
     }
 }
 
-//
-// MARK: Exponentiation
-//
-precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
-infix operator ** : PowerPrecedence
-extension BigInt {
-    static public func **(radix: BigInt, power: UInt) -> BigInt {
-        var result = mpz_t()
-        __gmpz_init_set_ui(&result, 0)
-        
-        __gmpz_pow_ui(&result, &radix.integer, power)
-        
-        let output = BigInt()
-        __gmpz_set(&output.integer, &result)
-        return output
-    }
-}
 

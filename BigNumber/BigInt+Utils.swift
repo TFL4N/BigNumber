@@ -53,6 +53,10 @@ extension BigInt {
         return output
     }
     
+    public static func expontential(_ n: BigInt, power: UInt) -> BigInt {
+        return n ** power
+    }
+    
     public static func factorial(_ n: UInt) -> BigInt {
         // alloc vars
         let output: BigInt = 0
