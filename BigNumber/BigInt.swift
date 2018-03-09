@@ -93,20 +93,6 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     public var description: String {
         return self.toString(base: 10) ?? ""
     }
-    
-    //
-    // Custom Operators
-    //
-    public static func **(radix: BigInt, power: UInt) -> BigInt {
-        var result = mpz_t()
-        __gmpz_init_set_ui(&result, 0)
-        
-        __gmpz_pow_ui(&result, &radix.integer, power)
-        
-        let output = BigInt()
-        __gmpz_set(&output.integer, &result)
-        return output
-    }
 }
 
 //
@@ -676,6 +662,24 @@ extension BigInt {
         __gmpz_set(&lhs.integer, &result.integer)
     }
     
+    //
+    // Modulus
+    //
+    public static func %(lhs: BigInt, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_mod(&result.integer, &rhs.integer, &lhs.integer)
+        
+        return result
+    }
+    
+    public static func %(lhs: BigInt, rhs: UInt) -> BigInt {
+        return BigInt(__gmpz_fdiv_ui(&lhs.integer, rhs))
+    }
+    
+    public static func %(lhs: BigInt, rhs: Int) -> BigInt {
+        return BigInt(__gmpz_fdiv_ui(&lhs.integer, UInt(abs(rhs))))
+    }
     
     //
     // Bitwise
@@ -781,6 +785,28 @@ extension BigInt {
         }
         
         return factors
+    }
+    
+    //
+    // Expontenials
+    //
+    public static func **(radix: BigInt, power: UInt) -> BigInt {
+        var result = mpz_t()
+        __gmpz_init_set_ui(&result, 0)
+        
+        __gmpz_pow_ui(&result, &radix.integer, power)
+        
+        let output = BigInt()
+        __gmpz_set(&output.integer, &result)
+        return output
+    }
+    
+    public func isPerfectPower() -> Bool {
+        return __gmpz_perfect_power_p(&self.integer) != 0
+    }
+    
+    public func isPerfectSquare() -> Bool {
+        return __gmpz_perfect_square_p(&self.integer) != 0
     }
 }
 

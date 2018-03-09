@@ -158,6 +158,21 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     public var description: String {
         return self.toString(base: 10) ?? ""
     }
+    
+    //
+    // Misc Arithmetic
+    //
+    public func invert() {
+        __gmpq_inv(&self.rational, &self.rational)
+    }
+    
+    public func inverse() -> Rational {
+        let result = Rational()
+        
+        __gmpq_inv(&result.rational, &self.rational)
+        
+        return result
+    }
 }
 
 //
