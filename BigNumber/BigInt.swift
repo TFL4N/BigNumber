@@ -9,6 +9,12 @@
 import GMP
 
 //
+// Public Types
+//
+public typealias PrimeFactor = (BigInt, UInt)
+public typealias PrimeFactors = [BigInt : UInt]
+
+//
 // MARK: Exponentiation
 //
 precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
@@ -747,44 +753,74 @@ extension BigInt {
     }
     
     //
-    // MARK: Factor
+    // MARK: Factorization
     //
-    public func primeFactorization() -> [BigInt] {
+    public func enumeratePrimeFactors(withHandler handler: ((inout Bool, BigInt, BigInt)->())) {
         var working = BigInt(self)
+        var stop = false
         
         // check self.isPrime
         if self.isPrime() != .notPrime {
-            return [working]
+            handler(&stop, working, 1)
+            return
         }
         
         // find prime factors
-        var factors: [BigInt] = []
+        var test: BigInt = 1
         while working > 1 {
             // check if prime
             if working.isPrime() != .notPrime {
-                factors.append(working)
+                handler(&stop, working, 1)
                 working = 1
                 continue
             }
             
             // find next factor
-            var test: BigInt = 1
+            test = test.nextPrime()
+            var q = mpz_t()
+            var r = mpz_t()
             repeat {
-                test = test.nextPrime()
-                
-                var q = mpz_t()
-                var r = mpz_t()
-                
                 __gmpz_fdiv_qr(&q, &r, &working.integer, &test.integer)
                 if __gmpz_cmp_ui(&r, 0) == 0 {
-                    factors.append(test)
                     __gmpz_swap(&working.integer, &q)
+                    handler(&stop, test, working)
+                    if stop {
+                        return
+                    }
+                } else {
                     break
                 }
             } while test < working
         }
+    }
+    
+    public func primeFactorsAndExponents() -> [PrimeFactor] {
+        var output: [PrimeFactor] = []
+        var last: PrimeFactor? = nil
+        self.enumeratePrimeFactors() { (_, factor, _) in
+            if last == nil {
+                last = (factor, 1)
+            } else {
+                if last!.0 == factor {
+                    last!.1 += 1
+                } else {
+                    output.append(last!)
+                    last = (factor,1)
+                }
+            }
+        }
+        output.append(last!)
         
-        return factors
+        return output
+    }
+    
+    public func primeFactorization() -> [BigInt] {
+        var output: [BigInt] = []
+        self.enumeratePrimeFactors() { (_, factor, _) in
+            output.append(factor)
+        }
+        
+        return output
     }
     
     //
