@@ -11,7 +11,6 @@ import GMP
 //
 // Public Types
 //
-public typealias PrimeFactor = (BigInt, UInt)
 public typealias PrimeFactors = [BigInt : UInt]
 
 //
@@ -19,7 +18,7 @@ public typealias PrimeFactors = [BigInt : UInt]
 //
 precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
 infix operator ** : PowerPrecedence
-
+infix operator **= : PowerPrecedence
 //
 // BigInt
 //
@@ -794,22 +793,44 @@ extension BigInt {
         }
     }
     
-    public func primeFactorsAndExponents() -> [PrimeFactor] {
-        var output: [PrimeFactor] = []
-        var last: PrimeFactor? = nil
+    public func primeFactorsAndExponents() -> PrimeFactors {
+        var output: PrimeFactors = [:]
         self.enumeratePrimeFactors() { (_, factor, _) in
-            if last == nil {
-                last = (factor, 1)
+            if output[factor] != nil {
+                output[factor]! += 1
             } else {
-                if last!.0 == factor {
-                    last!.1 += 1
-                } else {
-                    output.append(last!)
-                    last = (factor,1)
-                }
+                output[factor] = 1
             }
         }
-        output.append(last!)
+        
+        return output
+    }
+    
+    public func primeFactorsAndExponents_Ints() -> [UInt : UInt] {
+        var output: [UInt: UInt] = [:]
+        self.enumeratePrimeFactors() { (_, factor, _) in
+            let int = factor.toUInt()!
+            if output[int] != nil {
+                output[int]! += 1
+            } else {
+                output[int] = 1
+            }
+        }
+        
+        return output
+    }
+    
+    public func primeFactorsAndExponents_Bool() -> [UInt : Bool] {
+        var output: [UInt: Bool] = [:]
+        self.enumeratePrimeFactors() { (_, factor, _) in
+            let int = factor.toUInt()!
+            let val = output[int]
+            if val != nil {
+                output[int]! = val! == false
+            } else {
+                output[int] = false
+            }
+        }
         
         return output
     }
@@ -824,17 +845,23 @@ extension BigInt {
     }
     
     //
-    // Expontenials
+    // MARK: Expontenials
     //
     public static func **(radix: BigInt, power: UInt) -> BigInt {
-        var result = mpz_t()
-        __gmpz_init_set_ui(&result, 0)
-        
-        __gmpz_pow_ui(&result, &radix.integer, power)
-        
         let output = BigInt()
-        __gmpz_set(&output.integer, &result)
+        
+        __gmpz_pow_ui(&output.integer, &radix.integer, power)
+        
         return output
+    }
+    
+    
+    public static func **=(radix: inout BigInt, power: UInt) {
+        __gmpz_pow_ui(&radix.integer, &radix.integer, power)
+    }
+    
+    public func raisedTo(_ power: UInt) {
+        __gmpz_pow_ui(&self.integer, &self.integer, power)
     }
     
     public func isPerfectPower() -> Bool {

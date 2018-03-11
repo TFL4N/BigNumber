@@ -8,22 +8,8 @@
 
 import GMP
 
+// MARK: Instance methods
 extension BigInt {
-    // n! / r!(n-r)!
-    public static func combinations(from n: UInt, choose r: UInt) -> BigInt {
-        if n == 0 {
-            return 0
-        } else if r == 1 {
-            return BigInt(n)
-        }
-        
-        let n_fact = BigInt.factorial(n)
-        let r_fact = BigInt.factorial(r)
-        let nr_fact = BigInt.factorial(n-r)
-        
-        return n_fact / (r_fact * nr_fact)
-    }
-    
     public func digitalSum() -> BigInt {
         // alloc and init vars
         var result = mpz_t()
@@ -51,6 +37,43 @@ extension BigInt {
         __gmpz_clear(&remainder)
         
         return output
+    }
+    
+    public func orderOfMagnitude() -> UInt {
+        let str = self.toString()
+        return UInt(str.count)
+    }
+}
+
+// MARK: Static functions
+extension BigInt {
+    // n! / r!(n-r)!
+    public static func combinations(from n: UInt, choose r: UInt) -> BigInt {
+        if n == 0 {
+            return 0
+        } else if r == 1 {
+            return BigInt(n)
+        }
+        
+        let n_fact = BigInt.factorial(n)
+        let r_fact = BigInt.factorial(r)
+        let nr_fact = BigInt.factorial(n-r)
+        
+        return n_fact / (r_fact * nr_fact)
+    }
+    
+    public static func numberOfPrimes(min: UInt, max: UInt) -> UInt {
+        let num = BigInt(min)
+        var count: UInt = 0
+        repeat {
+            if num.isPrime() != .notPrime {
+                count += 1
+            }
+            
+            num.moveToNextPrime()
+        } while num <= max
+        
+        return count
     }
     
     public static func expontential(_ n: BigInt, power: UInt) -> BigInt {
