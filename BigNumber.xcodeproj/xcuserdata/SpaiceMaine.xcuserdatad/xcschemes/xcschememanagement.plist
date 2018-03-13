@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>Install BigNumber.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -18,6 +23,11 @@
 			<true/>
 		</dict>
 		<key>6533D1B01F48FADD00831742</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6533EF8A2058529A00BC586F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
