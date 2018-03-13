@@ -673,7 +673,7 @@ extension BigInt {
     public static func %(lhs: BigInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mod(&result.integer, &rhs.integer, &lhs.integer)
+        __gmpz_mod(&result.integer, &lhs.integer, &rhs.integer)
         
         return result
     }
