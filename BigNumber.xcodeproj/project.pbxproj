@@ -22,6 +22,8 @@
 		6533EF912058529A00BC586F /* gmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6533D1C61F48FC3100831742 /* gmp.dylib */; };
 		6533EF932058529A00BC586F /* BigNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1AB1F48FADD00831742 /* BigNumber.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6533EF942058529A00BC586F /* gmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1C51F48FC3100831742 /* gmp.h */; };
+		654C484F205A564800E0FE10 /* NumberTheory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C484E205A564800E0FE10 /* NumberTheory.swift */; };
+		654C4850205A564800E0FE10 /* NumberTheory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C484E205A564800E0FE10 /* NumberTheory.swift */; };
 		65B70FD7204DBA6D005EA455 /* Rational+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */; };
 		65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B70FD8204DE0F9005EA455 /* RationalTests.swift */; };
 /* End PBXBuildFile section */
@@ -50,6 +52,7 @@
 		6533D1C61F48FC3100831742 /* gmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = gmp.dylib; sourceTree = "<group>"; };
 		6533D1C71F48FC3100831742 /* module.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.map; sourceTree = "<group>"; };
 		6533EF9A2058529A00BC586F /* BigNumber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BigNumber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		654C484E205A564800E0FE10 /* NumberTheory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTheory.swift; sourceTree = "<group>"; };
 		65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rational+Utils.swift"; sourceTree = "<group>"; };
 		65B70FD8204DE0F9005EA455 /* RationalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RationalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -111,6 +114,7 @@
 				6501AFAC1F534E530052F040 /* Rational.swift */,
 				6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */,
 				65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */,
+				654C484E205A564800E0FE10 /* NumberTheory.swift */,
 			);
 			path = BigNumber;
 			sourceTree = "<group>";
@@ -301,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6501AFAB1F493E5D0052F040 /* BigInt+Utils.swift in Sources */,
+				654C484F205A564800E0FE10 /* NumberTheory.swift in Sources */,
 				6533D1C31F48FB3500831742 /* BigInt.swift in Sources */,
 				6501AFAD1F534E530052F040 /* Rational.swift in Sources */,
 				65B70FD7204DBA6D005EA455 /* Rational+Utils.swift in Sources */,
@@ -321,6 +326,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6533EF8C2058529A00BC586F /* BigInt+Utils.swift in Sources */,
+				654C4850205A564800E0FE10 /* NumberTheory.swift in Sources */,
 				6533EF8D2058529A00BC586F /* BigInt.swift in Sources */,
 				6533EF8E2058529A00BC586F /* Rational.swift in Sources */,
 				6533EF8F2058529A00BC586F /* Rational+Utils.swift in Sources */,

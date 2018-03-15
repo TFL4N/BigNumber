@@ -330,12 +330,48 @@ extension Rational {
         return result
     }
     
-    public static func +=(lhs: inout Rational, rhs: Rational) {
+    public static func +(lhs: Int, rhs: Rational) -> Rational {
         let result = Rational()
         
-        __gmpq_add(&result.rational, &lhs.rational, &rhs.rational)
+        __gmpq_add(&result.rational, &Rational(lhs).rational, &rhs.rational)
         
-        __gmpq_set(&lhs.rational, &result.rational)
+        return result
+    }
+    
+    public static func +(lhs: Rational, rhs: Int) -> Rational {
+        let result = Rational()
+        
+        __gmpq_add(&result.rational, &lhs.rational, &Rational(rhs).rational)
+        
+        return result
+    }
+    
+    public static func +(lhs: UInt, rhs: Rational) -> Rational {
+        let result = Rational()
+        
+        __gmpq_add(&result.rational, &Rational(lhs).rational, &rhs.rational)
+        
+        return result
+    }
+    
+    public static func +(lhs: Rational, rhs: UInt) -> Rational {
+        let result = Rational()
+        
+        __gmpq_add(&result.rational, &lhs.rational, &Rational(rhs).rational)
+        
+        return result
+    }
+    
+    public static func +=(lhs: inout Rational, rhs: Rational) {
+        __gmpq_add(&lhs.rational, &lhs.rational, &rhs.rational)
+    }
+    
+    public static func +=(lhs: inout Rational, rhs: Int) {
+        __gmpq_add(&lhs.rational, &lhs.rational, &Rational(rhs).rational)
+    }
+    
+    public static func +=(lhs: inout Rational, rhs: UInt) {
+        __gmpq_add(&lhs.rational, &lhs.rational, &Rational(rhs).rational)
     }
     
     //
@@ -349,12 +385,48 @@ extension Rational {
         return result
     }
     
-    public static func -=(lhs: inout Rational, rhs: Rational) {
+    public static func -(lhs: Int, rhs: Rational) -> Rational {
         let result = Rational()
         
-        __gmpq_sub(&result.rational, &lhs.rational, &rhs.rational)
+        __gmpq_sub(&result.rational, &Rational(lhs).rational, &rhs.rational)
         
-        __gmpq_set(&lhs.rational, &result.rational)
+        return result
+    }
+    
+    public static func -(lhs: Rational, rhs: Int) -> Rational {
+        let result = Rational()
+        
+        __gmpq_sub(&result.rational, &lhs.rational, &Rational(rhs).rational)
+        
+        return result
+    }
+    
+    public static func -(lhs: UInt, rhs: Rational) -> Rational {
+        let result = Rational()
+        
+        __gmpq_sub(&result.rational, &Rational(lhs).rational, &rhs.rational)
+        
+        return result
+    }
+    
+    public static func -(lhs: Rational, rhs: UInt) -> Rational {
+        let result = Rational()
+        
+        __gmpq_sub(&result.rational, &lhs.rational, &Rational(rhs).rational)
+        
+        return result
+    }
+    
+    public static func -=(lhs: inout Rational, rhs: Rational) {
+        __gmpq_sub(&lhs.rational, &lhs.rational, &rhs.rational)
+    }
+    
+    public static func -=(lhs: inout Rational, rhs: Int) {
+        __gmpq_sub(&lhs.rational, &lhs.rational, &Rational(rhs).rational)
+    }
+    
+    public static func -=(lhs: inout Rational, rhs: UInt) {
+        __gmpq_sub(&lhs.rational, &lhs.rational, &Rational(rhs).rational)
     }
     
     //
