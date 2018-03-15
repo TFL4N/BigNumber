@@ -186,6 +186,14 @@ extension BigInt {
             return nil
         }
     }
+    
+    public func toDouble() -> Double? {
+        if __gmpz_fits_ulong_p(&self.integer) != 0 {
+            return __gmpz_get_d(&self.integer)
+        } else {
+            return nil
+        }
+    }
 }
 
 //

@@ -53,6 +53,18 @@ extension BigInt {
 public typealias ContinedFractionExpansion = (UInt, [UInt])
 
 extension BigInt {
+    //  phi(n^k)=n^(k-1)phi(n)
+    public static func eulersTotient(_ n: BigInt) -> BigInt {
+        var numerator = BigInt(n)
+        var denominator: BigInt = 1
+        for p in n.primeFactorsUnique() {
+            numerator *= p - 1
+            denominator *= p
+        }
+        
+        return numerator / denominator
+    }
+    
     public static func greatestCommonDivisor() -> BigInt {
         return 0
     }
