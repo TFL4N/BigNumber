@@ -49,7 +49,7 @@
 		6533D1C51F48FC3100831742 /* gmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gmp.h; sourceTree = "<group>"; };
 		6533D1C61F48FC3100831742 /* gmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = gmp.dylib; sourceTree = "<group>"; };
 		6533D1C71F48FC3100831742 /* module.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.map; sourceTree = "<group>"; };
-		6533EF9A2058529A00BC586F /* Install BigNumber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "Install BigNumber.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6533EF9A2058529A00BC586F /* BigNumber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BigNumber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rational+Utils.swift"; sourceTree = "<group>"; };
 		65B70FD8204DE0F9005EA455 /* RationalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RationalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -96,7 +96,7 @@
 			children = (
 				6533D1A81F48FADD00831742 /* BigNumber.framework */,
 				6533D1B11F48FADD00831742 /* BigNumberTests.xctest */,
-				6533EF9A2058529A00BC586F /* Install BigNumber.framework */,
+				6533EF9A2058529A00BC586F /* BigNumber.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -211,7 +211,7 @@
 			);
 			name = "Install BigNumber";
 			productName = BigNumber;
-			productReference = 6533EF9A2058529A00BC586F /* Install BigNumber.framework */;
+			productReference = 6533EF9A2058529A00BC586F /* BigNumber.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -291,7 +291,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\ncp -R ${BUILT_PRODUCTS_DIR}/Install\\ BigNumber.framework ~/lib/BigNumber.framework\nfi";
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\nrm -R ~/lib/BigNumber.framework\ncp -R ${BUILT_PRODUCTS_DIR}/BigNumber.framework ~/lib/BigNumber.framework\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -554,7 +554,7 @@
 					"$(PROJECT_DIR)/BigNumber/GMP",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = spaice.BigNumber;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = BigNumber;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
@@ -581,7 +581,7 @@
 					"$(PROJECT_DIR)/BigNumber/GMP",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = spaice.BigNumber;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = BigNumber;
 				SKIP_INSTALL = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;

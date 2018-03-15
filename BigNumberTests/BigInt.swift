@@ -516,4 +516,22 @@ class BigIntTests: XCTestCase {
         temp = bint1 << uint1
         XCTAssertEqual("\(9<<3)", temp.toString(), "<<(lhs: BigInt, rhs: UInt) failed")
     }
+    
+    func testIntModulus() {
+        let bint0: BigInt = 3
+        let bint1: BigInt = 28
+        
+        let uint0: UInt = 3
+        
+        let int0: Int = 3
+        
+        var temp = bint1 % bint0
+        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: BigInt) failed")
+
+        temp = bint1 % uint0
+        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: UInt) failed")
+        
+        temp = bint1 % int0
+        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: Int) failed")
+    }
 }

@@ -793,6 +793,21 @@ extension BigInt {
         }
     }
     
+    public func primeFactorsUnique() -> [BigInt] {
+        var output: [BigInt] = []
+        self.enumeratePrimeFactors() { (_, factor, _) in
+            if output.count == 0 {
+                output.append(factor)
+            } else {
+                if output.last! != factor {
+                    output.append(factor)
+                }
+            }
+        }
+        
+        return output
+    }
+    
     public func primeFactorsAndExponents() -> PrimeFactors {
         var output: PrimeFactors = [:]
         self.enumeratePrimeFactors() { (_, factor, _) in
@@ -820,6 +835,7 @@ extension BigInt {
         return output
     }
     
+    // returns (factor, even_times)
     public func primeFactorsAndExponents_Bool() -> [UInt : Bool] {
         var output: [UInt: Bool] = [:]
         self.enumeratePrimeFactors() { (_, factor, _) in

@@ -10,6 +10,10 @@ import GMP
 
 // MARK: Instance methods
 extension BigInt {
+    public func radical() -> BigInt {
+        return self.primeFactorsUnique().reduce(1,*)
+    }
+    
     public func digitalSum() -> BigInt {
         // alloc and init vars
         var result = mpz_t()
@@ -49,6 +53,9 @@ extension BigInt {
 public typealias ContinedFractionExpansion = (UInt, [UInt])
 
 extension BigInt {
+    public static func greatestCommonDivisor() -> BigInt {
+        return 0
+    }
     
     // https://proofwiki.org/wiki/Continued_Fraction_Expansion_of_Irrational_Square_Root/Example/13/Convergents
     public static func continuedFractionExpansionOfQuadraticSurd(_ n: UInt) -> ContinedFractionExpansion {
