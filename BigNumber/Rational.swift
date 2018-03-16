@@ -440,11 +440,132 @@ extension Rational {
         return result
     }
     
+    public static func *(lhs: Rational, rhs: BigInt) -> Rational {
+        let result = Rational(lhs)
+        
+        __gmpz_mul(&lhs.rational._mp_num, &lhs.rational._mp_num, &rhs.integer)
+        __gmpq_canonicalize(&lhs.rational)
+        
+        return result
+    }
+    
+    public static func *(lhs: BigInt, rhs: Rational) -> Rational {
+        let result = Rational(rhs)
+        
+        __gmpz_mul(&rhs.rational._mp_num, &lhs.integer, &rhs.rational._mp_num)
+        __gmpq_canonicalize(&rhs.rational)
+        
+        return result
+    }
+    
+    public static func *(lhs: Rational, rhs: Int) -> Rational {
+        let result = Rational(rhs)
+        
+        __gmpq_mul(&result.rational, &lhs.rational, &result.rational)
+        
+        return result
+    }
+    
+    public static func *(lhs: Int, rhs: Rational) -> Rational {
+        let result = Rational(lhs)
+        
+        __gmpq_mul(&result.rational, &result.rational, &rhs.rational)
+        
+        return result
+    }
+    
+    public static func *(lhs: Rational, rhs: UInt) -> Rational {
+        let result = Rational(rhs)
+        
+        __gmpq_mul(&result.rational, &lhs.rational, &result.rational)
+        
+        return result
+    }
+    
+    public static func *(lhs: UInt, rhs: Rational) -> Rational {
+        let result = Rational(lhs)
+        
+        __gmpq_mul(&result.rational, &result.rational, &rhs.rational)
+        
+        return result
+    }
+    
     public static func *=(lhs: inout Rational, rhs: Rational) {
         let result = Rational()
         
         __gmpq_mul(&result.rational, &lhs.rational, &rhs.rational)
         
         __gmpq_set(&lhs.rational, &result.rational)
+    }
+    
+    public static func *=(lhs: inout Rational, rhs: Int) {
+        __gmpz_mul_si(&lhs.rational._mp_num, &lhs.rational._mp_num, rhs)
+        __gmpq_canonicalize(&lhs.rational)
+    }
+    
+    public static func *=(lhs: inout Rational, rhs: UInt) {
+        __gmpz_mul_ui(&lhs.rational._mp_num, &lhs.rational._mp_num, rhs)
+        __gmpq_canonicalize(&lhs.rational)
+    }
+    
+    //
+    // Division
+    //
+    public static func /(lhs: Rational, rhs: Rational) -> Rational {
+        let result = Rational()
+        
+        __gmpq_div(&result.rational, &lhs.rational, &rhs.rational)
+        
+        return result
+    }
+    
+    public static func /(lhs: Rational, rhs: Int) -> Rational {
+        let result = Rational(rhs)
+        
+        __gmpq_div(&result.rational, &lhs.rational, &result.rational)
+        
+        return result
+    }
+    
+    public static func /(lhs: Int, rhs: Rational) -> Rational {
+        let result = Rational(lhs)
+        
+        __gmpq_div(&result.rational, &result.rational, &rhs.rational)
+        
+        return result
+    }
+    
+    public static func /(lhs: Rational, rhs: UInt) -> Rational {
+        let result = Rational(rhs)
+        
+        __gmpq_div(&result.rational, &lhs.rational, &result.rational)
+        
+        return result
+    }
+    
+    public static func /(lhs: UInt, rhs: Rational) -> Rational {
+        let result = Rational(lhs)
+        
+        __gmpq_div(&result.rational, &result.rational, &rhs.rational)
+        
+        return result
+    }
+    
+    public static func /=(lhs: inout Rational, rhs: Rational) {
+        let result = Rational()
+        
+        __gmpq_div(&result.rational, &lhs.rational, &rhs.rational)
+        
+        __gmpq_set(&lhs.rational, &result.rational)
+    }
+    
+    public static func /=(lhs: inout Rational, rhs: Int) {
+        __gmpz_mul_si(&lhs.rational._mp_den, &lhs.rational._mp_den, rhs)
+        __gmpq_canonicalize(&lhs.rational)
+    }
+    
+    public static func /=(lhs: inout Rational, rhs: UInt) {
+        __gmpz_mul_ui(&lhs.rational._mp_den, &lhs.rational._mp_den, rhs)
+        __gmpq_canonicalize(&lhs.rational)
     }
 }
