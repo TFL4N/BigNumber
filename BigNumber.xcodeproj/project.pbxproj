@@ -25,6 +25,9 @@
 		654C484F205A564800E0FE10 /* NumberTheory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C484E205A564800E0FE10 /* NumberTheory.swift */; };
 		654C4850205A564800E0FE10 /* NumberTheory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C484E205A564800E0FE10 /* NumberTheory.swift */; };
 		65951828205B974600E86D9F /* NumericExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65951827205B974600E86D9F /* NumericExtended.swift */; };
+		6595182A205BB52A00E86D9F /* Polynomial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65951829205BB52A00E86D9F /* Polynomial.swift */; };
+		6595182B205BB52A00E86D9F /* Polynomial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65951829205BB52A00E86D9F /* Polynomial.swift */; };
+		6595182C205BB53000E86D9F /* NumericExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65951827205B974600E86D9F /* NumericExtended.swift */; };
 		65B70FD7204DBA6D005EA455 /* Rational+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */; };
 		65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B70FD8204DE0F9005EA455 /* RationalTests.swift */; };
 /* End PBXBuildFile section */
@@ -55,6 +58,7 @@
 		6533EF9A2058529A00BC586F /* BigNumber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BigNumber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		654C484E205A564800E0FE10 /* NumberTheory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTheory.swift; sourceTree = "<group>"; };
 		65951827205B974600E86D9F /* NumericExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumericExtended.swift; sourceTree = "<group>"; };
+		65951829205BB52A00E86D9F /* Polynomial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polynomial.swift; sourceTree = "<group>"; };
 		65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rational+Utils.swift"; sourceTree = "<group>"; };
 		65B70FD8204DE0F9005EA455 /* RationalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RationalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,11 +117,12 @@
 				6533D1AB1F48FADD00831742 /* BigNumber.h */,
 				6533D1AC1F48FADD00831742 /* Info.plist */,
 				6533D1C21F48FB3500831742 /* BigInt.swift */,
-				65951827205B974600E86D9F /* NumericExtended.swift */,
 				6501AFAC1F534E530052F040 /* Rational.swift */,
 				6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */,
 				65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */,
+				65951827205B974600E86D9F /* NumericExtended.swift */,
 				654C484E205A564800E0FE10 /* NumberTheory.swift */,
+				65951829205BB52A00E86D9F /* Polynomial.swift */,
 			);
 			path = BigNumber;
 			sourceTree = "<group>";
@@ -310,6 +315,7 @@
 				6501AFAB1F493E5D0052F040 /* BigInt+Utils.swift in Sources */,
 				654C484F205A564800E0FE10 /* NumberTheory.swift in Sources */,
 				6533D1C31F48FB3500831742 /* BigInt.swift in Sources */,
+				6595182A205BB52A00E86D9F /* Polynomial.swift in Sources */,
 				6501AFAD1F534E530052F040 /* Rational.swift in Sources */,
 				65951828205B974600E86D9F /* NumericExtended.swift in Sources */,
 				65B70FD7204DBA6D005EA455 /* Rational+Utils.swift in Sources */,
@@ -329,7 +335,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6595182C205BB53000E86D9F /* NumericExtended.swift in Sources */,
 				6533EF8C2058529A00BC586F /* BigInt+Utils.swift in Sources */,
+				6595182B205BB52A00E86D9F /* Polynomial.swift in Sources */,
 				654C4850205A564800E0FE10 /* NumberTheory.swift in Sources */,
 				6533EF8D2058529A00BC586F /* BigInt.swift in Sources */,
 				6533EF8E2058529A00BC586F /* Rational.swift in Sources */,
