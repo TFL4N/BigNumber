@@ -10,6 +10,53 @@ import Foundation
 
 public typealias ContinedFractionExpansion = (UInt, [UInt])
 
+// https://en.wikipedia.org/wiki/Lagrange_polynomial
+public func lagrangeBasisPolynomial(x_values: [Int], j: Array<Int>.Index) -> Polynomial {
+    var numerator: Polynomial = 1
+    var denominator: Int = 1
+    let x_j = x_values[j]
+    
+    for (i, el) in x_values.enumerated() {
+        if i == j {
+            continue
+        }
+        
+        numerator *= [-el,1]
+        denominator *= x_j - el
+    }
+    
+    return numerator / denominator
+}
+
+public func lagrangeBasisPolynomial(count: Int, j: Array<Int>.Index) -> Polynomial {
+    var numerator: Polynomial = 1
+    var denominator: Int = 1
+    let x_j = j + 1
+    
+    for x in 1...count {
+        if x == x_j {
+            continue
+        }
+        
+        numerator *= [-x,1]
+        denominator *= x_j - x
+    }
+    
+    return numerator / denominator
+}
+
+public func lagrangePolynomial(y_values: [Int]) -> Polynomial {
+    let count = y_values.count
+    var sum: Polynomial = 0
+    
+    
+    for (j, el) in y_values.enumerated() {
+        sum += el * lagrangeBasisPolynomial(count: count, j: j)
+    }
+    
+    return sum
+}
+
 //  phi(n^k)=n^(k-1)phi(n)
 public func eulersTotient(_ n: BigInt) -> BigInt {
     var numerator = BigInt(n)

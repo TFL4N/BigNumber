@@ -443,8 +443,8 @@ extension Rational {
     public static func *(lhs: Rational, rhs: BigInt) -> Rational {
         let result = Rational(lhs)
         
-        __gmpz_mul(&lhs.rational._mp_num, &lhs.rational._mp_num, &rhs.integer)
-        __gmpq_canonicalize(&lhs.rational)
+        __gmpz_mul(&result.rational._mp_num, &result.rational._mp_num, &rhs.integer)
+        __gmpq_canonicalize(&result.rational)
         
         return result
     }
@@ -452,8 +452,8 @@ extension Rational {
     public static func *(lhs: BigInt, rhs: Rational) -> Rational {
         let result = Rational(rhs)
         
-        __gmpz_mul(&rhs.rational._mp_num, &lhs.integer, &rhs.rational._mp_num)
-        __gmpq_canonicalize(&rhs.rational)
+        __gmpz_mul(&result.rational._mp_num, &lhs.integer, &result.rational._mp_num)
+        __gmpq_canonicalize(&result.rational)
         
         return result
     }
