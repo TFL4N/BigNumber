@@ -240,8 +240,12 @@ extension Rational {
         return self.toString(base: 10)!
     }
     
-    public func toDouble() -> Double? {
+    public func toDouble() -> Double {
         return __gmpq_get_d(&self.rational)
+    }
+    
+    public func isIntegral() -> Bool {
+        return __gmpz_cmp_si(&self.rational._mp_den, 1) == 0
     }
 }
 

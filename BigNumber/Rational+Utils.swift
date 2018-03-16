@@ -9,6 +9,12 @@
 import GMP
 
 extension Rational {
+    public func add(toNumerator n: UInt, subtractFromDenominator d: UInt ) {
+        __gmpz_add_ui(&self.rational._mp_num, &self.rational._mp_num, n)
+        __gmpz_sub_ui(&self.rational._mp_den, &self.rational._mp_den, d)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
     public func toFloatString(decimalPlaces: UInt = 10) -> String {
         //
         // vars
