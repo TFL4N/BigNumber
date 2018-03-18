@@ -67,6 +67,40 @@ extension BigInt {
         return output
     }
     
+    public static func fibonacci(_ n: UInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_fib_ui(&result.integer, n)
+        
+        return result
+    }
+    
+    public static func fibonacci(_ n: UInt) -> (BigInt,BigInt) {
+        let result = BigInt()
+        let result2 = BigInt()
+        
+        __gmpz_fib2_ui(&result.integer, &result2.integer, n)
+        
+        return (result, result2)
+    }
+    
+    public static func lucas(_ n: UInt) -> BigInt  {
+        let result = BigInt()
+        
+        __gmpz_lucnum_ui(&result.integer, n)
+        
+        return result
+    }
+    
+    public static func lucas(_ n: UInt) -> (BigInt,BigInt)  {
+        let result = BigInt()
+        let result2 = BigInt()
+        
+        __gmpz_lucnum2_ui(&result.integer, &result2.integer, n)
+        
+        return (result, result2)
+    }
+    
     public static func getString(_ n: inout mpz_t, base: Int32) -> String? {
         if let r = __gmpz_get_str(nil, base, &n) {
             return String(cString: r)
