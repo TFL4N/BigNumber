@@ -53,7 +53,7 @@ extension BigInt {
 
 // MARK: Static functions
 extension BigInt {
-    public static func expontential(_ n: BigInt, power: UInt) -> BigInt {
+    public static func exponential(_ n: BigInt, power: UInt) -> BigInt {
         return n ** power
     }
     
