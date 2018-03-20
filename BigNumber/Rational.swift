@@ -30,7 +30,8 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
         }
     
         set {
-            __gmpq_set_num(&self.rational, &newValue.integer)
+            __gmpz_set(&self.rational._mp_num, &newValue.integer)
+            __gmpq_canonicalize(&self.rational)
         }
     }
     
@@ -44,7 +45,8 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
         }
         
         set {
-            __gmpq_set_den(&self.rational, &newValue.integer)
+            __gmpz_set(&self.rational._mp_den, &newValue.integer)
+            __gmpq_canonicalize(&self.rational)
         }
     }
     
@@ -56,16 +58,14 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
         __gmpq_init(&self.rational)
     }
     
-    public required init(integerLiteral value: Rational.IntegerLiteralType) {
-        self.rational = mpq_t()
-        __gmpq_init(&self.rational)
+    public required convenience init(integerLiteral value: Rational.IntegerLiteralType) {
+        self.init()
         __gmpq_set_si(&self.rational, value, 1)
         __gmpq_canonicalize(&self.rational)
     }
     
-    public required init(floatLiteral value: Rational.FloatLiteralType) {
-        self.rational = mpq_t()
-        __gmpq_init(&self.rational)
+    public required convenience init(floatLiteral value: Rational.FloatLiteralType) {
+        self.init()
         __gmpq_set_d(&self.rational, value)
         __gmpq_canonicalize(&self.rational)
     }
@@ -277,6 +277,7 @@ extension Rational: Comparable, Equatable {
     
     //
     // isLessThan
+    //
     public static func <(lhs: Rational, rhs: Rational) -> Bool {
         return __gmpq_cmp(&lhs.rational, &rhs.rational) < 0
     }
@@ -495,11 +496,7 @@ extension Rational {
     }
     
     public static func *=(lhs: inout Rational, rhs: Rational) {
-        let result = Rational()
-        
-        __gmpq_mul(&result.rational, &lhs.rational, &rhs.rational)
-        
-        __gmpq_set(&lhs.rational, &result.rational)
+        __gmpq_mul(&lhs.rational, &lhs.rational, &rhs.rational)
     }
     
     public static func *=(lhs: inout Rational, rhs: Int) {
@@ -556,11 +553,7 @@ extension Rational {
     }
     
     public static func /=(lhs: inout Rational, rhs: Rational) {
-        let result = Rational()
-        
-        __gmpq_div(&result.rational, &lhs.rational, &rhs.rational)
-        
-        __gmpq_set(&lhs.rational, &result.rational)
+        __gmpq_div(&lhs.rational, &lhs.rational, &rhs.rational)
     }
     
     public static func /=(lhs: inout Rational, rhs: Int) {
