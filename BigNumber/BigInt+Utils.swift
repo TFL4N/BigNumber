@@ -14,6 +14,21 @@ extension BigInt {
         return self.primeFactorsUnique().reduce(1,*)
     }
     
+    func isSquareFree(n: BigInt) -> Bool {
+        var last: BigInt = 0
+        var is_free = true
+        n.enumeratePrimeFactors { (stop, factor, _) in
+            if last == factor {
+                stop = true
+                is_free = false
+            } else {
+                last = factor
+            }
+        }
+        
+        return is_free
+    }
+    
     // TODO: #80 might have faster method
     // convert to str, and add ascii values
     public func digitalSum() -> BigInt {

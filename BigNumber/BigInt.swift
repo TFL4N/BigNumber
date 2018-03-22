@@ -895,6 +895,23 @@ extension BigInt {
     public func isPerfectSquare() -> Bool {
         return __gmpz_perfect_square_p(&self.integer) != 0
     }
+    
+    public func squareRoot() -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_sqrt(&result.integer, &self.integer)
+        
+        return result
+    }
+    
+    public func squareRootAndRemainder() -> (BigInt,BigInt) {
+        let root = BigInt()
+        let rem = BigInt()
+        
+        __gmpz_sqrtrem(&root.integer, &rem.integer, &self.integer)
+        
+        return (root,rem)
+    }
 }
 
 
