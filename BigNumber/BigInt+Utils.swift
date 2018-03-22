@@ -53,14 +53,6 @@ extension BigInt {
 
 // MARK: Static functions
 extension BigInt {
-    public static func binomialCoefficients(n: UInt, k: UInt) -> BigInt {
-        let result = BigInt()
-    
-        __gmpz_bin_uiui(&result.integer, n, k)
-        
-        return result
-    }
-    
     public static func exponential(_ n: BigInt, power: UInt) -> BigInt {
         return n ** power
     }

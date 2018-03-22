@@ -7,8 +7,56 @@
 //
 
 import Foundation
+import GMP
 
 public typealias ContinedFractionExpansion = (UInt, [UInt])
+
+public func divisors(_ n: Int, handler: ((inout Bool, Int)->Void)) {
+    var div = 1
+    var upper_bound = n
+    var stop = false
+    
+    handler(&stop,1)
+    
+    while div < upper_bound - 1 && !stop {
+        div += 1
+        
+        if n % div == 0 {
+            handler(&stop, div)
+            upper_bound = n / div
+            
+            if upper_bound != div && !stop {
+                handler(&stop,upper_bound)
+            }
+        }
+    }
+}
+
+public func divisors(_ n: Int, sorted: Bool = false, includeSelf: Bool = false) -> [Int] {
+    var output: [Int] = []
+    
+    divisors(n) { (_, div) in
+        output.append(div)
+    }
+    
+    
+    if includeSelf {
+        output.append(n)
+    }
+    
+    if sorted {
+        output.sort()
+    }
+    return output
+}
+
+public func binomialCoefficients(n: UInt, k: UInt) -> BigInt {
+    let result = BigInt()
+    
+    __gmpz_bin_uiui(&result.integer, n, k)
+    
+    return result
+}
 
 // https://en.wikipedia.org/wiki/Lagrange_polynomial
 public func lagrangeBasisPolynomial(x_values: [Int], j: Array<Int>.Index) -> Polynomial {
