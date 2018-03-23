@@ -1,0 +1,4 @@
+module MPFR [system][extern_c] {
+    header "mpfr.h"
+    export *
+}

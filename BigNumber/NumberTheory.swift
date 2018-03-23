@@ -11,6 +11,9 @@ import GMP
 
 public typealias ContinedFractionExpansion = (UInt, [UInt])
 
+// 100000
+// 0.0000001
+
 public func divisors(_ n: Int, handler: ((inout Bool, Int)->Void)) {
     var div = 1
     var upper_bound = n

@@ -8,6 +8,11 @@
 
 import Foundation
 import GMP
+import MPFR
+
+public enum Infinity: Int32 {
+    case positive = 1, negative = -1
+}
 
 public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, CustomStringConvertible {
     //
@@ -15,66 +20,79 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     //
     public typealias IntegerLiteralType = Int
     public typealias FloatLiteralType = Double
-    public static var defaultPrecision: mp_bitcnt_t = 350
+    public static var defaultPrecision: mpfr_prec_t = 350
+    public static var defaultRounding: mpfr_rnd_t = MPFR_RNDF
     
     //
     // ivars
     //
-    internal var float: mpf_t
+    internal var float: mpfr_t
+    
+    //
+    // Accessors
+    //
+    public var isInfinite: Bool {
+        return mpfr_inf_p(&self.float) != 0
+    }
     
     //
     // Initalizers
     //
-    public required init(precision: mp_bitcnt_t = BigFloat.defaultPrecision) {
-        self.float = mpf_t()
-        __gmpf_init2(&self.float, precision)
+    public required init(precision: mpfr_prec_t = BigFloat.defaultPrecision) {
+        self.float = mpfr_t()
+        mpfr_init2(&self.float, precision)
     }
     
     public required convenience init(integerLiteral value: Rational.IntegerLiteralType) {
         self.init()
-        __gmpf_set_si(&self.float, value)
+        mpfr_set_si(&self.float, value, BigFloat.defaultRounding)
     }
     
     public required convenience init(floatLiteral value: Rational.FloatLiteralType) {
         self.init()
-        __gmpf_set_d(&self.float, value)
+        mpfr_set_d(&self.float, value, BigFloat.defaultRounding)
     }
     
-    public convenience init(_ value: BigFloat, precision: mp_bitcnt_t = BigFloat.defaultPrecision) {
+    public convenience init(_ infinity: Infinity, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
-        __gmpf_set(&self.float, &value.float)
+        mpfr_set_inf(&self.float, infinity.rawValue)
     }
     
-    public convenience init(_ value: BigInt, precision: mp_bitcnt_t = BigFloat.defaultPrecision ) {
+    public convenience init(_ value: BigFloat, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
-        __gmpf_set_z(&self.float, &value.integer)
+        mpfr_set(&self.float, &value.float, BigFloat.defaultRounding)
     }
     
-    public convenience init(_ value: Rational, precision: mp_bitcnt_t = BigFloat.defaultPrecision) {
+    public convenience init(_ value: BigInt, precision: mpfr_prec_t = BigFloat.defaultPrecision ) {
         self.init(precision: precision)
-        __gmpf_set_q(&self.float, &value.rational)
+        mpfr_set_z(&self.float, &value.integer, BigFloat.defaultRounding)
     }
     
-    public convenience init(_ value: Double, precision: mp_bitcnt_t = BigFloat.defaultPrecision) {
+    public convenience init(_ value: Rational, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
-        __gmpf_set_d(&self.float, value)
+        mpfr_set_q(&self.float, &value.rational, BigFloat.defaultRounding)
     }
     
-    public convenience init(_ value: Int, precision: mp_bitcnt_t = BigFloat.defaultPrecision) {
+    public convenience init(_ value: Double, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
-        __gmpf_set_si(&self.float, value)
+        mpfr_set_d(&self.float, value, BigFloat.defaultRounding)
     }
     
-    public convenience init(_ value: UInt, precision: mp_bitcnt_t = BigFloat.defaultPrecision) {
+    public convenience init(_ value: Int, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
-        __gmpf_set_ui(&self.float, value)
+        mpfr_set_si(&self.float, value, BigFloat.defaultRounding)
+    }
+    
+    public convenience init(_ value: UInt, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
+        self.init(precision: precision)
+        mpfr_set_ui(&self.float, value, BigFloat.defaultRounding)
     }
     
     //
     // deinit
     //
     deinit {
-        __gmpf_clear(&self.float)
+        mpfr_clear(&self.float)
     }
     
     //
@@ -94,13 +112,13 @@ extension BigFloat: SignedNumeric {
     prefix public static func -(operand: BigFloat) -> BigFloat {
         let result = BigFloat(operand)
         
-        __gmpf_neg(&result.float, &result.float)
+        mpfr_neg(&result.float, &result.float, BigFloat.defaultRounding)
         
         return result
     }
     
     public func negate() {
-        __gmpf_neg(&self.float, &self.float)
+        mpfr_neg(&self.float, &self.float, BigFloat.defaultRounding)
     }
     
     // Numeric
@@ -125,7 +143,7 @@ extension BigFloat: SignedNumeric {
     public var magnitude: BigFloat {
         let result = BigFloat(self)
         
-        __gmpf_abs(&result.float, &result.float)
+        mpfr_abs(&result.float, &result.float, BigFloat.defaultRounding)
         
         return result
     }
@@ -141,7 +159,7 @@ extension BigFloat: SignedNumeric {
 extension BigFloat {
     public func toString(base: Int32, numberOfDigits: Int = 0) -> (String, Int)? {
         var exponent = 0
-        if let r = __gmpf_get_str(nil, &exponent, base, numberOfDigits, &self.float) {
+        if let r = mpfr_get_str(nil, &exponent, base, numberOfDigits, &self.float, BigFloat.defaultRounding) {
             return (String(cString: r),exponent)
         } else {
             return nil
@@ -170,27 +188,29 @@ extension BigFloat {
     }
     
     public func toDouble() -> Double {
-        return __gmpf_get_d(&self.float)
+        return mpfr_get_d(&self.float, BigFloat.defaultRounding)
     }
     
     public func toInt() -> Int? {
-        if __gmpf_get_d(&self.float) != 0 {
-            return __gmpf_get_si(&self.float)
+        if  mpfr_cmp_si(&self.float, Int.max) <= 0
+        &&  mpfr_cmp_si(&self.float, Int.min) >= 0 {
+            return mpfr_get_si(&self.float, BigFloat.defaultRounding)
         }
         
         return nil
     }
     
     public func toUInt() -> UInt? {
-        if __gmpf_get_d(&self.float) != 0 {
-            return __gmpf_get_ui(&self.float)
+        if mpfr_cmp_ui(&self.float, UInt.max) <= 0
+        &&  mpfr_cmp_ui(&self.float, UInt.min) >= 0{
+            return mpfr_get_ui(&self.float, BigFloat.defaultRounding)
         }
         
         return nil
     }
     
     public func isIntegral() -> Bool {
-        return __gmpf_integer_p(&self.float) != 0
+        return mpfr_integer_p(&self.float) != 0
     }
 }
 
@@ -202,42 +222,42 @@ extension BigFloat: Comparable, Equatable {
     // isEqual
     //
     public static func ==(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return __gmpf_cmp(&lhs.float, &rhs.float) != 0
+        return mpfr_cmp(&lhs.float, &rhs.float) != 0
     }
     
     //
     // isNotEqual
     //
     public static func !=(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return __gmpf_cmp(&lhs.float, &rhs.float) == 0
+        return mpfr_cmp(&lhs.float, &rhs.float) == 0
     }
     
     //
     // isLessThan
     //
     public static func <(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return __gmpf_cmp(&lhs.float, &rhs.float) < 0
+        return mpfr_cmp(&lhs.float, &rhs.float) < 0
     }
     
     //
     // isLessThanOrEqual
     //
     public static func <=(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return __gmpf_cmp(&lhs.float, &rhs.float) <= 0
+        return mpfr_cmp(&lhs.float, &rhs.float) <= 0
     }
     
     //
     // isGreaterThan
     //
     public static func >(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return __gmpf_cmp(&lhs.float, &rhs.float) > 0
+        return mpfr_cmp(&lhs.float, &rhs.float) > 0
     }
     
     //
     // isGreaterThanOrEqual
     //
     public static func >=(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return __gmpf_cmp(&lhs.float, &rhs.float) >= 0
+        return mpfr_cmp(&lhs.float, &rhs.float) >= 0
     }
 }
 
@@ -251,13 +271,13 @@ extension BigFloat {
     public static func +(lhs: BigFloat, rhs: BigFloat) -> BigFloat {
         let result = BigFloat()
         
-        __gmpf_add(&result.float, &lhs.float, &rhs.float)
+        mpfr_add(&result.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
         
         return result
     }
     
     public static func +=(lhs: inout BigFloat, rhs: BigFloat) {
-        __gmpf_add(&lhs.float, &lhs.float, &rhs.float)
+        mpfr_add(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
     }
     
     //
@@ -266,13 +286,13 @@ extension BigFloat {
     public static func -(lhs: BigFloat, rhs: BigFloat) -> BigFloat {
         let result = BigFloat()
         
-        __gmpf_sub(&result.float, &lhs.float, &rhs.float)
+        mpfr_sub(&result.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
         
         return result
     }
     
     public static func -=(lhs: inout BigFloat, rhs: BigFloat) {
-        __gmpf_sub(&lhs.float, &lhs.float, &rhs.float)
+        mpfr_sub(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
     }
     
     //
@@ -281,13 +301,13 @@ extension BigFloat {
     public static func *(lhs: BigFloat, rhs: BigFloat) -> BigFloat {
         let result = BigFloat()
         
-        __gmpf_mul(&result.float, &lhs.float, &rhs.float)
+        mpfr_mul(&result.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
         
         return result
     }
     
     public static func *=(lhs: inout BigFloat, rhs: BigFloat) {
-        __gmpf_mul(&lhs.float, &lhs.float, &rhs.float)
+        mpfr_mul(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
     }
 
     //
@@ -296,12 +316,12 @@ extension BigFloat {
     public static func /(lhs: BigFloat, rhs: BigFloat) -> BigFloat {
         let result = BigFloat()
         
-        __gmpf_div(&result.float, &lhs.float, &rhs.float)
+        mpfr_div(&result.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
         
         return result
     }
     
     public static func /=(lhs: inout BigFloat, rhs: BigFloat) {
-        __gmpf_div(&lhs.float, &lhs.float, &rhs.float)
+        mpfr_div(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
     }
 }
