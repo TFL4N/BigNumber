@@ -11,8 +11,47 @@ import GMP
 
 public typealias ContinedFractionExpansion = (UInt, [UInt])
 
-// 100000
-// 0.0000001
+/**
+ Finds the root of a function in the interval (a, b).  It does so iteratively, by halving the interval, and convergenting on the root.
+ 
+ - Precondition: F(a) and F(b) must have opposite signs, i.e. greater than and less than zero
+ - Parameters:
+    - a: The initial value for a in F(a)
+    - b: The initial value for b in F(b)
+    - f: The function for which the root is being found
+    - maxIterations: The maximum number of iterations before the routine gives up and returns null
+    - tolerance: The maximum size of the interval for an acceptable answers
+ - Returns: The root, if it exists in the interval (a,b)
+ */
+public func findRootBisection(a a_0: BigFloat, b b_0: BigFloat, f: ((BigFloat)->BigFloat), maxIterations: Int = 100000, tolerance: BigFloat = 0.00001) -> BigFloat? {
+    var a: BigFloat = BigFloat(a_0)
+    var b: BigFloat = BigFloat(b_0)
+    var c: BigFloat = 0
+    
+    let f_a_sign = f(a) > 0
+    var f_c: BigFloat = 0
+    
+    var n = 0
+    repeat {
+        c = (a + b) / 2
+        
+        f_c = f(c)
+        if f_c == 0.0 || (b - a) / 2 < tolerance {
+            return c
+        }
+        
+        if (f_c > 0) == f_a_sign {
+            a = c
+        } else {
+            b = c
+        }
+        
+        // loop
+        n += 1
+    } while n < maxIterations
+    
+    return nil
+}
 
 public func divisors(_ n: Int, handler: ((inout Bool, Int)->Void)) {
     var div = 1

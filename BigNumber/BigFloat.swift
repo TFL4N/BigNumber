@@ -212,6 +212,15 @@ extension BigFloat {
     public func isIntegral() -> Bool {
         return mpfr_integer_p(&self.float) != 0
     }
+    
+    public func isIntegral(tolerance: BigFloat) -> Bool {
+        var int_val = mpfr_t()
+        mpfr_init2(&int_val, BigFloat.defaultPrecision)
+        mpfr_roundeven(&int_val, &self.float)
+        mpfr_sub(&int_val, &int_val, &self.float, BigFloat.defaultRounding)
+        
+        return mpfr_cmpabs(&int_val, &tolerance.float) <= 0
+    }
 }
 
 //
@@ -222,14 +231,14 @@ extension BigFloat: Comparable, Equatable {
     // isEqual
     //
     public static func ==(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return mpfr_cmp(&lhs.float, &rhs.float) != 0
+        return mpfr_cmp(&lhs.float, &rhs.float) == 0
     }
     
     //
     // isNotEqual
     //
     public static func !=(lhs: BigFloat, rhs: BigFloat) -> Bool {
-        return mpfr_cmp(&lhs.float, &rhs.float) == 0
+        return mpfr_cmp(&lhs.float, &rhs.float) != 0
     }
     
     //
