@@ -105,7 +105,19 @@ public func lagrangePolynomial(y_values: [Int]) -> Polynomial {
     return sum
 }
 
-//  phi(n^k)=n^(k-1)phi(n)
+/**
+ Euler's Totient function is the number of relatively prime numbers less than or equal to *N*.  It other words, the number of integers *k* in the range 1 ≤ *k* ≤ *N*. It uses the formula:
+    ````
+    φ(n^k) = n^(k-1) * φ(n)
+    ````
+ The totient is a multiplicative function, i.e.
+    ````
+    φ(mn) = φ(m)φ(n)
+    ````
+ 
+ - parameter n: The number to totient
+ - returns: The number of relatively primes numbers less than or equal to n
+ */
 public func eulersTotient(_ n: BigInt) -> BigInt {
     var numerator = BigInt(n)
     var denominator: BigInt = 1

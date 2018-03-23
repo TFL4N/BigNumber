@@ -10,6 +10,11 @@ import GMP
 
 // MARK: Instance methods
 extension BigInt {
+    /**
+     The radical of a number is the product of all its unique prime factors
+     
+     - Returns: The radical
+     */
     public func radical() -> BigInt {
         return self.primeFactorsUnique().reduce(1,*)
     }
@@ -29,8 +34,14 @@ extension BigInt {
         return is_free
     }
     
-    // TODO: #80 might have faster method
-    // convert to str, and add ascii values
+    /**
+     The digital sum is the sum of a number's individual digits
+     
+     
+     - ToDo: \#80 might have faster method -- convert to str, and add ascii values
+     
+     - Returns: The digital sum
+     */
     public func digitalSum() -> BigInt {
         // alloc and init vars
         var result = mpz_t()

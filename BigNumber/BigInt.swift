@@ -762,6 +762,12 @@ extension BigInt {
     //
     // MARK: Factorization
     //
+    
+    /**
+     Loops through all the prime factors of Self. Set the Bool in `handler` to stop the enumeration.
+     
+     - parameter handler: (Stop, Factor, Working_Register)
+    */
     public func enumeratePrimeFactors(withHandler handler: ((inout Bool, BigInt, BigInt)->())) {
         var working = BigInt(self)
         var stop = false
@@ -801,17 +807,49 @@ extension BigInt {
         }
     }
     
+    /**
+     Prime factors Self and returns the unique factors
+     
+     - Returns: An array of unique BigInt factors
+    */
     public func primeFactorsUnique() -> [BigInt] {
-        var output: [BigInt] = []
-        self.enumeratePrimeFactors() { (_, factor, _) in
-            if output.count == 0 {
-                output.append(factor)
-            } else {
-                if output.last! != factor {
-                    output.append(factor)
-                }
-            }
+        let working = BigInt(self)
+        
+        // check self.isPrime
+        if self.isPrime() != .notPrime {
+            return [working]
         }
+        
+        // find prime factors
+        var output = [BigInt]()
+        var test: BigInt = 1
+        var q = mpz_t()
+        var r = mpz_t()
+        defer {
+            __gmpz_clear(&q)
+            __gmpz_clear(&r)
+        }
+        
+        while working > 1 {
+            // check if prime
+            if working.isPrime() != .notPrime {
+                output.append(working)
+                return output
+            }
+            
+            // find next factor
+            test = test.nextPrime()
+            __gmpz_fdiv_qr(&q, &r, &working.integer, &test.integer)
+            if __gmpz_cmp_ui(&r, 0) == 0 {
+                output.append(BigInt(test))
+                
+                // divide out all factors of test
+                repeat {
+                    __gmpz_fdiv_qr(&working.integer, &r, &q, &test.integer)
+                    __gmpz_swap(&working.integer, &q)
+                } while __gmpz_cmp_ui(&r, 0) == 0
+            }
+        } // while working > 1
         
         return output
     }
