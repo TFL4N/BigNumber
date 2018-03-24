@@ -215,6 +215,10 @@ extension BigFloat {
     
     public func isIntegral(tolerance: BigFloat) -> Bool {
         var int_val = mpfr_t()
+        defer {
+            mpfr_clear(&int_val)
+        }
+        
         mpfr_init2(&int_val, BigFloat.defaultPrecision)
         mpfr_roundeven(&int_val, &self.float)
         mpfr_sub(&int_val, &int_val, &self.float, BigFloat.defaultRounding)

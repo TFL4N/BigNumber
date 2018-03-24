@@ -53,6 +53,13 @@ extension BigInt {
         var remainder = mpz_t()
         __gmpz_init_set_ui(&remainder, 0)
         
+        defer {
+            __gmpz_clear(&result)
+            __gmpz_clear(&working)
+            __gmpz_clear(&remainder)
+        }
+        
+        
         // calc digital sum
         while __gmpz_cmp_ui(&working, 0) > 0 {
             __gmpz_fdiv_qr_ui(&working, &remainder, &working, 10)
@@ -62,11 +69,6 @@ extension BigInt {
         // create output
         let output = BigInt()
         __gmpz_set(&output.integer, &result)
-        
-        // clear vars
-        __gmpz_clear(&result)
-        __gmpz_clear(&working)
-        __gmpz_clear(&remainder)
         
         return output
     }

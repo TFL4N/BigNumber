@@ -447,11 +447,7 @@ extension BigInt {
     }
     
     public static func +=(lhs: inout BigInt, rhs: BigInt) {
-        let result = BigInt()
-        
-        __gmpz_add(&result.integer, &lhs.integer, &rhs.integer)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_add(&lhs.integer, &lhs.integer, &rhs.integer)
     }
     
     public static func +=(lhs: inout BigInt, rhs: UInt) {
@@ -526,19 +522,11 @@ extension BigInt {
     }
     
     public static func -=(lhs: inout BigInt, rhs: BigInt) {
-        let result = BigInt()
-        
-        __gmpz_sub(&result.integer, &lhs.integer, &rhs.integer)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_sub(&lhs.integer, &lhs.integer, &rhs.integer)
     }
     
     public static func -=(lhs: inout BigInt, rhs: UInt) {
-        let result = BigInt()
-        
-        __gmpz_sub_ui(&result.integer, &lhs.integer, rhs)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_sub_ui(&lhs.integer, &lhs.integer, rhs)
     }
     
     //
@@ -780,6 +768,13 @@ extension BigInt {
         
         // find prime factors
         var test: BigInt = 1
+        var q = mpz_t()
+        var r = mpz_t()
+        defer {
+            __gmpz_clear(&q)
+            __gmpz_clear(&r)
+        }
+        
         while working > 1 {
             // check if prime
             if working.isPrime() != .notPrime {
@@ -790,8 +785,6 @@ extension BigInt {
             
             // find next factor
             test = test.nextPrime()
-            var q = mpz_t()
-            var r = mpz_t()
             repeat {
                 __gmpz_fdiv_qr(&q, &r, &working.integer, &test.integer)
                 if __gmpz_cmp_ui(&r, 0) == 0 {

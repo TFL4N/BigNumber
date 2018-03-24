@@ -52,7 +52,7 @@ public func findRootBisection(a a_0: BigFloat, b b_0: BigFloat, f: ((BigFloat)->
     return nil
 }
 
-public func divisors(_ n: Int, handler: ((inout Bool, Int)->Void)) {
+public func divisors(_ n: Int, includeN: Bool = false, handler: ((inout Bool, Int)->Void)) {
     var div = 1
     var upper_bound = n
     var stop = false
@@ -70,6 +70,10 @@ public func divisors(_ n: Int, handler: ((inout Bool, Int)->Void)) {
                 handler(&stop,upper_bound)
             }
         }
+    }
+    
+    if includeN {
+        handler(&stop,n)
     }
 }
 

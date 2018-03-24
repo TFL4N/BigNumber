@@ -25,6 +25,12 @@ extension Rational {
         var divisor = mpz_t()
         var quotient = mpz_t()
         var result = mpz_t()
+        defer {
+            __gmpz_clear(&dividend)
+            __gmpz_clear(&divisor)
+            __gmpz_clear(&quotient)
+            __gmpz_clear(&result)
+        }
         
         __gmpz_init(&dividend)
         __gmpz_init(&divisor)
