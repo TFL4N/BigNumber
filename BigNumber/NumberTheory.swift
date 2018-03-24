@@ -9,7 +9,6 @@
 import Foundation
 import GMP
 
-public typealias ContinedFractionExpansion = (UInt, [UInt])
 
 /**
  Finds the root of a function in the interval (a, b).  It does so iteratively, by halving the interval, and convergenting on the root.
@@ -175,7 +174,18 @@ public func greatestCommonDivisor() -> BigInt {
     return 0
 }
 
-// https://proofwiki.org/wiki/Continued_Fraction_Expansion_of_Irrational_Square_Root/Example/13/Convergents
+
+public typealias ContinedFractionExpansion = (UInt, [UInt])
+
+/**
+ The square root of very positive squarefree integer can be expressed as continued fraction with a repeating period.
+  [ProofWiki](https://proofwiki.org/wiki/Continued_Fraction_Expansion_of_Irrational_Square_Root/Example/13/Convergents)
+ 
+ This function will accept square numbers, and simply return a tuple with the square root and an empty array, as expected.
+ 
+ - Parameter n: A positive integer
+ - Returns: A tuple with the whole root, and an array of the repeating period
+ */
 public func continuedFractionExpansionOfQuadraticSurd(_ n: UInt) -> ContinedFractionExpansion {
     // check if perfect square
     let root = sqrt(Double(n))
@@ -206,6 +216,14 @@ public func continuedFractionExpansionOfQuadraticSurd(_ n: UInt) -> ContinedFrac
     return (expansion.removeFirst(), expansion)
 }
 
+/**
+ This function calculations the Nth convergent of a Continued Fraction Expansion.
+ 
+ - Parameters:
+    - n: Zero indexed Nth convergent to be found
+    - continuedFraction: The ContinuedFractionExpansion describing the convergence
+ - Returns: A Rational of the Nth convergent
+ */
 public func getConvergent(n: UInt, continuedFraction expansion: ContinedFractionExpansion ) -> Rational {
     if n == 0 || expansion.1.isEmpty {
         return Rational(expansion.0)
@@ -223,11 +241,24 @@ public func getConvergent(n: UInt, continuedFraction expansion: ContinedFraction
     return expansion.0 + num.inverse()
 }
 
-// https://en.wikipedia.org/wiki/Pell%27s_equation#The_smallest_solution_of_Pell_equations
-// https://proofwiki.org/wiki/Pell%27s_Equation/Examples/13
-// http://mathworld.wolfram.com/PellEquation.html
+/**
+ This function finds the smallest of solution of Pell's equation of the form:
+    ````
+    x^2 - Dy^2 = 1
+    ````
+ It does so by finding the continue fraction expansion of the quadratic surd *√N*.  Then iteratively tries to find the first integer solution.
+ 
+ Interestingly enough, Fermat was the first to extensively study this equation. And Euler erroneously attributed it to Pell
+ 
+[Wikipedia - The smallest solution](https://en.wikipedia.org/wiki/Pell%27s_equation#The_smallest_solution_of_Pell_equations)
+[ProofWiki - Example](https://proofwiki.org/wiki/Pell%27s_Equation/Examples/13)
+[MathWord - Pell's Equation](http://mathworld.wolfram.com/PellEquation.html)
 
-// x^2 - Dy^2 = 1
+ - Precondition: D must be squarefree
+ 
+ - Parameter D: A squarefree positive integer
+ - Returns: A tuple of the smallest solution (x,y)
+ */
 public func findSmallestSolutionOfPellsEquation(D: UInt) -> (x: BigInt, y: BigInt) {
     let (root, expansion) = continuedFractionExpansionOfQuadraticSurd(D)
     
