@@ -682,6 +682,15 @@ extension BigInt {
         return BigInt(__gmpz_fdiv_ui(&lhs.integer, UInt(abs(rhs))))
     }
     
+    public static func %(lhs: BigInt, rhs: BigInt) -> (q: BigInt, r: BigInt) {
+        let quotient = BigInt()
+        let remainder = BigInt()
+        
+        __gmpz_fdiv_qr(&quotient.integer, &remainder.integer, &lhs.integer, &rhs.integer)
+        
+        return (quotient, remainder)
+    }
+    
     //
     // Bitwise
     //
