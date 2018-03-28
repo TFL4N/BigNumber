@@ -19,6 +19,12 @@ extension BigInt {
         return self.primeFactorsUnique().reduce(1,*)
     }
     
+    public func makePositive() -> BigInt {
+        __gmpz_abs(&self.integer, &self.integer)
+    
+        return self
+    }
+    
     func isSquareFree(n: BigInt) -> Bool {
         var last: BigInt = 0
         var is_free = true
