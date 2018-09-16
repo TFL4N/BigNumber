@@ -88,6 +88,14 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
         mpfr_set_ui(&self.float, value, BigFloat.defaultRounding)
     }
     
+    public static func pi() -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_const_pi(&result.float, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
     //
     // deinit
     //

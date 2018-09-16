@@ -16,3 +16,51 @@ public func sqrt(_ n: BigFloat) -> BigFloat {
     
     return result
 }
+
+public func sin(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_sin(&result.float, &n.float, BigFloat.defaultRounding)
+    
+    return result
+}
+
+public func cos(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_cos(&result.float, &n.float, BigFloat.defaultRounding)
+    
+    return result
+}
+
+public func tan(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_tan(&result.float, &n.float, BigFloat.defaultRounding)
+    
+    return result
+}
+
+public func asin(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_asin(&result.float, &n.float, BigFloat.defaultRounding)
+    
+    return result
+}
+
+public func acos(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_acos(&result.float, &n.float, BigFloat.defaultRounding)
+    
+    return result
+}
+
+public func atan(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_atan(&result.float, &n.float, BigFloat.defaultRounding)
+    
+    return result
+}
