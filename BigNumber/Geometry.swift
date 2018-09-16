@@ -121,6 +121,44 @@ public struct Triangle {
     public var lines: [Line] {
         return [line_1, line_2, line_3]
     }
+    
+    // right triangles
+    public static func area(leg leg_1: BigFloat, leg leg_2: BigFloat) -> BigFloat {
+        return 0.5 * leg_1 * leg_2
+    }
+    
+    // all triangles
+    public static func area(side side_1: BigFloat, side side_2: BigFloat, side side_3: BigFloat) -> BigFloat {
+        // Heron's Formula
+        let s = 0.5 * (side_1 + side_2 + side_3)
+        let surd = s * (s - side_1) * (s - side_2) * (s - side_3)
+        
+        return sqrt(surd)
+    }
+    
+    public static func area(side side_1: BigFloat, angle: BigFloat, side side_2: BigFloat) -> BigFloat {
+        return 0.5 * side_1 * side_2 * sin(angle)
+    }
+}
+
+public struct Circle {
+    public var radius: BigFloat
+    
+    public init(radius: BigFloat) {
+        self.radius = radius
+    }
+    
+    public func area() -> BigFloat {
+        return self.radius * self.radius * BigFloat.pi
+    }
+    
+    public func sectorArea(angle: BigFloat) -> BigFloat {
+        return 0.5 * self.radius * self.radius * angle
+    }
+    
+    public func segmentArea(angle: BigFloat) -> BigFloat {
+        return 0.5 * self.radius * self.radius * (angle - sin(angle))
+    }
 }
 
 public func intersection(line_1: Line, line_2: Line) -> Point? {
