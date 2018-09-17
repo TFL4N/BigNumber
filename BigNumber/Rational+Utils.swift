@@ -78,7 +78,8 @@ extension Rational {
             while decimal_count < decimalPlaces &&  __gmpz_cmp_ui(&dividend, 0) != 0 {
                 // adjust the divisor by x10 while divisor > dividend
                 var adjustment: UInt = 0
-                while __gmpz_cmp(&divisor, &dividend) > 0 {
+                while __gmpz_cmp(&divisor, &dividend) > 0
+                    && adjustment + decimal_count < decimalPlaces {
                     adjustment += 1
                     __gmpz_mul_ui(&dividend, &dividend, 10)
                     __gmpz_mul_ui(&result, &result, 10)
