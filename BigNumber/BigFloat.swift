@@ -109,6 +109,33 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     public var description: String {
         return self.toString()
     }
+    
+    //
+    // Assignment
+    //
+    public final func set(_ value: BigFloat, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
+        mpfr_set(&self.float, &value.float, rounding)
+    }
+    
+    public final func set(_ value: BigInt, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
+        mpfr_set_z(&self.float, &value.integer, rounding)
+    }
+    
+    public final func set(_ value: Rational, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
+        mpfr_set_q(&self.float, &value.rational, rounding)
+    }
+    
+    public final func set(_ value: Double, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
+        mpfr_set_d(&self.float, value, rounding)
+    }
+    
+    public final func set(_ value: Int, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
+        mpfr_set_si(&self.float, value, rounding)
+    }
+    
+    public final func set(_ value: UInt, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
+        mpfr_set_ui(&self.float, value, rounding)
+    }
 }
 
 

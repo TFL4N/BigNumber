@@ -114,19 +114,8 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     }
     
     public convenience init(_ numerator: Int, _ denominator: Int) {
-        var num = abs(numerator)
-        let dem = UInt(abs(denominator))
-        
-        let is_num_neg = numerator < 0
-        let is_den_neg = denominator < 0
-        
-        if is_num_neg != is_den_neg {
-            num.negate()
-        }
-        
         self.init()
-        __gmpq_set_si(&self.rational, num, dem)
-        __gmpq_canonicalize(&self.rational)
+        self.set(numerator, denominator)
     }
     
     public required convenience init?(_ description: String) {
@@ -157,6 +146,60 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     //
     public var description: String {
         return self.toString(base: 10) ?? ""
+    }
+    
+    //
+    // Assignments
+    //
+    public final func set(_ value: Rational) {
+        __gmpq_set(&self.rational, &value.rational)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public final func set(_ value: BigInt) {
+        __gmpq_set_z(&self.rational, &value.integer)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public final func set(_ value: Int) {
+        __gmpq_set_si(&self.rational, value, 1)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public final func set(_ value: UInt) {
+        __gmpq_set_ui(&self.rational, value, 1)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public final func set(_ numerator: BigInt, _ denominator: BigInt) {
+        __gmpq_set_num(&self.rational, &numerator.integer)
+        __gmpq_set_den(&self.rational, &denominator.integer)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public final func set(_ numerator: UInt, _ denominator: UInt) {
+        __gmpq_set_ui(&self.rational, numerator, denominator)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public final func set(_ numerator: Int, _ denominator: UInt) {
+        __gmpq_set_si(&self.rational, numerator, denominator)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public final func set(_ numerator: Int, _ denominator: Int) {
+        var num = abs(numerator)
+        let dem = UInt(abs(denominator))
+        
+        let is_num_neg = numerator < 0
+        let is_den_neg = denominator < 0
+        
+        if is_num_neg != is_den_neg {
+            num.negate()
+        }
+        
+        __gmpq_set_si(&self.rational, num, dem)
+        __gmpq_canonicalize(&self.rational)
     }
     
     //

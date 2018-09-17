@@ -98,6 +98,29 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     public var description: String {
         return self.toString(base: 10) ?? ""
     }
+    
+    //
+    // Assignments
+    //
+    public final func set(_ integer: BigInt) {
+        __gmpz_set(&self.integer, &integer.integer)
+    }
+    
+    public final func set(_ integer: UInt) {
+        __gmpz_set_ui(&self.integer, integer)
+    }
+    
+    public final func set(_ integer: Int) {
+        __gmpz_set_si(&self.integer, integer)
+    }
+    
+    public final func set(_ double: Double) {
+        __gmpz_set_d(&self.integer, double)
+    }
+    
+    public final func set(_ rational: Rational) {
+        __gmpz_set_q(&self.integer, &rational.rational)
+    }
 }
 
 //
