@@ -8,12 +8,13 @@
 
 import GMP
 
-public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, LosslessStringConvertible {
+public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, ExpressibleByArrayLiteral, LosslessStringConvertible {
     //
     // constants
     //
     public typealias IntegerLiteralType = Int
     public typealias FloatLiteralType = Double
+    public typealias ArrayLiteralElement = UInt
     
     //
     // ivars
@@ -67,6 +68,12 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     public required convenience init(floatLiteral value: Rational.FloatLiteralType) {
         self.init()
         __gmpq_set_d(&self.rational, value)
+        __gmpq_canonicalize(&self.rational)
+    }
+    
+    public required convenience init(arrayLiteral elements: Rational.ArrayLiteralElement...) {
+        self.init()
+        __gmpq_set_ui(&self.rational, elements[0], elements[1])
         __gmpq_canonicalize(&self.rational)
     }
     
@@ -215,6 +222,15 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
         __gmpq_inv(&result.rational, &self.rational)
         
         return result
+    }
+}
+
+//
+// Hashable
+//
+extension Rational: Hashable {
+    public var hashValue: Int {
+        return self.numerator.hashValue ^ self.denominator.hashValue
     }
 }
 

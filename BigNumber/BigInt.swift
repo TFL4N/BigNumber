@@ -121,6 +121,20 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     public final func set(_ rational: Rational) {
         __gmpz_set_q(&self.integer, &rational.rational)
     }
+    
+    //
+    // Misc
+    //
+    public final func signum() -> Int {
+        let x = __gmpz_cmp_ui(&self.integer, 0)
+        if x < 0 {
+            return -1
+        } else if x > 0 {
+            return 1
+        } else {
+            return 0
+        }
+    }
 }
 
 //
@@ -174,7 +188,19 @@ extension BigInt: SignedNumeric {
 // Hashable
 extension BigInt: Hashable {
     public var hashValue: Int {
-        return Int(__gmpz_getlimbn(&self.integer, 0))
+        let size = __gmpz_size(&self.integer)
+        let limb_pointer = __gmpz_limbs_read(&self.integer)!
+        
+        var hash = 0
+        
+        for i in 0..<size {
+            hash  = hash.addingReportingOverflow(limb_pointer.advanced(by: i).pointee.hashValue).partialValue
+            
+            // http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/java/math/BigInteger.java
+//            hash = 31.unsafeMultiplied(by: hash).unsafeAdding(Int(limb_pointer.advanced(by: i).pointee))
+        }
+        
+        return hash //Int(__gmpz_getlimbn(&self.integer, 0))
     }
 }
 

@@ -65,11 +65,11 @@ extension Rational {
                 __gmpz_mul_ui(&dividend, &dividend, 10)
             }
             
-            if padding > 0 {
-                for _ in 1..<padding {
-                    decimal_str += "0"
-                    decimal_count += 1
-                }
+            while padding > 1 && decimal_count < decimalPlaces {
+                decimal_str += "0"
+                
+                padding -= 1
+                decimal_count += 1
             }
             
             //
@@ -100,7 +100,9 @@ extension Rational {
             //
             // format output
             //
-            decimal_str += BigInt.getString(&result)
+            if __gmpz_cmp_ui(&result, 0) != 0 {
+                decimal_str += BigInt.getString(&result)
+            }
             return "\(int_str).\(decimal_str)"
         }
     }

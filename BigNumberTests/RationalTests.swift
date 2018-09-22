@@ -52,6 +52,12 @@ class RationalTests: XCTestCase {
         str = number.toFloatString(decimalPlaces: 12)
         XCTAssertEqual("0.175000000000", str, "(BigRational)[12].toFloatString failed")
         
+        str = Rational(1,200000000).toFloatString(decimalPlaces: 5)
+        XCTAssertEqual("0.00000", str, "(1/200000000)[5].toFloatString failed")
     }
 
+//    func testRationalHashing() {
+//        let rational = Rational(1,125)
+//        print(rational.hashValue)
+//    }
 }

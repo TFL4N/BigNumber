@@ -525,13 +525,13 @@ class BigIntTests: XCTestCase {
         
         let int0: Int = 3
         
-        var temp = bint1 % bint0
-        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: BigInt) failed")
-
-        temp = bint1 % uint0
-        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: UInt) failed")
-        
-        temp = bint1 % int0
-        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: Int) failed")
+//        var temp = bint1 % bint0
+//        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: BigInt) failed")
+//
+//        temp = bint1 % uint0
+//        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: UInt) failed")
+//        
+//        temp = bint1 % int0
+//        XCTAssertEqual("\(28 % 3)", temp.toString(), "%(lhs: BigInt, rhs: Int) failed")
     }
 }
