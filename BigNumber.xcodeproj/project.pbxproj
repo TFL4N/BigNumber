@@ -24,6 +24,7 @@
 		6533EF942058529A00BC586F /* gmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1C51F48FC3100831742 /* gmp.h */; };
 		654C484F205A564800E0FE10 /* NumberTheory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C484E205A564800E0FE10 /* NumberTheory.swift */; };
 		654C4850205A564800E0FE10 /* NumberTheory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 654C484E205A564800E0FE10 /* NumberTheory.swift */; };
+		658CE5EC215BF34F00847AD5 /* NumberTheoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 658CE5EB215BF34F00847AD5 /* NumberTheoryTests.swift */; };
 		65951828205B974600E86D9F /* NumericExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65951827205B974600E86D9F /* NumericExtended.swift */; };
 		6595182A205BB52A00E86D9F /* Polynomial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65951829205BB52A00E86D9F /* Polynomial.swift */; };
 		6595182B205BB52A00E86D9F /* Polynomial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65951829205BB52A00E86D9F /* Polynomial.swift */; };
@@ -69,6 +70,7 @@
 		6533D1C71F48FC3100831742 /* module.map */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = module.map; sourceTree = "<group>"; };
 		6533EF9A2058529A00BC586F /* BigNumber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BigNumber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		654C484E205A564800E0FE10 /* NumberTheory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTheory.swift; sourceTree = "<group>"; };
+		658CE5EB215BF34F00847AD5 /* NumberTheoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTheoryTests.swift; sourceTree = "<group>"; };
 		65951827205B974600E86D9F /* NumericExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumericExtended.swift; sourceTree = "<group>"; };
 		65951829205BB52A00E86D9F /* Polynomial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polynomial.swift; sourceTree = "<group>"; };
 		65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rational+Utils.swift"; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				6533D1B61F48FADD00831742 /* BigInt.swift */,
 				6533D1B81F48FADD00831742 /* Info.plist */,
 				65B70FD8204DE0F9005EA455 /* RationalTests.swift */,
+				658CE5EB215BF34F00847AD5 /* NumberTheoryTests.swift */,
 			);
 			path = BigNumberTests;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6533D1B71F48FADD00831742 /* BigInt.swift in Sources */,
+				658CE5EC215BF34F00847AD5 /* NumberTheoryTests.swift in Sources */,
 				65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

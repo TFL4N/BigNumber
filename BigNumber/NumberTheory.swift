@@ -72,7 +72,7 @@ public func divisors(_ n: Int, includeN: Bool = false, handler: ((inout Bool, In
         }
     }
     
-    if includeN {
+    if includeN && n != 1 {
         handler(&stop,n)
     }
 }
@@ -85,7 +85,7 @@ public func divisors(_ n: Int, sorted: Bool = false, includeSelf: Bool = false) 
     }
     
     
-    if includeSelf {
+    if includeSelf && n != 1 {
         output.append(n)
     }
     
@@ -93,6 +93,32 @@ public func divisors(_ n: Int, sorted: Bool = false, includeSelf: Bool = false) 
         output.sort()
     }
     return output
+}
+
+public func partitions(_ n: Int, cache: inout [Int:BigInt]) -> BigInt {
+    if n < 0 {
+        return 0
+    } else if n == 1 || n == 0 {
+        return 1
+    } else if let val = cache[n] {
+        return val
+    }
+    
+    var sum: BigInt = 0
+    for k in 1...n {
+        sum += divisors(k, includeSelf: true).reduce(0,+) * partitions(n-k, cache: &cache)
+    }
+    
+    let result = sum / n
+    
+    cache[n] = result
+    
+    return result
+}
+
+public func partitions(_ n: Int) -> BigInt {
+    var cache: [Int:BigInt] = [:]
+    return partitions(n, cache: &cache)
 }
 
 public func binomialCoefficients(n: UInt, k: UInt) -> BigInt {

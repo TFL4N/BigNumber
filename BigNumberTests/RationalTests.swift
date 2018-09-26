@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import BigNumber
+@testable import BigNumber
 
 class RationalTests: XCTestCase {
 

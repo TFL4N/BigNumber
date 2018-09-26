@@ -109,6 +109,7 @@ extension BigInt {
         return result
     }
     
+    // returns (F(n), F(n-1))
     public static func fibonacci(_ n: UInt) -> (BigInt,BigInt) {
         let result = BigInt()
         let result2 = BigInt()
@@ -126,6 +127,7 @@ extension BigInt {
         return result
     }
     
+    // returns (L(n), L(n-1))
     public static func lucas(_ n: UInt) -> (BigInt,BigInt)  {
         let result = BigInt()
         let result2 = BigInt()
