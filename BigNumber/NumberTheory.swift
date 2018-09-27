@@ -95,6 +95,16 @@ public func divisors(_ n: Int, sorted: Bool = false, includeSelf: Bool = false) 
     return output
 }
 
+// includes self in sum
+public func divisorsSum(_ n: Int) -> Int {
+    var sum = 0
+    divisors(n, includeN: true) { (_, div) in
+        sum += div
+    }
+    
+    return sum
+}
+
 public func partitions(_ n: Int, cache: inout [Int:BigInt]) -> BigInt {
     if n < 0 {
         return 0
@@ -106,7 +116,7 @@ public func partitions(_ n: Int, cache: inout [Int:BigInt]) -> BigInt {
     
     var sum: BigInt = 0
     for k in 1...n {
-        sum += divisors(k, includeSelf: true).reduce(0,+) * partitions(n-k, cache: &cache)
+        sum += divisorsSum(k) * partitions(n-k, cache: &cache)
     }
     
     let result = sum / n
@@ -127,6 +137,36 @@ public func binomialCoefficients(n: UInt, k: UInt) -> BigInt {
     __gmpz_bin_uiui(&result.integer, n, k)
     
     return result
+}
+
+public func enumeratePartitions(handler: (Int,BigInt)->Bool){
+    func nextPartition(n: Int, partitions: inout [BigInt], divisorSums: inout [Int] ) -> BigInt {
+        divisorSums.append(divisorsSum(n))
+        
+        var new_partition: BigInt = 0
+        let count = partitions.count - 1
+        for i in 0...count {
+            new_partition += divisorSums[count - i] * partitions[i]
+        }
+        
+        new_partition /= n
+        partitions.append(new_partition)
+        
+        return new_partition
+    }
+    
+    var count = 0
+    
+    var partitions: [BigInt] = [1]
+    var divisorSums: [Int] = []
+    var stop = false
+    
+    while !stop {
+        count += 1
+        stop = handler(count, nextPartition(n: count,
+                                            partitions: &partitions,
+                                            divisorSums: &divisorSums))
+    }
 }
 
 // https://en.wikipedia.org/wiki/Lagrange_polynomial
