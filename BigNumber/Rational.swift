@@ -323,6 +323,14 @@ extension Rational: Comparable, Equatable {
         return __gmpq_cmp_z(&lhs.rational, &rhs.integer) == 0
     }
     
+    public static func ==(lhs: Rational, rhs: Int) -> Bool {
+        return __gmpq_cmp_si(&lhs.rational, rhs, 1) == 0
+    }
+    
+    public static func ==(lhs: Rational, rhs: UInt) -> Bool {
+        return __gmpq_cmp_ui(&lhs.rational, rhs, 1) == 0
+    }
+    
     //
     // isNotEqual
     //
@@ -332,6 +340,14 @@ extension Rational: Comparable, Equatable {
     
     public static func !=(lhs: Rational, rhs: BigInt) -> Bool {
         return __gmpq_cmp_z(&lhs.rational, &rhs.integer) != 0
+    }
+    
+    public static func !=(lhs: Rational, rhs: Int) -> Bool {
+        return __gmpq_cmp_si(&lhs.rational, rhs, 1) == 0
+    }
+    
+    public static func !=(lhs: Rational, rhs: UInt) -> Bool {
+        return __gmpq_cmp_ui(&lhs.rational, rhs, 1) == 0
     }
     
     //
@@ -345,6 +361,14 @@ extension Rational: Comparable, Equatable {
         return __gmpq_cmp_z(&lhs.rational, &rhs.integer) < 0
     }
     
+    public static func <(lhs: Rational, rhs: Int) -> Bool {
+        return __gmpq_cmp_si(&lhs.rational, rhs, 1) <= 0
+    }
+    
+    public static func <(lhs: Rational, rhs: UInt) -> Bool {
+        return __gmpq_cmp_ui(&lhs.rational, rhs, 1) <= 0
+    }
+    
     //
     // isLessThanOrEqual
     //
@@ -354,6 +378,14 @@ extension Rational: Comparable, Equatable {
     
     public static func <=(lhs: Rational, rhs: BigInt) -> Bool {
         return __gmpq_cmp_z(&lhs.rational, &rhs.integer) <= 0
+    }
+    
+    public static func <=(lhs: Rational, rhs: Int) -> Bool {
+        return __gmpq_cmp_si(&lhs.rational, rhs, 1) <= 0
+    }
+    
+    public static func <=(lhs: Rational, rhs: UInt) -> Bool {
+        return __gmpq_cmp_ui(&lhs.rational, rhs, 1) <= 0
     }
     
     //
@@ -367,6 +399,14 @@ extension Rational: Comparable, Equatable {
         return __gmpq_cmp_z(&lhs.rational, &rhs.integer) > 0
     }
     
+    public static func >(lhs: Rational, rhs: Int) -> Bool {
+        return __gmpq_cmp_si(&lhs.rational, rhs, 1) > 0
+    }
+    
+    public static func >(lhs: Rational, rhs: UInt) -> Bool {
+        return __gmpq_cmp_ui(&lhs.rational, rhs, 1) > 0
+    }
+    
     //
     // isGreaterThanOrEqual
     //
@@ -376,6 +416,14 @@ extension Rational: Comparable, Equatable {
     
     public static func >=(lhs: Rational, rhs: BigInt) -> Bool {
         return __gmpq_cmp_z(&lhs.rational, &rhs.integer) >= 0
+    }
+    
+    public static func >=(lhs: Rational, rhs: Int) -> Bool {
+        return __gmpq_cmp_si(&lhs.rational, rhs, 1) >= 0
+    }
+    
+    public static func >=(lhs: Rational, rhs: UInt) -> Bool {
+        return __gmpq_cmp_ui(&lhs.rational, rhs, 1) >= 0
     }
 }
 
