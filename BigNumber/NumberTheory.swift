@@ -169,7 +169,9 @@ public func enumeratePartitions(handler: (Int,BigInt)->Bool){
     }
 }
 
+/**
 // https://en.wikipedia.org/wiki/Lagrange_polynomial
+ */
 public func lagrangeBasisPolynomial(x_values: [Int], j: Array<Int>.Index) -> Polynomial {
     var numerator: Polynomial = 1
     var denominator: Int = 1
@@ -375,7 +377,9 @@ public func enumerateConvergents(continuedFraction: ContinuedFractionExpansion, 
  Interestingly enough, Fermat was the first to extensively study this equation. And Euler erroneously attributed it to Pell
  
 [Wikipedia - The smallest solution](https://en.wikipedia.org/wiki/Pell%27s_equation#The_smallest_solution_of_Pell_equations)
+ 
 [ProofWiki - Example](https://proofwiki.org/wiki/Pell%27s_Equation/Examples/13)
+ 
 [MathWord - Pell's Equation](http://mathworld.wolfram.com/PellEquation.html)
 
  - Precondition: D must be squarefree
@@ -453,3 +457,5 @@ public func numberOfPrimes(min: UInt, max: UInt) -> UInt {
     
     return count
 }
+
+

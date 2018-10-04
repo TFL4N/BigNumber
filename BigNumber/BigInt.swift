@@ -9,16 +9,12 @@
 import GMP
 
 //
-// Public Types
-//
-public typealias PrimeFactors = [BigInt : UInt]
-
-//
 // MARK: Exponentiation
 //
 precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
 infix operator ** : PowerPrecedence
 infix operator **= : PowerPrecedence
+
 //
 // BigInt
 //
@@ -39,6 +35,11 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     public required init() {
         self.integer = mpz_t()
         __gmpz_init(&self.integer)
+    }
+    
+    public required init(_ n: UnsafeMutablePointer<mpz_t>) {
+        self.integer = mpz_t()
+        __gmpz_init_set(&self.integer, n)
     }
     
     public required init(integerLiteral value: BigInt.IntegerLiteralType) {
@@ -134,6 +135,14 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
         } else {
             return 0
         }
+    }
+    
+    public final func isOdd() -> Bool {
+        return self.integer._mp_d.pointee % 2 == 1
+    }
+    
+    public final func isEven() -> Bool {
+        return self.integer._mp_d.pointee % 2 == 0
     }
 }
 
@@ -740,6 +749,10 @@ extension BigInt {
         return (quotient, remainder)
     }
     
+    public static func %=(lhs: inout BigInt, rhs: BigInt) {
+        __gmpz_mod(&lhs.integer, &lhs.integer, &rhs.integer)
+    }
+    
     //
     // Bitwise
     //
@@ -905,15 +918,24 @@ extension BigInt {
         return output
     }
     
-    public func primeFactorsAndExponents() -> PrimeFactors {
-        var output: PrimeFactors = [:]
+    public func primeFactorsAndExponents() -> [(BigInt,UInt)] {
+        var output: [(BigInt,UInt)] = []
+        var last_factor: BigInt = 0
+        var count: UInt = 0
         self.enumeratePrimeFactors() { (_, factor, _) in
-            if output[factor] != nil {
-                output[factor]! += 1
+            if last_factor == factor {
+                count += 1
             } else {
-                output[factor] = 1
+                if last_factor != 0 {
+                    output.append((last_factor,count))
+                }
+                
+                last_factor = factor
+                count = 1
             }
         }
+        
+        output.append((last_factor,count))
         
         return output
     }

@@ -22,8 +22,8 @@ class NumberTheoryTests: XCTestCase {
     }
 
     func testPartitions() {
-        var cache = [Int:Int]()
-        partitions(317, cache: &cache)
+//        var cache = [Int:Int]()
+//        partitions(317, cache: &cache)
     }
 
 }

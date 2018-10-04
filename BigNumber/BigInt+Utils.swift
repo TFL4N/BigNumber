@@ -10,6 +10,22 @@ import GMP
 
 // MARK: Instance methods
 extension BigInt {
+    public func gcd(_ n: BigInt) -> BigInt {
+        let result = BigInt()
+        __gmpz_gcd(&result.integer, &self.integer, &n.integer)
+        return result
+    }
+    
+    public func gcd(_ n: UInt) -> BigInt {
+        let result = BigInt()
+        __gmpz_gcd_ui(&result.integer, &self.integer, n)
+        return result
+    }
+    
+    public func isMultiple(of: BigInt) -> Bool {
+        return __gmpz_divisible_p(&self.integer, &of.integer) != 0
+    }
+    
     /**
      The radical of a number is the product of all its unique prime factors
      
@@ -87,8 +103,35 @@ extension BigInt {
 
 // MARK: Static functions
 extension BigInt {
+    public static func gcd(_ n1: BigInt, _ n2: BigInt, _ numbers: BigInt ...) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_gcd(&result.integer, &n1.integer, &n2.integer)
+        
+        for n in numbers {
+            __gmpz_gcd(&result.integer, &result.integer, &n.integer)
+        }
+        
+        return result
+    }
+    
     public static func exponential(_ n: BigInt, power: UInt) -> BigInt {
         return n ** power
+    }
+    
+    /**
+     The modular exponential is (base^exponent) % modulus
+     
+     Negative exp is supported if an inverse base^-1 mod modulus exists (see mpz_invert in Number Theoretic Functions). If an inverse doesn’t exist then a divide by zero is raised.
+     
+     - Returns: (base^exponent) % modulus
+     */
+    func modularExponential(base: BigInt, exponent: BigInt, modulus: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_powm(&result.integer, &base.integer, &exponent.integer, &modulus.integer)
+        
+        return result
     }
     
     public static func factorial(_ n: UInt) -> BigInt {
