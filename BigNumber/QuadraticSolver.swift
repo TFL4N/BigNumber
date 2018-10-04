@@ -10,9 +10,29 @@ import Foundation
 import GMP
 
 /**
- CongruenceSolution is used to store a solution to a quadratic congruence.
+ Represents the congruence `x ≡ a (mod m)`
  */
-public struct CongruenceSolution: CustomStringConvertible {
+public struct Congruence: Equatable {
+    var a: BigInt
+    var modulus: BigInt
+    
+    init() {
+        self.a = 0
+        self.modulus = 0
+    }
+    
+    init(_ a: BigInt, modulus: BigInt) {
+        self.a = a
+        self.modulus = modulus
+    }
+}
+
+internal typealias MPZ_Pointer = UnsafeMutablePointer<mpz_t>
+
+/**
+ QuadraticCongruenceSolution is used to store a solution to a quadratic congruence.
+ */
+public struct QuadraticCongruenceSolution: CustomStringConvertible {
     public let solutions: [BigInt]
     public let modulus: BigInt
     public let originalModulus: BigInt
@@ -68,26 +88,27 @@ public struct CongruenceSolution: CustomStringConvertible {
  
  [Algorithm Implementation](http://www.numbertheory.org/gnubc/sqroot)
  
- - Precondition: `exponent >= 1`
+ - Precondition:
+    - `exponent >= 1`
  - Parameters:
     - a: the residue
     - primePowerModulus: the prime base of the modulus
     - exponent: the exponent of the modulus
  - Returns: a CongruenceSolution representing the solution, if it exists
  */
-public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exponent n: UInt) -> CongruenceSolution? {
+public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exponent n: UInt) -> QuadraticCongruenceSolution? {
     // if 'a' is not a multiple of p, then 'a' and p^n are coprime so specialized functions can be used
     let modulus = p ** n
     if !a.isMultiple(of: p) {
         if p == 2 {
             if let solutions = solveQuadraticCongruence(a: a, evenPrimePowerModulus: n) {
-                return CongruenceSolution(solutions: solutions, modulus: modulus, originalModulus: modulus)
+                return QuadraticCongruenceSolution(solutions: solutions, modulus: modulus, originalModulus: modulus)
             } else {
                 return nil
             }
         } else {
             if let solutions = solveQuadraticCongruence(a: a, oddPrimePowerModulus: p, exponent: n) {
-                return CongruenceSolution(solutions: solutions, modulus: modulus, originalModulus: modulus)
+                return QuadraticCongruenceSolution(solutions: solutions, modulus: modulus, originalModulus: modulus)
             } else {
                 return nil
             }
@@ -102,11 +123,11 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
         if n % 2 == UInt(0) {
             // n = 2m
             // x = 0 (mod p^m)
-            return CongruenceSolution(solutions: [0], modulus: p**(n/2), originalModulus: modulus)
+            return QuadraticCongruenceSolution(solutions: [0], modulus: p**(n/2), originalModulus: modulus)
         } else {
             // n = 2m+1
             // x = 0 (mod p^(m+1))
-            return CongruenceSolution(solutions: [0], modulus: p**(1+n/2), originalModulus: modulus)
+            return QuadraticCongruenceSolution(solutions: [0], modulus: p**(1+n/2), originalModulus: modulus)
         }
     }
     
@@ -139,7 +160,7 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
             if var solutions = solveQuadraticCongruence(a: new_a, evenPrimePowerModulus: new_n) {
                 // undo the transformation
                 solutions = solutions.map {$0 * p_inverse}
-                return CongruenceSolution(solutions: solutions, modulus: new_modulus, originalModulus: modulus)
+                return QuadraticCongruenceSolution(solutions: solutions, modulus: new_modulus, originalModulus: modulus)
             } else {
                 return nil
             }
@@ -147,7 +168,7 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
             if var solutions = solveQuadraticCongruence(a: new_a, oddPrimePowerModulus: p, exponent: new_n) {
                 // undo the transformation
                 solutions = solutions.map {$0 * p_inverse}
-                return CongruenceSolution(solutions: solutions, modulus: new_modulus, originalModulus: modulus)
+                return QuadraticCongruenceSolution(solutions: solutions, modulus: new_modulus, originalModulus: modulus)
             } else {
                 return nil
             }
@@ -175,7 +196,9 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
  
  [Example](https://math.stackexchange.com/questions/1895058/how-to-find-modulus-square-root/1895883#1895883)
  
- - Precondition: `a` and the modulus are coprime, and `exponent >= 1`
+ - Precondition:
+    - `a` and the modulus are coprime
+    - `exponent >= 1`
  - Parameters:
     - a: the residue
     - oddPrimePowerModulus: the odd prime base of the modulus
@@ -224,7 +247,9 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimePowerModulus p: BigInt, 
  
  [Algorithm Explanation](https://www.johndcook.com/blog/quadratic_congruences/)
  
- - Precondition: Parameter `a` must be odd, and `evenPrimePowerModulus >= 1`
+ - Precondition:
+    - Parameter `a` must be odd
+    - Parameter `evenPrimePowerModulus >= 1`
  
  - Parameters:
     - a: odd residue
@@ -290,7 +315,8 @@ public func solveQuadraticCongruence(a: BigInt, evenPrimePowerModulus n: UInt) -
  
  [Algorithm Implementation](https://gmplib.org/list-archives/gmp-devel/2006-May/000633.html)
  
- - Precondition: `p` is an odd prime
+ - Precondition:
+    - `p` is an odd prime
  - Parameters:
  - a: the residue
  - p: the modulus
@@ -321,10 +347,10 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimeModulus p: BigInt) -> [B
     }
     
     // vars
-    var q = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
-    var z = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
-    var y = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
-    var inverse_n = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
+    var q = MPZ_Pointer.allocate(capacity: 1)
+    var z = MPZ_Pointer.allocate(capacity: 1)
+    var y = MPZ_Pointer.allocate(capacity: 1)
+    var inverse_n = MPZ_Pointer.allocate(capacity: 1)
     defer {
         for x in [q,z,y,inverse_n] {
             __gmpz_clear(x)
@@ -405,22 +431,23 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimeModulus p: BigInt) -> [B
  ```
  x ≡ a (mod p)
  ```
- All moduli must be pairwise coprime.  In other words, every possible pair of moduli must be coprime (their gcd() is 1)
+ 
+ References:
+ [Algorithm](O. Ore, American Mathematical Monthly,vol.59,pp.365-370,1952)
  
  [Wikipedia](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
  
- [Algorithm Implementation](https://www.geeksforgeeks.org/using-chinese-remainder-theorem-combine-modular-equations/)
- 
- 
- - Precondition: `congruences.count > 1` and all moduli are pairwise coprime
+ - Precondition:
+    - `congruences.count > 1`
+    - All moduli are greater than 1
  - Parameter congruences: an array of tuples (constant, modulus) describing the system
- - Returns: a BigInt solution of the system
+ - Returns: a congruence representing the solution of the system
  */
-public func chineseRemainderTheorem(congruences: [(a:BigInt,mod:BigInt)]) -> BigInt {
-    var total_x = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
-    var total_mod = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
-    var temp = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
-    var temp_2 = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
+public func chineseRemainderTheorem(congruences: [Congruence]) -> Congruence? {
+    let total_x = MPZ_Pointer.allocate(capacity: 1)
+    let total_mod = MPZ_Pointer.allocate(capacity: 1)
+    let temp = MPZ_Pointer.allocate(capacity: 1)
+    let temp_2 = MPZ_Pointer.allocate(capacity: 1)
     
     let vars = [total_x,total_mod,temp,temp_2]
     
@@ -429,6 +456,76 @@ public func chineseRemainderTheorem(congruences: [(a:BigInt,mod:BigInt)]) -> Big
         __gmpz_init(x)
     }
     
+    defer {
+        for x in vars {
+            __gmpz_clear(x)
+            x.deinitialize(count: 1)
+            x.deallocate()
+        }
+    }
+    
+    let first_congruence = congruences.first!
+    __gmpz_set(total_x, &first_congruence.a.integer)
+    __gmpz_set(total_mod, &first_congruence.modulus.integer)
+    
+    for congruence in congruences.dropFirst() {
+        // next congruence
+        if let solution = chineseRemainderTheorem(a_1: total_x, a_2: &congruence.a.integer, m_1: total_mod, m_2: &congruence.modulus.integer) {
+            // update the current solution
+            __gmpz_set(total_x, solution.solution)
+            __gmpz_set(total_mod, solution.moduli_lcm)
+            
+            defer {
+                __gmpz_clear(solution.solution)
+                __gmpz_clear(solution.moduli_lcm)
+                
+                solution.solution.deinitialize(count: 1)
+                solution.moduli_lcm.deinitialize(count: 1)
+                
+                solution.solution.deallocate()
+                solution.moduli_lcm.deallocate()
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    return Congruence(BigInt(total_x),modulus: BigInt(total_mod))
+    
+}
+
+/**
+ Solves a system of linear congruences of the form:
+ ```
+ x ≡ a (mod p)
+ ```
+ All moduli must be pairwise coprime.  In other words, every possible pair of moduli must be coprime (their gcd() is 1)
+ 
+ [Wikipedia](https://en.wikipedia.org/wiki/Chinese_remainder_theorem)
+ 
+ [Algorithm Implementation](https://www.geeksforgeeks.org/using-chinese-remainder-theorem-combine-modular-equations/)
+ 
+ 
+ - Precondition:
+    - All moduli are pairwise coprime
+    - All moduli are greater than 1
+    - `congruences.count > 1`
+ - Parameter congruences: an array of tuples (constant, modulus) describing the system
+ - Returns: a congruence representing the solution of the system
+ */
+public func chineseRemainderTheorem(withCoprimeCongruences congruences: [Congruence]) -> Congruence? {
+    let total_x = MPZ_Pointer.allocate(capacity: 1)
+    let total_mod = MPZ_Pointer.allocate(capacity: 1)
+    let temp = MPZ_Pointer.allocate(capacity: 1)
+    let temp_2 = MPZ_Pointer.allocate(capacity: 1)
+
+    let vars = [total_x,total_mod,temp,temp_2]
+
+    for x in vars {
+        x.initialize(to: mpz_t())
+        __gmpz_init(x)
+    }
+
     defer {
         for x in vars {
             __gmpz_clear(x)

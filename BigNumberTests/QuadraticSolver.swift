@@ -20,6 +20,29 @@ class QuadraticSolver: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
+    
+    func areQuadraticCongruenceSolutionEqual(_ lhs: QuadraticCongruenceSolution?, _ rhs: QuadraticCongruenceSolution?) -> Bool {
+        if (lhs == nil && rhs != nil) || (lhs != nil && rhs == nil) {
+            return false
+        }
+        if lhs == nil && rhs == nil {
+            return true
+        }
+        
+        let lhs = lhs!
+        let rhs = rhs!
+        
+        let lhs_set = Set(lhs.solutions.map{$0.toInt()!})
+        let rhs_set = Set(rhs.solutions.map{$0.toInt()!})
+        
+        return lhs_set == rhs_set
+            && lhs.modulus == rhs.modulus
+            && lhs.originalModulus == rhs.originalModulus
+    }
+    
+    func getQuadraticCongruenceSolutionCompareString(_ lhs: QuadraticCongruenceSolution?, _ rhs: QuadraticCongruenceSolution?) -> String {
+        return "\(lhs?.description ?? "nil") is not equal to \(rhs?.description ?? "nil")."
+    }
 
     func testSquareQuadraticCongruencesWithOddPrimeModulus() {
         typealias CaseType = (n:BigInt,prime:BigInt,solution:Set<Int>?)
@@ -59,18 +82,41 @@ class QuadraticSolver: XCTestCase {
     }
     
     func testChineseRemainderTheorem() {
-        typealias CaseType = (solution:BigInt,congruences:[(a:BigInt,mod:BigInt)])
+        typealias CaseType = (solution:Congruence?,congruences:[Congruence])
         
-        let cases: [CaseType] = [
-            (1243,[(3,4),
-                   (4,7),
-                   (1,9),
-                   (0,11)])
+        
+        let coprime_cases: [CaseType] = [
+            (Congruence(1243, modulus: 2772),
+             [
+                Congruence(3, modulus: 4),
+                Congruence(4, modulus: 7),
+                Congruence(1, modulus: 9),
+                Congruence(0, modulus: 11)
+                ]),
         ]
         
-        for c in cases {
-            let sol = chineseRemainderTheorem(congruences: c.congruences)
-            XCTAssertEqual(sol, c.solution, "chineseRemainderTheorem() fail -- \(c.congruences)")
+        let noncoprime_cases: [CaseType] = [
+        
+        ]
+        
+        let all = [
+            (coprime_cases, "Coprime moduli"),
+            (noncoprime_cases, "Non coprime moduli"),
+        ]
+        
+        for (type, type_str) in all {
+            for c in type {
+                let sol = chineseRemainderTheorem(congruences: c.congruences)
+                //                let sol = chineseRemainderTheorem(withCoprimeCongruences: c.congruences)
+                
+                XCTAssertEqual(sol, c.solution, "chineseRemainderTheorem() <\(type_str)> fail -- \(c.congruences)")
+            }
+        }
+        
+        for c in coprime_cases {
+            let sol = chineseRemainderTheorem(withCoprimeCongruences: c.congruences)
+            
+            XCTAssertEqual(sol, c.solution, "chineseRemainderTheorem(withCoprimeModuli:) fail -- \(c.congruences)")
         }
     }
     
@@ -112,43 +158,24 @@ class QuadraticSolver: XCTestCase {
             XCTAssertEqual(set, c.solution, "solveQuadraticCongruence(a: \(c.a), oddPrimeModulus: \(c.prime), exponent: \(c.n)) fail")
         }
     }
-
-    func areCongruenceSolutionEqual(_ lhs: CongruenceSolution?, _ rhs: CongruenceSolution?) -> Bool {
-        if (lhs == nil && rhs != nil) || (lhs != nil && rhs == nil) {
-            return false
-        }
-        if lhs == nil && rhs == nil {
-            return true
-        }
-        
-        let lhs = lhs!
-        let rhs = rhs!
-        
-        let lhs_set = Set(lhs.solutions.map{$0.toInt()!})
-        let rhs_set = Set(rhs.solutions.map{$0.toInt()!})
-        
-        return lhs_set == rhs_set
-            && lhs.modulus == rhs.modulus
-            && lhs.originalModulus == rhs.originalModulus
-    }
     
     func testSquareQuadraticCongruencesWithPrimePowerModulus() {
-        typealias CaseType = (a:BigInt,prime:BigInt,n:UInt,solution:CongruenceSolution?)
+        typealias CaseType = (a:BigInt,prime:BigInt,n:UInt,solution:QuadraticCongruenceSolution?)
         
         //// a and p^n are not coprime, but a is not a multiple of p^n
         let non_coprime_cases: [CaseType] = [
-            (11*49, 7, 5, CongruenceSolution(solutions: [917,1484], modulus: 2401, originalModulus: 7**5) ),
-            (11*49, 7, 4, CongruenceSolution(solutions: [112,231], modulus: 343, originalModulus: 7**4)),
-            (11*49, 7, 3, CongruenceSolution(solutions: [14,35], modulus: 49, originalModulus: 7**3) )
+            (11*49, 7, 5, QuadraticCongruenceSolution(solutions: [917,1484], modulus: 2401, originalModulus: 7**5) ),
+            (11*49, 7, 4, QuadraticCongruenceSolution(solutions: [112,231], modulus: 343, originalModulus: 7**4)),
+            (11*49, 7, 3, QuadraticCongruenceSolution(solutions: [14,35], modulus: 49, originalModulus: 7**3) )
         ]
         
         
         //// a is a multiple of p^n
         let multiple_cases: [CaseType] = [
-            (25*2, 5, 2, CongruenceSolution(solutions: [0], modulus: 5, originalModulus: 5**2)),
-            (25*5, 5, 2, CongruenceSolution(solutions: [0], modulus: 5, originalModulus: 5**2)),
-            (169*5, 13, 2, CongruenceSolution(solutions: [0], modulus: 13, originalModulus: 13**2)),
-            (32*5, 2, 5, CongruenceSolution(solutions: [0], modulus: 8, originalModulus: 2**5)),
+            (25*2, 5, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 5, originalModulus: 5**2)),
+            (25*5, 5, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 5, originalModulus: 5**2)),
+            (169*5, 13, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 13, originalModulus: 13**2)),
+            (32*5, 2, 5, QuadraticCongruenceSolution(solutions: [0], modulus: 8, originalModulus: 2**5)),
         ]
         
         /// coprime, just uses specialized functions
@@ -162,18 +189,17 @@ class QuadraticSolver: XCTestCase {
             (coprime_cases, "<a && modulus are coprime>")
         ]
         
-        print()
-        print()
         for (type,type_str) in all {
             for c in type {
                 let sol = solveQuadraticCongruence(a: c.a, primePowerModulus: c.prime, exponent: c.n)
-                print("!!",sol ?? ([],0))
                 
-                XCTAssertTrue(areCongruenceSolutionEqual(sol,c.solution),
-                              "\(c.solution?.description ?? "nil") is not equal to \(sol?.description ?? "nil").  solveQuadraticCongruence(a: \(c.a), primePowerModulus: \(c.prime), exponent: \(c.n)) fail -- \(type_str)")
+                XCTAssertTrue(areQuadraticCongruenceSolutionEqual(sol,c.solution),
+                              "\(getQuadraticCongruenceSolutionCompareString(sol, c.solution)).  solveQuadraticCongruence(a: \(c.a), primePowerModulus: \(c.prime), exponent: \(c.n)) fail -- \(type_str)")
             }
         }
-        print()
-        print()
+    }
+    
+    func testSquareQuadraticCongruence() {
+        
     }
 }
