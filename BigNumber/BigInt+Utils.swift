@@ -26,6 +26,34 @@ extension BigInt {
         return __gmpz_divisible_p(&self.integer, &of.integer) != 0
     }
     
+    public func inverse(modulus: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_invert(&result.integer, &self.integer, &modulus.integer)
+        
+        return result
+    }
+    
+    public func scanBits1(start_bit: UInt) -> UInt? {
+        let result = __gmpz_scan1(&self.integer, start_bit)
+        
+        if result == UInt.max {
+            return nil
+        } else {
+            return result
+        }
+    }
+    
+    public func scanBits0(start_bit: UInt) -> UInt? {
+        let result = __gmpz_scan0(&self.integer, start_bit)
+        
+        if result == UInt.max {
+            return nil
+        } else {
+            return result
+        }
+    }
+    
     /**
      The radical of a number is the product of all its unique prime factors
      
