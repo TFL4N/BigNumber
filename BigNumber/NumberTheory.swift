@@ -446,16 +446,21 @@ public func combinations(from n: UInt, choose r: UInt) -> BigInt {
 
 public func numberOfPrimes(min: UInt, max: UInt) -> UInt {
     let num = BigInt(min)
-    var count: UInt = 0
-    repeat {
-        if num.isPrime() != .notPrime {
-            count += 1
-        }
+    var count: UInt = num.isPrime() != .notPrime ? 1 : 0
+    while num <= max {
+        count += 1
         
         num.moveToNextPrime()
-    } while num <= max
+    }
     
     return count
+}
+
+public func estimateNumberOfPrimes(lessThan: UInt) -> UInt {
+    let n = Float(lessThan)
+    let ln_n = log(n)
+    
+    return UInt(n/ln_n)
 }
 
 
