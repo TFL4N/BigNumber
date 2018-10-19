@@ -22,6 +22,12 @@ extension BigInt {
         return result
     }
     
+    public func lcm(_ n: BigInt) -> BigInt {
+        let result = BigInt()
+        __gmpz_lcm(&result.integer, &self.integer, &n.integer)
+        return result
+    }
+    
     public func isMultiple(of: BigInt) -> Bool {
         return __gmpz_divisible_p(&self.integer, &of.integer) != 0
     }
@@ -129,6 +135,27 @@ extension BigInt {
     }
 }
 
+
+
+public func exponential(_ n: BigInt, power: UInt) -> BigInt {
+    return n ** power
+}
+
+/**
+ The modular exponential is (base^exponent) % modulus
+ 
+ Negative exp is supported if an inverse base^-1 mod modulus exists (see mpz_invert in Number Theoretic Functions). If an inverse doesn’t exist then a divide by zero is raised.
+ 
+ - Returns: (base^exponent) % modulus
+ */
+public func modularExponential(base: BigInt, exponent: BigInt, modulus: BigInt) -> BigInt {
+    let result = BigInt()
+    
+    __gmpz_powm(&result.integer, &base.integer, &exponent.integer, &modulus.integer)
+    
+    return result
+}
+
 // MARK: Static functions
 extension BigInt {
     public static func gcd(_ n1: BigInt, _ n2: BigInt, _ numbers: BigInt ...) -> BigInt {
@@ -139,25 +166,6 @@ extension BigInt {
         for n in numbers {
             __gmpz_gcd(&result.integer, &result.integer, &n.integer)
         }
-        
-        return result
-    }
-    
-    public static func exponential(_ n: BigInt, power: UInt) -> BigInt {
-        return n ** power
-    }
-    
-    /**
-     The modular exponential is (base^exponent) % modulus
-     
-     Negative exp is supported if an inverse base^-1 mod modulus exists (see mpz_invert in Number Theoretic Functions). If an inverse doesn’t exist then a divide by zero is raised.
-     
-     - Returns: (base^exponent) % modulus
-     */
-    func modularExponential(base: BigInt, exponent: BigInt, modulus: BigInt) -> BigInt {
-        let result = BigInt()
-        
-        __gmpz_powm(&result.integer, &base.integer, &exponent.integer, &modulus.integer)
         
         return result
     }

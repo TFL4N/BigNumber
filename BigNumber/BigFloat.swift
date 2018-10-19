@@ -26,7 +26,7 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     //
     // ivars
     //
-    internal var float: mpfr_t
+    public var float: mpfr_t
     
     //
     // Accessors
@@ -107,7 +107,7 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     // CustomStringConvertible
     //
     public var description: String {
-        return self.toString()
+        return self.toPrettyString(18)
     }
     
     //
@@ -201,25 +201,49 @@ extension BigFloat {
         }
     }
     
-    public func toString() -> String {
-        var (str, exp) = self.toString(base: 10)!
+    public func toPrettyString(_ numberOfDigits: Int = 0) -> String {
+        var (str, exp) = self.toString(base: 10, numberOfDigits: numberOfDigits)!
         
-        if str.isEmpty {
+        guard !str.isEmpty else {
             return "0"
-        } else if exp == 0 {
-            return "0." + str
+        }
+        
+        var sign = ""
+        if str.first! == "-" {
+            sign = "-"
+            str.removeFirst()
+        }
+        
+        if exp == 0 {
+            return sign + "0." + str
         } else if exp < 0 {
-            return "0." + String(repeating: "0", count: -exp) + str
+            return sign + "0." + String(repeating: "0", count: -exp) + str
         } else if exp > 0 {
             if str.count > exp {
                 str.insert(".", at: str.index(str.startIndex, offsetBy: exp))
-                return str
+                return sign + str
             } else if str.count < exp {
-                return str + String(repeating: "0", count: exp - str.count) 
+                return sign + str + String(repeating: "0", count: exp - str.count)
             }
         }
         
-        return str
+        return sign + str
+    }
+    
+    public func toBigInt() -> BigInt {
+        let result = BigInt()
+        
+        mpfr_get_z(&result.integer, &self.float, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public func toRational() -> Rational {
+        let result = Rational()
+        
+        mpfr_get_q(&result.rational, &self.float)
+        
+        return result
     }
     
     public func toDouble() -> Double {
@@ -324,6 +348,86 @@ extension BigFloat {
         return result
     }
     
+    public static func +(lhs: BigFloat, rhs: BigInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_z(&result.float, &lhs.float, &rhs.integer, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: BigInt, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_z(&result.float, &rhs.float, &lhs.integer, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: BigFloat, rhs: Rational) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_q(&result.float, &lhs.float, &rhs.rational, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: Rational, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_q(&result.float, &rhs.float, &lhs.rational, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: BigFloat, rhs: Int) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_si(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: Int, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_si(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: BigFloat, rhs: UInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_ui(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: UInt, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_ui(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: BigFloat, rhs: Double) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_d(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func +(lhs: Double, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_add_d(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
     public static func +=(lhs: inout BigFloat, rhs: BigFloat) {
         mpfr_add(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
     }
@@ -354,8 +458,108 @@ extension BigFloat {
         return result
     }
     
+    public static func *(lhs: BigFloat, rhs: Int) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_si(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: Int, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_si(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: BigFloat, rhs: UInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_ui(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: UInt, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_ui(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: BigFloat, rhs: Double) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_d(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: Double, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_d(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: BigFloat, rhs: BigInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_z(&result.float, &lhs.float, &rhs.integer, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: BigInt, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_z(&result.float, &rhs.float, &lhs.integer, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: BigFloat, rhs: Rational) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_q(&result.float, &lhs.float, &rhs.rational, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func *(lhs: Rational, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_mul_q(&result.float, &rhs.float, &lhs.rational, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
     public static func *=(lhs: inout BigFloat, rhs: BigFloat) {
         mpfr_mul(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
+    }
+    
+    public static func *=(lhs: inout BigFloat, rhs: Int) {
+        mpfr_mul_si(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
+    }
+    
+    public static func *=(lhs: inout BigFloat, rhs: UInt) {
+        mpfr_mul_ui(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
+    }
+    
+    public static func *=(lhs: inout BigFloat, rhs: Double) {
+        mpfr_mul_d(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
+    }
+    
+    public static func *=(lhs: inout BigFloat, rhs: BigInt) {
+        mpfr_mul_z(&lhs.float, &lhs.float, &rhs.integer, BigFloat.defaultRounding)
+    }
+    
+    public static func *=(lhs: inout BigFloat, rhs: Rational) {
+        mpfr_mul_q(&lhs.float, &lhs.float, &rhs.rational, BigFloat.defaultRounding)
     }
 
     //
@@ -371,5 +575,40 @@ extension BigFloat {
     
     public static func /=(lhs: inout BigFloat, rhs: BigFloat) {
         mpfr_div(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
+    }
+    
+    //
+    // Exponentation
+    //
+    public static func **(lhs: BigFloat, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_pow(&result.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func **(lhs: BigFloat, rhs: BigInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_pow_z(&result.float, &lhs.float, &rhs.integer, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func **(lhs: BigFloat, rhs: Int) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_pow_si(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func **(lhs: BigFloat, rhs: UInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_pow_ui(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
     }
 }

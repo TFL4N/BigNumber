@@ -48,6 +48,26 @@ class QuadraticSolver: XCTestCase {
         return "\(lhs?.description ?? "nil") is not equal to \(rhs?.description ?? "nil")."
     }
 
+    ///
+    ///
+    /// Tests
+    ///
+    ///
+    func testLinearDiophatineEquationSolver() {
+        // ax + by = c
+        typealias CaseType = (a: BigInt, b: BigInt, c: BigInt, solution: LinearDiophatineSolution?)
+    
+        
+        let cases: [CaseType] = [
+            (258, 147, 369, LinearDiophatineSolution(coefficients: Point<BigInt>(x: 49, y: 86), base_solution: Point<BigInt>(x: 492, y: -861))),
+        ]
+        
+        for c in cases {
+            let sol = solveLinearDiophatineEquation(ax: c.a, by: c.b, c: c.c)
+            XCTAssertEqual(sol, c.solution, "solveLinearDiophatineEquation(ax: \(c.a), by: \(c.b), c: \(c.c)) failed")
+        }
+    }
+    
     func testSquareQuadraticCongruencesWithOddPrimeModulus() {
         typealias CaseType = (n:BigInt,prime:BigInt,solution:Set<Int>?)
         

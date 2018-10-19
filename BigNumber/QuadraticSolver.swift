@@ -69,6 +69,114 @@ public struct QuadraticCongruenceSolution: CustomStringConvertible {
     }
 }
 
+public struct LinearDiophatineSolution: CustomStringConvertible, Equatable {
+    public let base_solution: Point<BigInt>
+    public let solutions_linear_coefficient: Point<BigInt>
+    
+    public init(coefficients: Point<BigInt>, base_solution: Point<BigInt>) {
+        self.base_solution = base_solution
+        self.solutions_linear_coefficient = coefficients
+    }
+    
+    // (stop, x, y, r) -> ()
+    func enumerateSolutions(_ handler: ((inout Bool, BigInt, BigInt, Int)->())) {
+        var stop = false
+        let x = BigInt(self.base_solution.x)
+        let y = BigInt(self.base_solution.y)
+        var r = 0
+        
+        // base solution
+        handler(&stop, x, y, r)
+        
+        while !stop {
+            r += 1
+            
+            handler(&stop,
+                    x - r*self.solutions_linear_coefficient.x,
+                    y + r*self.solutions_linear_coefficient.y,
+                    r)
+        }
+    }
+    
+    public var description: String {
+        return "[coeffs: \(self.solutions_linear_coefficient), const: \(self.base_solution)]"
+    }
+}
+
+/**
+ Solves for integer solutions of an equation of the form:
+    ```
+    ax + by = c
+    ```
+ Integer solves only exist if and only if c is a multiple of GCD(a,b).  It uses the Extended Euclidean Algorithm to first find `s` and `t` in the equation:
+    ```
+    a(ks) + b(kt) = k * GCD(a,b)
+    ```
+ Thus the base solution is `x = ks` and `y = kt`, where `k = c / GCD(a,b)`.  All the other solutions can be found by subtracting two solutions (x,y) and (x_0, y_0). Which gives the recurrances:
+    ```
+    y = y_0 + r (a / GCD(a,b))
+    x = x_0 - r (b / GCD(a,b))
+    ```
+ 
+ References:
+ [Explanation](https://math.stackexchange.com/a/20727)
+ 
+ - Preconditions:
+    - A, B, and C do not equal 0
+ 
+ - Returns: A LinearDiophatineSolution that represents all solutions
+ */
+public func solveLinearDiophatineEquation(ax: BigInt, by: BigInt, c: BigInt) -> LinearDiophatineSolution? {
+    
+    let gcd = MPZ_Pointer.allocate(capacity: 1)
+    let s = MPZ_Pointer.allocate(capacity: 1)
+    let t = MPZ_Pointer.allocate(capacity: 1)
+    let k = MPZ_Pointer.allocate(capacity: 1)
+    
+    let vars = [gcd,s,t,k]
+    for v in vars {
+        v.initialize(to: mpz_t())
+        __gmpz_init(v)
+    }
+    
+    defer {
+        for v in vars {
+            __gmpz_clear(v)
+            v.deinitialize(count: 1)
+            v.deallocate()
+        }
+    }
+    
+    
+    /// find bezout coeffiecents
+    /// a*s + b*t = gcd
+    __gmpz_gcdext(gcd, s, t, &ax.integer, &by.integer)
+    
+    // check is c is multiple of gcd(a,b)
+    guard __gmpz_divisible_p(&c.integer, gcd) != 0 else {
+        return nil
+    }
+    
+    // find k
+    __gmpz_divexact(k, &c.integer, gcd)
+    
+    // root solution
+    let sol_x = BigInt()
+    let sol_y = BigInt()
+    
+    __gmpz_mul(&sol_x.integer, k, s)
+    __gmpz_mul(&sol_y.integer, k, t)
+    
+    // coeffiecents
+    let coeff_x = BigInt()
+    let coeff_y = BigInt()
+
+    __gmpz_divexact(&coeff_x.integer, &by.integer, gcd)
+    __gmpz_divexact(&coeff_y.integer, &ax.integer, gcd)
+    
+    return LinearDiophatineSolution(coefficients: Point<BigInt>(x: coeff_x,y: coeff_y), base_solution: Point<BigInt>(x: sol_x,y: sol_y))
+}
+
 /**
  
  */

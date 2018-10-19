@@ -27,7 +27,7 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     //
     // ivars
     //
-    internal var integer: mpz_t
+    public var integer: mpz_t
     
     //
     // Initalizers

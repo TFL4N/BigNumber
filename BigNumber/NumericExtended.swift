@@ -8,15 +8,15 @@
 
 import Foundation
 
-public protocol NumericExtended: Numeric {
+public protocol NumericExtended: Numeric, Comparable {
     static func /(lhs: Self, rhs: Self) -> Self
     static func /=(lhs: inout Self, rhs: Self)
 }
 
 public protocol SignedNumericExtended: NumericExtended, SignedNumeric {}
 
-//public extension Rational: NumericExtended {}
-//public extension BigInt: NumericExtended {}
-//public extension Int: NumericExtended {}
-//public extension UInt: NumericExtended {}
+extension Rational: NumericExtended {}
+extension BigInt: NumericExtended {}
+extension Int: NumericExtended {}
+extension UInt: NumericExtended {}
 

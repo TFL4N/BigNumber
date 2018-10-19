@@ -10,19 +10,38 @@ import Foundation
 import GMP
 
 
+public func quadraticRoots(ax2 a: BigFloat, bx b: BigFloat, c: BigFloat) -> (BigFloat,BigFloat)? {
+    let d = b*b - 4*a*c
+    
+    guard d >= 0 else {
+        return nil
+    }
+    
+    let a_2 = 2*a
+    let ans_1 = -b + d
+    let ans_2 = -b - d
+    
+    return (ans_1/a_2, ans_2/a_2)
+}
+
 /**
  Finds the root of a function in the interval (a, b).  It does so iteratively, by halving the interval, and convergenting on the root.
  
- - Precondition: F(a) and F(b) must have opposite signs, i.e. greater than and less than zero
+ - Precondition:
+    - `F(a)` and `F(b)` must have opposite signs, i.e. greater than and less than zero
+    - `a < b`
  - Parameters:
-    - a: The initial value for a in F(a)
-    - b: The initial value for b in F(b)
+    - a: The initial value for `a` in `F(a)`
+    - b: The initial value for `b` in `F(b)`
     - f: The function for which the root is being found
     - maxIterations: The maximum number of iterations before the routine gives up and returns null
     - tolerance: The maximum size of the interval for an acceptable answers
- - Returns: The root, if it exists in the interval (a,b)
+ - Returns: The root, if it exists in the interval `(a,b)`
  */
-public func findRootBisection(a a_0: BigFloat, b b_0: BigFloat, f: ((BigFloat)->BigFloat), maxIterations: Int = 100000, tolerance: BigFloat = 0.00001) -> BigFloat? {
+public func findRootBisection(a a_0: BigFloat, b b_0: BigFloat, maxIterations: Int = 100000, tolerance: BigFloat? = 0.00001, f: ((BigFloat)->BigFloat)) -> BigFloat? {
+    let has_tolerance = tolerance != nil
+    let tolerance = has_tolerance ? tolerance! : 0
+    
     var a: BigFloat = BigFloat(a_0)
     var b: BigFloat = BigFloat(b_0)
     var c: BigFloat = 0
@@ -103,6 +122,27 @@ public func divisorsSum(_ n: Int) -> Int {
     }
     
     return sum
+}
+
+public func factors(_ n: Int, handler: ((inout Bool, Int, Int)->Void)) {
+    var div = 1
+    var upper_bound = n
+    var stop = false
+    
+    handler(&stop,1,n)
+    
+    loop: while div < upper_bound - 1 && !stop {
+        div += 1
+        
+        if n % div == 0 {
+            upper_bound = n / div
+            handler(&stop, div, upper_bound)
+            
+            if upper_bound == div {
+                break loop
+            }
+        }
+    }
 }
 
 public func partitions(_ n: Int, cache: inout [Int:BigInt]) -> BigInt {
@@ -372,7 +412,7 @@ public func enumerateConvergents(continuedFraction: ContinuedFractionExpansion, 
     ````
     x^2 - Dy^2 = 1
     ````
- It does so by finding the continue fraction expansion of the quadratic surd *√N*.  Then iteratively tries to find the first integer solution.
+ It does so by finding the continue fraction expansion of the quadratic surd `√N`.  Then iteratively tries to find the first integer solution.
  
  Interestingly enough, Fermat was the first to extensively study this equation. And Euler erroneously attributed it to Pell
  

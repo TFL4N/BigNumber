@@ -9,6 +9,14 @@
 import Foundation
 import MPFR
 
+public func floor(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_floor(&result.float, &n.float)
+    
+    return result
+}
+
 public func sqrt(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     

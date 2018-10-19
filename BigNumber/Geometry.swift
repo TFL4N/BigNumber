@@ -8,32 +8,32 @@
 
 import Foundation
 
-public struct Point: CustomStringConvertible  {
-    public var x: Rational
-    public var y: Rational
+public struct Point<T : NumericExtended>: CustomStringConvertible, Equatable  {
+    public var x: T
+    public var y: T
     
     public var description: String {
         return "(x:\(self.x), y:\(self.y))"
     }
     
-    public init(x: Rational, y: Rational) {
+    public init(x: T, y: T) {
         self.x = x
         self.y = y
     }
 }
 
-public struct Line: CustomStringConvertible {
+public struct Line<T : NumericExtended>: CustomStringConvertible {
     //
     // ivars
     //
-    public let point_1: Point
-    public let point_2: Point
-    public let slope: Rational?
+    public let point_1: Point<T>
+    public let point_2: Point<T>
+    public let slope: T?
     
     //
     // Initializers
     //
-    public init(_ p1: Point, _ p2: Point) {
+    public init(_ p1: Point<T>, _ p2: Point<T>) {
         self.point_1 = p1
         self.point_2 = p2
         
@@ -47,7 +47,7 @@ public struct Line: CustomStringConvertible {
         }
     }
         
-    public init(x1: Rational, y1: Rational, x2: Rational, y2: Rational) {
+    public init(x1: T, y1: T, x2: T, y2: T) {
         self.init(Point(x: x1, y: y1), Point(x: x2, y: y2))
     }
     
@@ -58,7 +58,7 @@ public struct Line: CustomStringConvertible {
         return "{\(self.point_1), \(self.point_2)}"
     }
     
-    public func getY(x: Rational) -> Rational? {
+    public func getY(x: T) -> T? {
         if let m = self.slope {
             return m * (x - self.point_1.x) + self.point_1.y
         } else {
@@ -66,7 +66,7 @@ public struct Line: CustomStringConvertible {
         }
     }
     
-    public func getX(y: Rational) -> Rational? {
+    public func getX(y: T) -> T? {
         if self.slope != nil && self.slope! != 0 {
             return (y - self.point_1.y) / self.slope! + self.point_1.x
         } else {
@@ -74,11 +74,11 @@ public struct Line: CustomStringConvertible {
         }
     }
     
-    public func getYIntercept() -> Rational? {
+    public func getYIntercept() -> T? {
         return self.getY(x: 0)
     }
     
-    public func getXIntercept() -> Rational? {
+    public func getXIntercept() -> T? {
         return self.getX(y: 0)
     }
     
@@ -89,7 +89,7 @@ public struct Line: CustomStringConvertible {
         - includeEndpoints: Optional, should the comparison include the endpoints of the segment
      - Returns: A truth value
     */
-    public func doesSegmentContain(point: Point, includeEndpoints: Bool = true) -> Bool {
+    public func doesSegmentContain(point: Point<T>, includeEndpoints: Bool = true) -> Bool {
         let y_max = max(self.point_1.y, self.point_2.y)
         let y_min = min(self.point_1.y, self.point_2.y)
         let x_max = max(self.point_1.x, self.point_2.x)
@@ -113,12 +113,12 @@ public struct Line: CustomStringConvertible {
     }
 }
 
-public struct Triangle {
-    public var line_1: Line
-    public var line_2: Line
-    public var line_3: Line
+public struct Triangle<T : NumericExtended> {
+    public var line_1: Line<T>
+    public var line_2: Line<T>
+    public var line_3: Line<T>
     
-    public var lines: [Line] {
+    public var lines: [Line<T>] {
         return [line_1, line_2, line_3]
     }
     
@@ -161,7 +161,7 @@ public struct Circle {
     }
 }
 
-public func intersection(line_1: Line, line_2: Line) -> Point? {
+public func intersection<T : NumericExtended>(line_1: Line<T>, line_2: Line<T>) -> Point<T>? {
     let m_1 = line_1.slope
     let m_2 = line_2.slope
     
@@ -210,7 +210,8 @@ public func intersection(line_1: Line, line_2: Line) -> Point? {
         
         let temp1 = (x2*y1 - x1*y2)
         let temp2 = (x4*y3 - x3*y4)
-        let denom = (x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1)
+        var denom = (x2 - x1) * (y4 - y3)
+        denom -= (x4 - x3) * (y2 - y1)
         
         let x = (temp1*(x4 - x3) - temp2*(x2 - x1)) / denom
         let y = (temp1*(y4 - y3) - temp2*(y2 - y1)) / denom

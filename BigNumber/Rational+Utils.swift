@@ -8,6 +8,14 @@
 
 import GMP
 
+public func floor(_ n: Rational) -> BigInt {
+    let result = BigInt()
+    
+    __gmpz_fdiv_q(&result.integer, &n.numerator.integer, &n.denominator.integer)
+    
+    return result
+}
+
 extension Rational {
     public func add(toNumerator n: UInt, subtractFromDenominator d: UInt ) {
         __gmpz_add_ui(&self.rational._mp_num, &self.rational._mp_num, n)

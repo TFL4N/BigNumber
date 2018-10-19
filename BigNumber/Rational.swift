@@ -19,7 +19,7 @@ public final class Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     //
     // ivars
     //
-    internal var rational: mpq_t
+    public var rational: mpq_t
     
     public var numerator: BigInt {
         get {
@@ -671,5 +671,18 @@ extension Rational {
     public static func /=(lhs: inout Rational, rhs: UInt) {
         __gmpz_mul_ui(&lhs.rational._mp_den, &lhs.rational._mp_den, rhs)
         __gmpq_canonicalize(&lhs.rational)
+    }
+    
+    //
+    // Exponentation
+    //
+    public static func **(lhs: Rational, rhs: UInt) -> Rational {
+        let result = Rational()
+        
+        __gmpz_pow_ui(&result.rational._mp_num, &lhs.rational._mp_num, rhs)
+        __gmpz_pow_ui(&result.rational._mp_den, &lhs.rational._mp_den, rhs)
+        __gmpq_canonicalize(&result.rational)
+        
+        return result
     }
 }
