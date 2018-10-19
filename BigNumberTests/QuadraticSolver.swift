@@ -200,9 +200,9 @@ class QuadraticSolver: XCTestCase {
         
         //// a and p^n are not coprime, but a is not a multiple of p^n
         let non_coprime_cases: [CaseType] = [
-            (11*49, 7, 5, QuadraticCongruenceSolution(solutions: [917,1484], modulus: 2401, originalModulus: 7**5) ),
-            (11*49, 7, 4, QuadraticCongruenceSolution(solutions: [112,231], modulus: 343, originalModulus: 7**4)),
-            (11*49, 7, 3, QuadraticCongruenceSolution(solutions: [14,35], modulus: 49, originalModulus: 7**3) ),
+            (11*49, 7, 5, QuadraticCongruenceSolution(solutions: [917,1484], modulus: 2401, originalModulus: BigInt(7)**5) ),
+            (11*49, 7, 4, QuadraticCongruenceSolution(solutions: [112,231], modulus: 343, originalModulus: BigInt(7)**4)),
+            (11*49, 7, 3, QuadraticCongruenceSolution(solutions: [14,35], modulus: 49, originalModulus: BigInt(7)**3) ),
             (100, 2, 3, QuadraticCongruenceSolution(solutions: [2], modulus: 4, originalModulus: 8)),
             (100, 2, 5, QuadraticCongruenceSolution(solutions: [2,6], modulus: 8, originalModulus: 32)),
             (160, 2, 5, QuadraticCongruenceSolution(solutions: [0], modulus: 8, originalModulus: 32))
@@ -211,10 +211,10 @@ class QuadraticSolver: XCTestCase {
         
         //// a is a multiple of p^n
         let multiple_cases: [CaseType] = [
-            (25*2, 5, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 5, originalModulus: 5**2)),
-            (25*5, 5, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 5, originalModulus: 5**2)),
-            (169*5, 13, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 13, originalModulus: 13**2)),
-            (32*5, 2, 5, QuadraticCongruenceSolution(solutions: [0], modulus: 8, originalModulus: 2**5)),
+            (25*2, 5, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 5, originalModulus: BigInt(5)**2)),
+            (25*5, 5, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 5, originalModulus: BigInt(5)**2)),
+            (169*5, 13, 2, QuadraticCongruenceSolution(solutions: [0], modulus: 13, originalModulus: BigInt(13)**2)),
+            (32*5, 2, 5, QuadraticCongruenceSolution(solutions: [0], modulus: 8, originalModulus: BigInt(2)**5)),
         ]
         
         /// coprime, just uses specialized functions

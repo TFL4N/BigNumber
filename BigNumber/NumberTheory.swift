@@ -212,8 +212,8 @@ public func enumeratePartitions(handler: (Int,BigInt)->Bool){
 /**
 // https://en.wikipedia.org/wiki/Lagrange_polynomial
  */
-public func lagrangeBasisPolynomial(x_values: [Int], j: Array<Int>.Index) -> Polynomial {
-    var numerator: Polynomial = 1
+public func lagrangeBasisPolynomial(x_values: [Int], j: Array<Int>.Index) -> Polynomial<Rational> {
+    var numerator: Polynomial<Rational> = 1
     var denominator: Int = 1
     let x_j = x_values[j]
     
@@ -222,15 +222,15 @@ public func lagrangeBasisPolynomial(x_values: [Int], j: Array<Int>.Index) -> Pol
             continue
         }
         
-        numerator *= [-el,1]
+        numerator *= [Rational(-el),1]
         denominator *= x_j - el
     }
     
     return numerator / denominator
 }
 
-public func lagrangeBasisPolynomial(count: Int, j: Array<Int>.Index) -> Polynomial {
-    var numerator: Polynomial = 1
+public func lagrangeBasisPolynomial(count: Int, j: Array<Int>.Index) -> Polynomial<Rational> {
+    var numerator: Polynomial<Rational> = 1
     var denominator: Int = 1
     let x_j = j + 1
     
@@ -239,16 +239,16 @@ public func lagrangeBasisPolynomial(count: Int, j: Array<Int>.Index) -> Polynomi
             continue
         }
         
-        numerator *= [-x,1]
+        numerator *= [Rational(-x),1]
         denominator *= x_j - x
     }
     
     return numerator / denominator
 }
 
-public func lagrangePolynomial(y_values: [Int]) -> Polynomial {
+public func lagrangePolynomial(y_values: [Int]) -> Polynomial<Rational> {
     let count = y_values.count
-    var sum: Polynomial = 0
+    var sum: Polynomial<Rational> = 0
     
     
     for (j, el) in y_values.enumerated() {

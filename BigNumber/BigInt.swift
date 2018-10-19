@@ -587,6 +587,17 @@ extension BigInt {
         __gmpz_sub_ui(&lhs.integer, &lhs.integer, rhs)
     }
     
+    public static func -=(lhs: inout BigInt, rhs: Int) {
+        let uint = UInt(abs(rhs))
+        
+        if rhs.signum() == -1 {
+            // negative value
+            __gmpz_add_ui(&lhs.integer, &lhs.integer, uint)
+        } else {
+            __gmpz_sub_ui(&lhs.integer, &lhs.integer, uint)
+        }
+    }
+    
     //
     // Multipication
     //
