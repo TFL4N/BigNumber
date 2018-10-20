@@ -73,6 +73,12 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
         mpfr_set_q(&self.float, &value.rational, BigFloat.defaultRounding)
     }
     
+    public convenience init(_ numerator: Int, _ denominator: Int, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
+        self.init(precision: precision)
+        let value = Rational(numerator,denominator)
+        mpfr_set_q(&self.float, &value.rational, BigFloat.defaultRounding)
+    }
+    
     public convenience init(_ value: Double, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
         mpfr_set_d(&self.float, value, BigFloat.defaultRounding)
@@ -160,17 +166,13 @@ extension BigFloat: SignedNumeric {
     public typealias Magnitude = BigFloat
     
     public convenience init?<T>(exactly source: T) where T : BinaryInteger {
-        if let s = source as? BigFloat {
+        if let s = source as? Int {
+            self.init(s)
+            return
+        } else if let s = source as? UInt {
             self.init(s)
             return
         }
-//        else if let s = source as? Int {
-//            self.init(s)
-//            return
-//        } else if let s = source as? UInt {
-//            self.init(s)
-//            return
-//        }
         
         return nil
     }
@@ -432,6 +434,14 @@ extension BigFloat {
         mpfr_add(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
     }
     
+    public static func +=(lhs: inout BigFloat, rhs: Int) {
+        mpfr_add_si(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
+    }
+    
+    public static func +=(lhs: inout BigFloat, rhs: UInt) {
+        mpfr_add_ui(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
+    }
+    
     //
     // Subtraction
     //
@@ -443,8 +453,48 @@ extension BigFloat {
         return result
     }
     
+    public static func -(lhs: BigFloat, rhs: Int) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_sub_si(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func -(lhs: Int, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_sub_si(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func -(lhs: BigFloat, rhs: UInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_sub_ui(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func -(lhs: UInt, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_sub_ui(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
     public static func -=(lhs: inout BigFloat, rhs: BigFloat) {
         mpfr_sub(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
+    }
+    
+    public static func -=(lhs: inout BigFloat, rhs: Int) {
+        mpfr_sub_si(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
+    }
+    
+    public static func -=(lhs: inout BigFloat, rhs: UInt) {
+        mpfr_sub_ui(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
     }
     
     //
@@ -573,8 +623,48 @@ extension BigFloat {
         return result
     }
     
+    public static func /(lhs: BigFloat, rhs: Int) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_div_si(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func /(lhs: Int, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_div_si(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func /(lhs: BigFloat, rhs: UInt) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_div_ui(&result.float, &lhs.float, rhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
+    public static func /(lhs: UInt, rhs: BigFloat) -> BigFloat {
+        let result = BigFloat()
+        
+        mpfr_div_ui(&result.float, &rhs.float, lhs, BigFloat.defaultRounding)
+        
+        return result
+    }
+    
     public static func /=(lhs: inout BigFloat, rhs: BigFloat) {
         mpfr_div(&lhs.float, &lhs.float, &rhs.float, BigFloat.defaultRounding)
+    }
+    
+    public static func /=(lhs: inout BigFloat, rhs: Int) {
+        mpfr_div_si(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
+    }
+    
+    public static func /=(lhs: inout BigFloat, rhs: UInt) {
+        mpfr_div_ui(&lhs.float, &lhs.float, rhs, BigFloat.defaultRounding)
     }
     
     //
