@@ -15,7 +15,7 @@ public func approximateIntegral(min: BigFloat, max: BigFloat, n: UInt, function:
     
     let delta_x = (max - min) / intervals
     let constant = delta_x / 3
-    var x = BigFloat(min)
+    var x = min
     var y = function(x)
     var current_interval = 0
     var total: BigFloat = 0
@@ -105,8 +105,8 @@ public func findRootBisection(a a_0: BigFloat, b b_0: BigFloat, maxIterations: I
     let has_tolerance = tolerance != nil
     let tolerance = has_tolerance ? tolerance! : 0
     
-    var a: BigFloat = BigFloat(a_0)
-    var b: BigFloat = BigFloat(b_0)
+    var a: BigFloat = a_0
+    var b: BigFloat = b_0
     var c: BigFloat = 0
     
     let f_a_sign = f(a) > 0

@@ -12,7 +12,7 @@ import MPFR
 public func floor(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_floor(&result.float, &n.float)
+    mpfr_floor(&result.float_impl.float, &n.float_impl.float)
     
     return result
 }
@@ -20,7 +20,7 @@ public func floor(_ n: BigFloat) -> BigFloat {
 public func sqrt(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_sqrt(&result.float, &n.float, BigFloat.defaultRounding)
+    mpfr_sqrt(&result.float_impl.float, &n.float_impl.float, BigFloat.defaultRounding)
     
     return result
 }
@@ -28,7 +28,7 @@ public func sqrt(_ n: BigFloat) -> BigFloat {
 public func sin(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_sin(&result.float, &n.float, BigFloat.defaultRounding)
+    mpfr_sin(&result.float_impl.float, &n.float_impl.float, BigFloat.defaultRounding)
     
     return result
 }
@@ -36,7 +36,7 @@ public func sin(_ n: BigFloat) -> BigFloat {
 public func cos(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_cos(&result.float, &n.float, BigFloat.defaultRounding)
+    mpfr_cos(&result.float_impl.float, &n.float_impl.float, BigFloat.defaultRounding)
     
     return result
 }
@@ -44,7 +44,7 @@ public func cos(_ n: BigFloat) -> BigFloat {
 public func tan(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_tan(&result.float, &n.float, BigFloat.defaultRounding)
+    mpfr_tan(&result.float_impl.float, &n.float_impl.float, BigFloat.defaultRounding)
     
     return result
 }
@@ -52,7 +52,7 @@ public func tan(_ n: BigFloat) -> BigFloat {
 public func asin(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_asin(&result.float, &n.float, BigFloat.defaultRounding)
+    mpfr_asin(&result.float_impl.float, &n.float_impl.float, BigFloat.defaultRounding)
     
     return result
 }
@@ -60,7 +60,7 @@ public func asin(_ n: BigFloat) -> BigFloat {
 public func acos(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_acos(&result.float, &n.float, BigFloat.defaultRounding)
+    mpfr_acos(&result.float_impl.float, &n.float_impl.float, BigFloat.defaultRounding)
     
     return result
 }
@@ -68,7 +68,7 @@ public func acos(_ n: BigFloat) -> BigFloat {
 public func atan(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     
-    mpfr_atan(&result.float, &n.float, BigFloat.defaultRounding)
+    mpfr_atan(&result.float_impl.float, &n.float_impl.float, BigFloat.defaultRounding)
     
     return result
 }

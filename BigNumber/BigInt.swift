@@ -46,6 +46,11 @@ internal final class BigIntImpl {
     // deinit
     //
     deinit {
+        if let pointer = self.integer_ptr_store {
+            pointer.deinitialize(count: 1)
+            pointer.deallocate()
+        }
+        
         __gmpz_clear(&self.integer)
     }
     

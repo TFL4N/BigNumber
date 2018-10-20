@@ -36,6 +36,11 @@ internal final class RationalImpl {
     // deinit
     //
     deinit {
+        if let pointer = self.rational_ptr_store {
+            pointer.deinitialize(count: 1)
+            pointer.deallocate()
+        }
+        
         __gmpq_clear(&self.rational)
     }
     

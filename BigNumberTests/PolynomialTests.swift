@@ -118,9 +118,9 @@ class PolynomialTests: XCTestCase {
 //            getBezierPolynomial(p0: 0, p1: BigFloat(v), p2: 1, p3: 1)
         
         let new_y: Polynomial<BigFloat> =
-            getBezierPolynomial(p0: 1, p1: 1, p2: BigFloat(v), p3: 0)
+            getBezierPolynomial(p0: 1, p1: 1, p2: v, p3: 0)
         let new_x: Polynomial<BigFloat> =
-            getBezierPolynomial(p0: 0, p1: BigFloat(v), p2: 1, p3: 1)
+            getBezierPolynomial(p0: 0, p1: v, p2: 1, p3: 1)
 
         let new_x_dt = new_x.derivative()
         let new_y_dt = new_y.derivative()
