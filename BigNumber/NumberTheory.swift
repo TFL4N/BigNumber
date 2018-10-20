@@ -10,12 +10,75 @@ import Foundation
 import GMP
 
 
+public func approximateIntegral(min: BigFloat, max: BigFloat, n: UInt, function: (BigFloat)->BigFloat) -> BigFloat {
+    let intervals = n % 2 == 0 ? n : n + 1
+    
+    let delta_x = (max - min) / intervals
+    let constant = delta_x / 3
+    var x = BigFloat(min)
+    var y = function(x)
+    var current_interval = 0
+    var total: BigFloat = 0
+    while current_interval < intervals {
+        /// (dx/3) [f(x0) + 4f(x1) + f(x2)]
+        /////////////
+        
+        /// f(x0)
+        var interval_total = y
+        
+        x += delta_x
+        current_interval += 1
+        
+        /// 4*f(x1)
+        y = function(x)
+        interval_total += 4 * y
+        
+        x += delta_x
+        current_interval += 1
+        
+        /// f(x2)
+        y = function(x)
+        interval_total += y
+        
+        /// (dx/3) [f(x0) + 4f(x1) + f(x2)]
+        total += constant * interval_total
+    }
+    
+    return total
+}
+
+public func fastExponentation<T:Numeric>(_ n: T, _ exponent: UInt) -> T {
+    if exponent == 0 {
+        return 1
+    }
+    
+    var exp = exponent
+    var y: T = 1
+    var x = n
+    
+    while exp > 1 {
+        if exp % 2 == UInt(0) {
+            x *= x
+            exp /= 2
+        } else {
+            y *= x
+            x *= x
+            
+            exp = (exp-1)/2
+        }
+    }
+    
+    return x*y
+}
+
 public func quadraticRoots(ax2 a: BigFloat, bx b: BigFloat, c: BigFloat) -> (BigFloat,BigFloat)? {
-    let d = b*b - 4*a*c
+    var d = b*b - 4*a*c
     
     guard d >= 0 else {
         return nil
     }
+    
+    d = sqrt(d)
     
     let a_2 = 2*a
     let ans_1 = -b + d
