@@ -18,9 +18,9 @@ public func floor(_ n: Rational) -> BigInt {
 
 extension Rational {
     public func add(toNumerator n: UInt, subtractFromDenominator d: UInt ) {
-        __gmpz_add_ui(&self.rational._mp_num, &self.rational._mp_num, n)
-        __gmpz_sub_ui(&self.rational._mp_den, &self.rational._mp_den, d)
-        __gmpq_canonicalize(&self.rational)
+        __gmpz_add_ui(&self.rational_impl.rational._mp_num, &self.rational_impl.rational._mp_num, n)
+        __gmpz_sub_ui(&self.rational_impl.rational._mp_den, &self.rational_impl.rational._mp_den, d)
+        __gmpq_canonicalize(&self.rational_impl.rational)
     }
     
     public func toFloatString(decimalPlaces: UInt = 10) -> String {

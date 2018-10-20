@@ -69,7 +69,7 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     
     public convenience init(_ rational: Rational) {
         self.init()
-        __gmpz_set_q(&self.integer, &rational.rational)
+        __gmpz_set_q(&self.integer, &rational.rational_impl.rational)
     }
     
     public required convenience init?(_ string: String) {
@@ -120,7 +120,7 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     }
     
     public final func set(_ rational: Rational) {
-        __gmpz_set_q(&self.integer, &rational.rational)
+        __gmpz_set_q(&self.integer, &rational.rational_impl.rational)
     }
     
     //

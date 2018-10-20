@@ -70,13 +70,13 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     
     public convenience init(_ value: Rational, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
-        mpfr_set_q(&self.float, &value.rational, BigFloat.defaultRounding)
+        mpfr_set_q(&self.float, &value.rational_impl.rational, BigFloat.defaultRounding)
     }
     
     public convenience init(_ numerator: Int, _ denominator: Int, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
         self.init(precision: precision)
         let value = Rational(numerator,denominator)
-        mpfr_set_q(&self.float, &value.rational, BigFloat.defaultRounding)
+        mpfr_set_q(&self.float, &value.rational_impl.rational, BigFloat.defaultRounding)
     }
     
     public convenience init(_ value: Double, precision: mpfr_prec_t = BigFloat.defaultPrecision) {
@@ -128,7 +128,7 @@ public final class BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLite
     }
     
     public final func set(_ value: Rational, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
-        mpfr_set_q(&self.float, &value.rational, rounding)
+        mpfr_set_q(&self.float, &value.rational_impl.rational, rounding)
     }
     
     public final func set(_ value: Double, rounding: mpfr_rnd_t = BigFloat.defaultRounding) {
@@ -243,7 +243,7 @@ extension BigFloat {
     public func toRational() -> Rational {
         let result = Rational()
         
-        mpfr_get_q(&result.rational, &self.float)
+        mpfr_get_q(&result.rational_impl.rational, &self.float)
         
         return result
     }
@@ -369,7 +369,7 @@ extension BigFloat {
     public static func +(lhs: BigFloat, rhs: Rational) -> BigFloat {
         let result = BigFloat()
         
-        mpfr_add_q(&result.float, &lhs.float, &rhs.rational, BigFloat.defaultRounding)
+        mpfr_add_q(&result.float, &lhs.float, &rhs.rational_impl.rational, BigFloat.defaultRounding)
         
         return result
     }
@@ -377,7 +377,7 @@ extension BigFloat {
     public static func +(lhs: Rational, rhs: BigFloat) -> BigFloat {
         let result = BigFloat()
         
-        mpfr_add_q(&result.float, &rhs.float, &lhs.rational, BigFloat.defaultRounding)
+        mpfr_add_q(&result.float, &rhs.float, &lhs.rational_impl.rational, BigFloat.defaultRounding)
         
         return result
     }
@@ -575,7 +575,7 @@ extension BigFloat {
     public static func *(lhs: BigFloat, rhs: Rational) -> BigFloat {
         let result = BigFloat()
         
-        mpfr_mul_q(&result.float, &lhs.float, &rhs.rational, BigFloat.defaultRounding)
+        mpfr_mul_q(&result.float, &lhs.float, &rhs.rational_impl.rational, BigFloat.defaultRounding)
         
         return result
     }
@@ -583,7 +583,7 @@ extension BigFloat {
     public static func *(lhs: Rational, rhs: BigFloat) -> BigFloat {
         let result = BigFloat()
         
-        mpfr_mul_q(&result.float, &rhs.float, &lhs.rational, BigFloat.defaultRounding)
+        mpfr_mul_q(&result.float, &rhs.float, &lhs.rational_impl.rational, BigFloat.defaultRounding)
         
         return result
     }
@@ -609,7 +609,7 @@ extension BigFloat {
     }
     
     public static func *=(lhs: inout BigFloat, rhs: Rational) {
-        mpfr_mul_q(&lhs.float, &lhs.float, &rhs.rational, BigFloat.defaultRounding)
+        mpfr_mul_q(&lhs.float, &lhs.float, &rhs.rational_impl.rational, BigFloat.defaultRounding)
     }
 
     //
