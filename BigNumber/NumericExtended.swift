@@ -39,6 +39,7 @@ public protocol IntegerArithmetic {
 
 extension Rational: IntegerArithmetic {}
 extension BigInt: IntegerArithmetic {}
+extension BigFloat: IntegerArithmetic {}
 
 //
 //
@@ -59,6 +60,8 @@ public protocol UnsignedIntegerArithmetic {
 
 extension Rational: UnsignedIntegerArithmetic {}
 extension BigInt: UnsignedIntegerArithmetic {}
+extension BigFloat: UnsignedIntegerArithmetic {}
+extension Polynomial: UnsignedIntegerArithmetic where Coefficient : UnsignedIntegerArithmetic {}
 
 //
 //

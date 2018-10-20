@@ -22,7 +22,9 @@ public struct Polynomial<Coefficient:SignedNumeric>: SignedNumeric, ExpressibleB
     
     // constants
     //////////////
-    private let default_value: Coefficient = Coefficient(exactly: 0)!
+    private var default_value: Coefficient {
+        return Coefficient(exactly: 0)!
+    }
     
     // ivars
     ///////////
@@ -57,20 +59,24 @@ public struct Polynomial<Coefficient:SignedNumeric>: SignedNumeric, ExpressibleB
         self.coefficients = values
     }
     
-    public init(integerLiteral value: Polynomial.IntegerLiteralType) {
-        self.coefficients = [0:Coefficient.init(integerLiteral: value)]
-    }
-    
-    public init(arrayLiteral elements: Polynomial.ArrayLiteralElement...) {
+    public init(_ values: [Polynomial.ArrayLiteralElement]) {
         var output = ElementsType()
         
         var index: UInt = 0
-        for el in elements {
+        for el in values {
             output[index] = el
             index += 1
         }
         
         self.coefficients = output
+    }
+    
+    public init(integerLiteral value: Polynomial.IntegerLiteralType) {
+        self.coefficients = [0:Coefficient.init(integerLiteral: value)]
+    }
+    
+    public init(arrayLiteral elements: Polynomial.ArrayLiteralElement...) {
+        self.init(elements)
     }
     
     public init(dictionaryLiteral elements: (Key, Value)...) {
@@ -144,12 +150,13 @@ public struct Polynomial<Coefficient:SignedNumeric>: SignedNumeric, ExpressibleB
         return output
     }
     
+
     public static func +=(lhs: inout Polynomial, rhs: Polynomial) {
         for (k,v) in rhs.coefficients {
             lhs.coefficients[k, default: lhs.default_value] += v
         }
     }
-    
+        
     public static func +=(lhs: inout Polynomial, rhs: Coefficient) {
         lhs.coefficients[0, default: lhs.default_value] += rhs
     }
@@ -199,6 +206,26 @@ public struct Polynomial<Coefficient:SignedNumeric>: SignedNumeric, ExpressibleB
         }
         
         return Polynomial(output)
+    }
+    
+    public static func *(lhs: Polynomial, rhs: Coefficient) -> Polynomial {
+        var output = Polynomial(lhs.coefficients)
+        
+        output.coefficients.forEach {
+            output.coefficients[$0.key]! *= rhs
+        }
+        
+        return output
+    }
+    
+    public static func *(lhs: Coefficient, rhs: Polynomial) -> Polynomial {
+        var output = Polynomial(rhs.coefficients)
+        
+        output.coefficients.forEach {
+            output.coefficients[$0.key]! *= lhs
+        }
+        
+        return output
     }
     
     public static func *=(lhs: inout Polynomial, rhs: Polynomial) {
@@ -422,14 +449,49 @@ public extension Polynomial where Coefficient : UnsignedIntegerArithmetic {
     }
 }
 
-public extension Polynomial where Coefficient : ExponentialArthmetic {
-        public func getValue(_ x: Coefficient) -> Coefficient {
-            var output: Coefficient = 0
-    
-            for (k, v) in self.coefficients {
-                output += v * (x ** k)
-            }
-    
-            return output
+public extension Polynomial where Coefficient : UnsignedIntegerArithmetic {
+    public func getValue(_ x: Coefficient) -> Coefficient {
+        var output: Coefficient = 0
+        
+        for (k, v) in self.coefficients {
+            output += v * fastExponentation(x,k)
         }
+        
+        return output
+    }
+    
+    public func derivative() -> Polynomial {
+        var output = Polynomial()
+        
+        for (k,v) in self.coefficients {
+            if k == 0 {
+                continue
+            }
+            
+            output.coefficients[k-1, default: output.default_value] = v * k
+        }
+        
+        return output
+    }
+    
+    public func integral() -> Polynomial {
+        var output = Polynomial()
+        
+        for (k,v) in self.coefficients {
+            if k == 0 {
+                continue
+            }
+            
+            let new_k = k+1
+            output.coefficients[new_k] = v / new_k
+        }
+        
+        return output
+    }
+    
+    public func integral(min: Coefficient, max: Coefficient) -> Coefficient {
+        let integral_result = self.integral()
+        
+        return integral_result.getValue(max) - integral_result.getValue(min)
+    }
 }
