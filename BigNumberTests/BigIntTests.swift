@@ -370,12 +370,12 @@ class BigIntTests: XCTestCase {
         XCTAssertEqual("\(result)", temp.toString(), "+(lhs: UInt, rhs: BigInt) failed")
         
         // +=(lhs: inout BigInt, rhs: BigInt)
-        temp = BigInt(bint1)
+        temp = bint1
         temp += bint2
         XCTAssertEqual("\(result)", temp.toString(), "+=(lhs: inout BigInt, rhs: BigInt) failed")
         
         // +=(lhs: inout BigInt, rhs: UInt)
-        temp = BigInt(bint1)
+        temp = bint1
         temp += uint2
         XCTAssertEqual("\(result)", temp.toString(), "+=(lhs: inout BigInt, rhs: UInt) failed")
     }
@@ -426,12 +426,12 @@ class BigIntTests: XCTestCase {
         XCTAssertEqual("\(result)", temp.toString(), "-(lhs: UInt, rhs: BigInt) failed")
         
         // -=(lhs: inout BigInt, rhs: BigInt)
-        temp = BigInt(bint2)
+        temp = bint2
         temp -= bint1
         XCTAssertEqual("\(result)", temp.toString(), "-=(lhs: inout BigInt, rhs: BigInt) failed")
         
         // -=(lhs: inout BigInt, rhs: UInt)
-        temp = BigInt(bint2)
+        temp = bint2
         temp -= uint1
         XCTAssertEqual("\(result)", temp.toString(), "-=(lhs: inout BigInt, rhs: UInt) failed")
     }
@@ -491,17 +491,17 @@ class BigIntTests: XCTestCase {
         XCTAssertEqual(result, temp.toString(), "*(lhs: UInt, rhs: BigInt) failed")
         
         // *=(lhs: inout BigInt, rhs: BigInt)
-        temp = BigInt(bint1)
+        temp = bint1
         temp *= bint2
         XCTAssertEqual(result, temp.toString(), "*=(lhs: inout BigInt, rhs: BigInt) failed")
         
         // *=(lhs: inout BigInt, rhs: Int)
-        temp = BigInt(bint1)
+        temp = bint1
         temp *= int2
         XCTAssertEqual(result, temp.toString(), "*=(lhs: inout BigInt, rhs: Int) failed")
         
         // *=(lhs: inout BigInt, rhs: UInt)
-        temp = BigInt(bint1)
+        temp = bint1
         temp *= uint2
         XCTAssertEqual(result, temp.toString(), "*=(lhs: inout BigInt, rhs: UInt) failed")
     }

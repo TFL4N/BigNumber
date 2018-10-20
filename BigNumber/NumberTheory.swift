@@ -237,7 +237,7 @@ public func partitions(_ n: Int) -> BigInt {
 public func binomialCoefficients(n: UInt, k: UInt) -> BigInt {
     let result = BigInt()
     
-    __gmpz_bin_uiui(&result.integer, n, k)
+    __gmpz_bin_uiui(&result.integer_impl.integer, n, k)
     
     return result
 }
@@ -335,7 +335,7 @@ public func lagrangePolynomial(y_values: [Int]) -> Polynomial<Rational> {
  - returns: The number of relatively primes numbers less than or equal to n
  */
 public func eulersTotient(_ n: BigInt) -> BigInt {
-    var numerator = BigInt(n)
+    var numerator = n
     var denominator: BigInt = 1
     for p in n.primeFactorsUnique() {
         numerator *= p - 1
@@ -498,8 +498,8 @@ public func findSmallestSolutionOfPellsEquation(D: UInt) -> (x: BigInt, y: BigIn
     var q0 = BigInt(1)
     
     var a1 = BigInt(expansion[0])
-    var p1 = BigInt(a0 * a1 + 1)
-    var q1 = BigInt(a1)
+    var p1 = a0 * a1 + 1
+    var q1 = a1
     
     let r = expansion.count
     if (r == 1 || r == 2) && p1*p1 - D*q1*q1 == 1 {
@@ -548,7 +548,7 @@ public func combinations(from n: UInt, choose r: UInt) -> BigInt {
 }
 
 public func numberOfPrimes(min: UInt, max: UInt) -> UInt {
-    let num = BigInt(min)
+    var num = BigInt(min)
     var count: UInt = num.isPrime() != .notPrime ? 1 : 0
     while num <= max {
         count += 1

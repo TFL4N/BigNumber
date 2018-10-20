@@ -81,8 +81,8 @@ public struct LinearDiophatineSolution: CustomStringConvertible, Equatable {
     // (stop, x, y, r) -> ()
     func enumerateSolutions(_ handler: ((inout Bool, BigInt, BigInt, Int)->())) {
         var stop = false
-        let x = BigInt(self.base_solution.x)
-        let y = BigInt(self.base_solution.y)
+        let x = self.base_solution.x
+        let y = self.base_solution.y
         var r = 0
         
         // base solution
@@ -150,29 +150,29 @@ public func solveLinearDiophatineEquation(ax: BigInt, by: BigInt, c: BigInt) -> 
     
     /// find bezout coeffiecents
     /// a*s + b*t = gcd
-    __gmpz_gcdext(gcd, s, t, &ax.integer, &by.integer)
+    __gmpz_gcdext(gcd, s, t, &ax.integer_impl.integer, &by.integer_impl.integer)
     
     // check is c is multiple of gcd(a,b)
-    guard __gmpz_divisible_p(&c.integer, gcd) != 0 else {
+    guard __gmpz_divisible_p(&c.integer_impl.integer, gcd) != 0 else {
         return nil
     }
     
     // find k
-    __gmpz_divexact(k, &c.integer, gcd)
+    __gmpz_divexact(k, &c.integer_impl.integer, gcd)
     
     // root solution
     let sol_x = BigInt()
     let sol_y = BigInt()
     
-    __gmpz_mul(&sol_x.integer, k, s)
-    __gmpz_mul(&sol_y.integer, k, t)
+    __gmpz_mul(&sol_x.integer_impl.integer, k, s)
+    __gmpz_mul(&sol_y.integer_impl.integer, k, t)
     
     // coeffiecents
     let coeff_x = BigInt()
     let coeff_y = BigInt()
 
-    __gmpz_divexact(&coeff_x.integer, &by.integer, gcd)
-    __gmpz_divexact(&coeff_y.integer, &ax.integer, gcd)
+    __gmpz_divexact(&coeff_x.integer_impl.integer, &by.integer_impl.integer, gcd)
+    __gmpz_divexact(&coeff_y.integer_impl.integer, &ax.integer_impl.integer, gcd)
     
     return LinearDiophatineSolution(coefficients: Point<BigInt>(x: coeff_x,y: coeff_y), base_solution: Point<BigInt>(x: sol_x,y: sol_y))
 }
@@ -215,7 +215,7 @@ public func solveQuadraticCongruence(a: BigInt, modulus m: BigInt) -> QuadraticC
         print("All anwers are reduced moduli")
         return QuadraticCongruenceSolution(solutions: [0],
                                            modulus: m/reduced_modulus,
-                                           originalModulus: BigInt(m))
+                                           originalModulus: m)
     }
     
 //    answers[0] = QuadraticCongruenceSolution(solutions: [2,6], modulus: 8, originalModulus: 32)
@@ -234,7 +234,7 @@ public func solveQuadraticCongruence(a: BigInt, modulus m: BigInt) -> QuadraticC
         /// the first answer is non reduced and even
         let n = prime_factors[0].1
         var r: UInt = 0
-        var new_a = BigInt(a)
+        var new_a = a
         repeat {
             new_a /= 2
             r += 1
@@ -272,19 +272,19 @@ public func solveQuadraticCongruence(a: BigInt, modulus m: BigInt) -> QuadraticC
         if congruence.modulus.isOdd() {
             return QuadraticCongruenceSolution(solutions: solutions,
                                                modulus: result_modulus,
-                                               originalModulus: BigInt(m))
+                                               originalModulus: m)
         } else {
             /// answer modulus is even, so must be 2^n
             if even_exp == 1 { // 2^1
                 // theres only one solution
                 return QuadraticCongruenceSolution(solutions: [solution],
                                                    modulus: result_modulus,
-                                                   originalModulus: BigInt(m))
+                                                   originalModulus: m)
             } else if even_exp == 2 { // 2^2
                 // there are two solutions
                 return QuadraticCongruenceSolution(solutions: solutions,
                                                    modulus: result_modulus,
-                                                   originalModulus: BigInt(m))
+                                                   originalModulus: m)
             } else { // > 2^3
                 // there are four solutions
                 var other_solution = (congruence.solutions[0] * congruence.modulus) / 2
@@ -297,7 +297,7 @@ public func solveQuadraticCongruence(a: BigInt, modulus m: BigInt) -> QuadraticC
                 
                 return QuadraticCongruenceSolution(solutions: solutions + [other_solution, result_modulus - other_solution],
                                                    modulus: result_modulus,
-                                                   originalModulus: BigInt(m))
+                                                   originalModulus: m)
             }
         }
     }
@@ -337,7 +337,7 @@ public func solveQuadraticCongruence(a: BigInt, modulus m: BigInt) -> QuadraticC
         
         return QuadraticCongruenceSolution(solutions: solutions,
                                            modulus: result_modulus,
-                                           originalModulus: BigInt(m))
+                                           originalModulus: m)
     } else {
         /// modulus is even
         // move first answer (the even answer to the back)
@@ -411,7 +411,7 @@ public func solveQuadraticCongruence(a: BigInt, modulus m: BigInt) -> QuadraticC
         
         print(solutions)
         
-        return QuadraticCongruenceSolution(solutions: solutions, modulus: result_modulus, originalModulus: BigInt(m))
+        return QuadraticCongruenceSolution(solutions: solutions, modulus: result_modulus, originalModulus: m)
     }
 }
 
@@ -452,7 +452,7 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
             if let solutions = solveQuadraticCongruence(a: a, evenPrimePowerModulus: n) {
                 return QuadraticCongruenceSolution(solutions: solutions.solutions,
                                                    modulus: solutions.modulus,
-                                                   originalModulus: BigInt(modulus))
+                                                   originalModulus: modulus)
             } else {
                 return nil
             }
@@ -460,7 +460,7 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
             if let solutions = solveQuadraticCongruence(a: a, oddPrimePowerModulus: p, exponent: n) {
                 return QuadraticCongruenceSolution(solutions: solutions,
                                                    modulus: modulus,
-                                                   originalModulus: BigInt(modulus))
+                                                   originalModulus: modulus)
             } else {
                 return nil
             }
@@ -477,13 +477,13 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
             // x = 0 (mod p^m)
             return QuadraticCongruenceSolution(solutions: [0],
                                                modulus: p**(n/2),
-                                               originalModulus: BigInt(modulus))
+                                               originalModulus: modulus)
         } else {
             // n = 2m+1
             // x = 0 (mod p^(m+1))
             return QuadraticCongruenceSolution(solutions: [0],
                                                modulus: p**(1+n/2),
-                                               originalModulus: BigInt(modulus))
+                                               originalModulus: modulus)
         }
     }
     
@@ -491,7 +491,7 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
     // 'a' is form the k*p^r
     // find r
     var r: UInt = 0
-    var new_a = BigInt(a)
+    var new_a = a
     repeat {
         new_a /= p
         r += 1
@@ -544,7 +544,7 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
                 let solutions = quad_solutions.solutions.map {$0 * p_inverse}
                 return QuadraticCongruenceSolution(solutions: solutions,
                                                    modulus:new_modulus,
-                                                   originalModulus: BigInt(modulus))
+                                                   originalModulus: modulus)
             } else {
                 return nil
             }
@@ -554,7 +554,7 @@ public func solveQuadraticCongruence(a: BigInt, primePowerModulus p: BigInt, exp
                 solutions = solutions.map {$0 * p_inverse}
                 return QuadraticCongruenceSolution(solutions: solutions,
                                                    modulus: p ** (n-m),
-                                                   originalModulus: BigInt(modulus))
+                                                   originalModulus: modulus)
             } else {
                 return nil
             }
@@ -603,7 +603,7 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimePowerModulus p: BigInt, 
     if n > 1 {
         for k in 2...n {
             temp = 2 * base_solution
-            __gmpz_invert(&inverse.integer, &temp.integer, &modulus.integer)
+            __gmpz_invert(&inverse.integer_impl.integer, &temp.integer_impl.integer, &modulus.integer_impl.integer)
             inverse %= p
             
             base_solution = base_solution - inverse*(base_solution*base_solution - a)
@@ -726,16 +726,16 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimeModulus p: BigInt) -> [B
     }
     
     /// check if n is a quadratic residue
-    if __gmpz_jacobi(&a.integer, &p.integer) != 1 {
+    if __gmpz_jacobi(&a.integer_impl.integer, &p.integer_impl.integer) != 1 {
         return nil
     }
     
     // check if p is of from 4k + 3, in other words p = 3 (mod 4)
-    if __gmpz_tstbit(&p.integer, 1) == 1 {
-        let result = BigInt(p) + 1
-        withUnsafeMutablePointer(to: &result.integer) { (r) in
+    if __gmpz_tstbit(&p.integer_impl.integer, 1) == 1 {
+        let result = p + 1
+        withUnsafeMutablePointer(to: &result.integer_impl.integer) { (r) in
             __gmpz_fdiv_q_2exp(r, r, 2)                  // r = r / 4
-            __gmpz_powm(r, &a.integer, r, &p.integer)    // r = n^r (mod p)
+            __gmpz_powm(r, &a.integer_impl.integer, r, &p.integer_impl.integer)    // r = n^r (mod p)
         }
         
         // result ==  n ^ ((p+1) / 4) (mod p)
@@ -762,7 +762,7 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimeModulus p: BigInt) -> [B
     }
     
     /// factor out powers of 2
-    __gmpz_set(q, &p.integer) // q = p
+    __gmpz_set(q, &p.integer_impl.integer) // q = p
     __gmpz_sub_ui(q, q, 1)   // q = p - 1
     
     var s: UInt = 0
@@ -773,34 +773,34 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimeModulus p: BigInt) -> [B
     
     // Search for a non-residue mod p
     __gmpz_set_ui(z, 2)
-    while __gmpz_jacobi(z, &p.integer) != -1 {
+    while __gmpz_jacobi(z, &p.integer_impl.integer) != -1 {
         __gmpz_add_ui(z, z, 1)
     }
     
     // w = w^q (mod p)
-    __gmpz_powm(z, z, q, &p.integer)
+    __gmpz_powm(z, z, q, &p.integer_impl.integer)
     
     // q = n^((q+1)/2) (mod p)
     __gmpz_add_ui(q, q, 1)                     // q = q + 1
     __gmpz_fdiv_q_2exp(q, q, 1)                // q = q / 2
-    __gmpz_powm(q, &a.integer, q, &p.integer)  // q = n^q (mod p)
+    __gmpz_powm(q, &a.integer_impl.integer, q, &p.integer_impl.integer)  // q = n^q (mod p)
     
     /// loop
     var i: UInt = 0
-    __gmpz_invert(inverse_n, &a.integer, &p.integer)
+    __gmpz_invert(inverse_n, &a.integer_impl.integer, &p.integer_impl.integer)
     main: while true {
         // y = q^2 (mod p)
-        __gmpz_powm_ui(y, q, 2, &p.integer)
+        __gmpz_powm_ui(y, q, 2, &p.integer_impl.integer)
         
         // y = y * n^-1 (mod p)
         __gmpz_mul(y, y, inverse_n)
-        __gmpz_mod(y, y, &p.integer)
+        __gmpz_mod(y, y, &p.integer_impl.integer)
         
         // loop
         i = 0
         while __gmpz_cmp_ui(y, 1) != 0 {
             i += 1
-            __gmpz_powm_ui(y, y, 2, &p.integer) // y = y ^ 2 (mod p)
+            __gmpz_powm_ui(y, y, 2, &p.integer_impl.integer) // y = y ^ 2 (mod p)
         }
         
         if i == 0 {
@@ -812,10 +812,10 @@ public func solveQuadraticCongruence(a: BigInt, oddPrimeModulus p: BigInt) -> [B
         if s-1 == UInt(1) {
             __gmpz_mul(q, q, z)
         } else {
-            __gmpz_powm_ui(y, z, 1 << (s-i-1), &p.integer)
+            __gmpz_powm_ui(y, z, 1 << (s-i-1), &p.integer_impl.integer)
             __gmpz_mul(q, q, y)
         }
-        __gmpz_mod(q, q, &p.integer)
+        __gmpz_mod(q, q, &p.integer_impl.integer)
     }
     
     let result = BigInt(q)
@@ -861,12 +861,12 @@ public func chineseRemainderTheorem(congruences: [Congruence]) -> Congruence? {
     }
     
     let first_congruence = congruences.first!
-    __gmpz_set(total_x, &first_congruence.a.integer)
-    __gmpz_set(total_mod, &first_congruence.modulus.integer)
+    __gmpz_set(total_x, &first_congruence.a.integer_impl.integer)
+    __gmpz_set(total_mod, &first_congruence.modulus.integer_impl.integer)
     
     for congruence in congruences.dropFirst() {
         // next congruence
-        if let solution = chineseRemainderTheorem(a_1: total_x, a_2: &congruence.a.integer, m_1: total_mod, m_2: &congruence.modulus.integer) {
+        if let solution = chineseRemainderTheorem(a_1: total_x, a_2: &congruence.a.integer_impl.integer, m_1: total_mod, m_2: &congruence.modulus.integer_impl.integer) {
             // update the current solution
             __gmpz_set(total_x, solution.solution)
             __gmpz_set(total_mod, solution.moduli_lcm)
@@ -886,7 +886,7 @@ public func chineseRemainderTheorem(congruences: [Congruence]) -> Congruence? {
         }
     }
     
-    return Congruence(BigInt(total_x),modulus: BigInt(total_mod))
+    return Congruence(BigInt(total_x), modulus: BigInt(total_mod))
     
 }
 
@@ -931,25 +931,25 @@ public func chineseRemainderTheorem(withCoprimeCongruences congruences: [Congrue
     }
 
     let first_congruence = congruences.first!
-    __gmpz_set(total_x, &first_congruence.a.integer)
-    __gmpz_set(total_mod, &first_congruence.modulus.integer)
+    __gmpz_set(total_x, &first_congruence.a.integer_impl.integer)
+    __gmpz_set(total_mod, &first_congruence.modulus.integer_impl.integer)
 
     for congruence in congruences.dropFirst() {
         // temp =  m_0^(-1) * m_0 * x_1
-        __gmpz_invert(temp, total_mod, &congruence.modulus.integer)
+        __gmpz_invert(temp, total_mod, &congruence.modulus.integer_impl.integer)
         __gmpz_mul(temp, temp, total_mod)
-        __gmpz_mul(temp, temp, &congruence.a.integer)
+        __gmpz_mul(temp, temp, &congruence.a.integer_impl.integer)
 
         // temp_2 =  m_1^(-1) * m_1 * x_0
-        __gmpz_invert(temp_2, &congruence.modulus.integer, total_mod)
-        __gmpz_mul(temp_2, temp_2, &congruence.modulus.integer)
+        __gmpz_invert(temp_2, &congruence.modulus.integer_impl.integer, total_mod)
+        __gmpz_mul(temp_2, temp_2, &congruence.modulus.integer_impl.integer)
         __gmpz_mul(temp_2, temp_2, total_x)
 
         // temp = (m_0^(-1) * m_0 * x_1) + (m_1^(-1) * m_1 * x_0)
         __gmpz_add(temp, temp, temp_2)
 
         // get new modulus and solution
-        __gmpz_mul(total_mod, total_mod, &congruence.modulus.integer)
+        __gmpz_mul(total_mod, total_mod, &congruence.modulus.integer_impl.integer)
         __gmpz_mod(total_x, temp, total_mod)
     }
 
@@ -986,10 +986,10 @@ func chineseRemainderTheorem(_ c1: Congruence, _ c2: Congruence) -> Congruence? 
         }
     }
     
-    __gmpz_set(a_1, &c1.a.integer)
-    __gmpz_set(a_2, &c2.a.integer)
-    __gmpz_set(m_1, &c1.modulus.integer)
-    __gmpz_set(m_2, &c2.modulus.integer)
+    __gmpz_set(a_1, &c1.a.integer_impl.integer)
+    __gmpz_set(a_2, &c2.a.integer_impl.integer)
+    __gmpz_set(m_1, &c1.modulus.integer_impl.integer)
+    __gmpz_set(m_2, &c2.modulus.integer_impl.integer)
     
     if let solution = chineseRemainderTheorem(a_1: a_1, a_2: a_2, m_1: m_1, m_2: m_2) {
         let result = BigInt(solution.solution)
@@ -1099,12 +1099,12 @@ internal func chineseRemainderTheorem(a_1: MPZ_Pointer, a_2: MPZ_Pointer, m_1: M
 
 // Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
 func quadraticSolver(Ax2: BigInt, Bxy: BigInt, Cy2: BigInt, Dx: BigInt, Ey: BigInt, F: BigInt) {
-    var A = BigInt(Ax2)
-    var B = BigInt(Bxy)
-    var C = BigInt(Cy2)
-    var D = BigInt(Dx)
-    var E = BigInt(Ey)
-    var F = BigInt(F)
+    var A = Ax2
+    var B = Bxy
+    var C = Cy2
+    var D = Dx
+    var E = Ey
+    var F = F
     
     // if A == B == C == 0, then is linear Equation
     //

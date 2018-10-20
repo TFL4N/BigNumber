@@ -18,16 +18,21 @@ infix operator **= : PowerPrecedence
 //
 // BigInt
 //
-public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
-    //
-    // constants
-    //
-    public typealias IntegerLiteralType = Int
-
+internal final class BigIntImpl {
     //
     // ivars
     //
     public var integer: mpz_t
+    
+    private var integer_ptr_store: UnsafeMutablePointer<mpz_t>? = nil
+    public var integer_ptr: UnsafeMutablePointer<mpz_t> {
+        if self.integer_ptr_store == nil {
+            self.integer_ptr_store = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
+            self.integer_ptr_store!.initialize(to: self.integer)
+        }
+        
+        return self.integer_ptr_store!
+    }
     
     //
     // Initalizers
@@ -37,49 +42,84 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
         __gmpz_init(&self.integer)
     }
     
-    public required init(_ n: UnsafeMutablePointer<mpz_t>) {
-        self.integer = mpz_t()
-        __gmpz_init_set(&self.integer, n)
+    //
+    // deinit
+    //
+    deinit {
+        __gmpz_clear(&self.integer)
     }
     
-    public required init(integerLiteral value: BigInt.IntegerLiteralType) {
-        self.integer = mpz_t()
-        __gmpz_init_set_si(&self.integer, value)
+    //
+    // Copying
+    //
+    internal func copy() -> BigIntImpl {
+        let new_copy = BigIntImpl()
+        __gmpz_set(&new_copy.integer, &self.integer)
+        
+        return new_copy
     }
+}
 
-    public convenience init(_ integer: BigInt) {
-        self.init()
-        __gmpz_set(&self.integer, &integer.integer)
+
+public struct BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
+    //
+    // constants
+    //
+    public typealias IntegerLiteralType = Int
+
+    //
+    // ivars
+    //
+    internal var integer_impl: BigIntImpl
+    public var integer_ptr: UnsafeMutablePointer<mpz_t> {
+        return self.integer_impl.integer_ptr
     }
     
-    public convenience init(_ integer: UInt) {
-        self.init()
-        __gmpz_set_ui(&self.integer, integer)
+    //
+    // Initalizers
+    //
+    public init() {
+       self.integer_impl = BigIntImpl()
     }
     
-    public convenience init(_ integer: Int) {
-        self.init()
-        __gmpz_set_si(&self.integer, integer)
+    public init(_ n: UnsafeMutablePointer<mpz_t>) {
+        self.integer_impl = BigIntImpl()
+        __gmpz_init_set(&self.integer_impl.integer, n)
     }
     
-    public convenience init(_ double: Double) {
-        self.init()
-        __gmpz_set_d(&self.integer, double)
+    public init(integerLiteral value: BigInt.IntegerLiteralType) {
+        self.integer_impl = BigIntImpl()
+        __gmpz_init_set_si(&self.integer_impl.integer, value)
     }
     
-    public convenience init(_ rational: Rational) {
+    public init(_ integer: UInt) {
         self.init()
-        __gmpz_set_q(&self.integer, &rational.rational_impl.rational)
+        __gmpz_set_ui(&self.integer_impl.integer, integer)
     }
     
-    public required convenience init?(_ string: String) {
+    public init(_ integer: Int) {
+        self.init()
+        __gmpz_set_si(&self.integer_impl.integer, integer)
+    }
+    
+    public init(_ double: Double) {
+        self.init()
+        __gmpz_set_d(&self.integer_impl.integer, double)
+    }
+    
+    public init(_ rational: Rational) {
+        self.init()
+        __gmpz_set_q(&self.integer_impl.integer, &rational.rational_impl.rational)
+    }
+    
+    public init?(_ string: String) {
         self.init(string: string, base: 10)
     }
     
-    public convenience init?(string:String, base: Int32) {
+    public init?(string:String, base: Int32) {
         self.init()
         
-        let result = string.withCString { __gmpz_set_str(&self.integer, $0, base) }
+        let result = string.withCString { __gmpz_set_str(&self.integer_impl.integer, $0, base) }
         
         if result != 0 {
             return nil
@@ -87,10 +127,12 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     }
     
     //
-    // deinit
+    // Memory Management
     //
-    deinit {
-        __gmpz_clear(&self.integer)
+    private mutating func ensureUnique() {
+        if !isKnownUniquelyReferenced(&self.integer_impl) {
+            self.integer_impl = self.integer_impl.copy()
+        }
     }
     
     //
@@ -103,31 +145,41 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
     //
     // Assignments
     //
-    public final func set(_ integer: BigInt) {
-        __gmpz_set(&self.integer, &integer.integer)
+    public mutating func set(_ integer: BigInt) {
+        self.ensureUnique()
+        
+        __gmpz_set(&self.integer_impl.integer, &integer.integer_impl.integer)
     }
     
-    public final func set(_ integer: UInt) {
-        __gmpz_set_ui(&self.integer, integer)
+    public mutating func set(_ integer: UInt) {
+        self.ensureUnique()
+        
+        __gmpz_set_ui(&self.integer_impl.integer, integer)
     }
     
-    public final func set(_ integer: Int) {
-        __gmpz_set_si(&self.integer, integer)
+    public mutating func set(_ integer: Int) {
+        self.ensureUnique()
+        
+        __gmpz_set_si(&self.integer_impl.integer, integer)
     }
     
-    public final func set(_ double: Double) {
-        __gmpz_set_d(&self.integer, double)
+    public mutating func set(_ double: Double) {
+        self.ensureUnique()
+        
+        __gmpz_set_d(&self.integer_impl.integer, double)
     }
     
-    public final func set(_ rational: Rational) {
-        __gmpz_set_q(&self.integer, &rational.rational_impl.rational)
+    public mutating func set(_ rational: Rational) {
+        self.ensureUnique()
+        
+        __gmpz_set_q(&self.integer_impl.integer, &rational.rational_impl.rational)
     }
     
     //
     // Misc
     //
-    public final func signum() -> Int {
-        let x = __gmpz_cmp_ui(&self.integer, 0)
+    public func signum() -> Int {
+        let x = __gmpz_cmp_ui(&self.integer_impl.integer, 0)
         if x < 0 {
             return -1
         } else if x > 0 {
@@ -137,12 +189,12 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
         }
     }
     
-    public final func isOdd() -> Bool {
-        return self.integer._mp_d.pointee % 2 == 1
+    public func isOdd() -> Bool {
+        return self.integer_impl.integer._mp_d.pointee % 2 == 1
     }
     
-    public final func isEven() -> Bool {
-        return self.integer._mp_d.pointee % 2 == 0
+    public func isEven() -> Bool {
+        return self.integer_impl.integer._mp_d.pointee % 2 == 0
     }
 }
 
@@ -152,25 +204,24 @@ public final class BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertibl
 extension BigInt: SignedNumeric {
     // Sign Numeric
     prefix public static func -(operand: BigInt) -> BigInt {
-        let result = BigInt(operand)
+        let result = operand
         
-        __gmpz_neg(&result.integer, &result.integer)
+        __gmpz_neg(&result.integer_impl.integer, &result.integer_impl.integer)
         
         return result
     }
     
-    public func negate() {
-        __gmpz_neg(&self.integer, &self.integer)
+    public mutating func negate() {
+        self.ensureUnique()
+        
+        __gmpz_neg(&self.integer_impl.integer, &self.integer_impl.integer)
     }
     
     // Numeric
     public typealias Magnitude = BigInt
     
-    public convenience init?<T>(exactly source: T) where T : BinaryInteger {
-        if let s = source as? BigInt {
-            self.init(s)
-            return
-        } else if let s = source as? Int {
+    public init?<T>(exactly source: T) where T : BinaryInteger {
+        if let s = source as? Int {
             self.init(s)
             return
         } else if let s = source as? UInt {
@@ -182,9 +233,9 @@ extension BigInt: SignedNumeric {
     }
     
     public var magnitude: BigInt {
-        let result = BigInt(self)
+        let result = self
         
-        __gmpz_abs(&result.integer, &result.integer)
+        __gmpz_abs(&result.integer_impl.integer, &result.integer_impl.integer)
         
         return result
     }
@@ -197,8 +248,8 @@ extension BigInt: SignedNumeric {
 // Hashable
 extension BigInt: Hashable {
     public var hashValue: Int {
-        let size = __gmpz_size(&self.integer)
-        let limb_pointer = __gmpz_limbs_read(&self.integer)!
+        let size = __gmpz_size(&self.integer_impl.integer)
+        let limb_pointer = __gmpz_limbs_read(&self.integer_impl.integer)!
         
         var hash = 0
         
@@ -209,7 +260,7 @@ extension BigInt: Hashable {
 //            hash = 31.unsafeMultiplied(by: hash).unsafeAdding(Int(limb_pointer.advanced(by: i).pointee))
         }
         
-        return hash //Int(__gmpz_getlimbn(&self.integer, 0))
+        return hash //Int(__gmpz_getlimbn(&self.integer_impl.integer, 0))
     }
 }
 
@@ -218,7 +269,7 @@ extension BigInt: Hashable {
 //
 extension BigInt {
     public func toString(base: Int32) -> String? {
-        if let r = __gmpz_get_str(nil, base, &self.integer) {
+        if let r = __gmpz_get_str(nil, base, &self.integer_impl.integer) {
             return String(cString: r)
         } else {
             return nil
@@ -230,24 +281,24 @@ extension BigInt {
     }
     
     public func toInt() -> Int? {
-        if __gmpz_fits_slong_p(&self.integer) != 0 {
-            return __gmpz_get_si(&self.integer)
+        if __gmpz_fits_slong_p(&self.integer_impl.integer) != 0 {
+            return __gmpz_get_si(&self.integer_impl.integer)
         } else {
             return nil
         }
     }
     
     public func toUInt() -> UInt? {
-        if __gmpz_fits_ulong_p(&self.integer) != 0 {
-            return __gmpz_get_ui(&self.integer)
+        if __gmpz_fits_ulong_p(&self.integer_impl.integer) != 0 {
+            return __gmpz_get_ui(&self.integer_impl.integer)
         } else {
             return nil
         }
     }
     
     public func toDouble() -> Double? {
-        if __gmpz_fits_ulong_p(&self.integer) != 0 {
-            return __gmpz_get_d(&self.integer)
+        if __gmpz_fits_ulong_p(&self.integer_impl.integer) != 0 {
+            return __gmpz_get_d(&self.integer_impl.integer)
         } else {
             return nil
         }
@@ -262,186 +313,186 @@ extension BigInt: Comparable, Equatable {
     // isEqual
     //
     public static func ==(lhs: BigInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp(&lhs.integer, &rhs.integer) == 0
+        return __gmpz_cmp(&lhs.integer_impl.integer, &rhs.integer_impl.integer) == 0
     }
     
     public static func ==(lhs: BigInt, rhs: Double) -> Bool {
-        return __gmpz_cmp_d(&lhs.integer, rhs) == 0
+        return __gmpz_cmp_d(&lhs.integer_impl.integer, rhs) == 0
     }
     
     public static func ==(lhs: Double, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_d(&rhs.integer, lhs) == 0
+        return __gmpz_cmp_d(&rhs.integer_impl.integer, lhs) == 0
     }
     
     public static func ==(lhs: BigInt, rhs: Int) -> Bool {
-        return __gmpz_cmp_si(&lhs.integer, rhs) == 0
+        return __gmpz_cmp_si(&lhs.integer_impl.integer, rhs) == 0
     }
     
     public static func ==(lhs: Int, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_si(&rhs.integer, lhs) == 0
+        return __gmpz_cmp_si(&rhs.integer_impl.integer, lhs) == 0
     }
     
     public static func ==(lhs: BigInt, rhs: UInt) -> Bool {
-        return __gmpz_cmp_ui(&lhs.integer, rhs) == 0
+        return __gmpz_cmp_ui(&lhs.integer_impl.integer, rhs) == 0
     }
     
     public static func ==(lhs: UInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_ui(&rhs.integer, lhs) == 0
+        return __gmpz_cmp_ui(&rhs.integer_impl.integer, lhs) == 0
     }
     
     //
     // isNotEqual
     //
     public static func !=(lhs: BigInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp(&lhs.integer, &rhs.integer) != 0
+        return __gmpz_cmp(&lhs.integer_impl.integer, &rhs.integer_impl.integer) != 0
     }
     
     public static func !=(lhs: BigInt, rhs: Double) -> Bool {
-        return __gmpz_cmp_d(&lhs.integer, rhs) != 0
+        return __gmpz_cmp_d(&lhs.integer_impl.integer, rhs) != 0
     }
     
     public static func !=(lhs: Double, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_d(&rhs.integer, lhs) != 0
+        return __gmpz_cmp_d(&rhs.integer_impl.integer, lhs) != 0
     }
     
     public static func !=(lhs: BigInt, rhs: Int) -> Bool {
-        return __gmpz_cmp_si(&lhs.integer, rhs) != 0
+        return __gmpz_cmp_si(&lhs.integer_impl.integer, rhs) != 0
     }
     
     public static func !=(lhs: Int, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_si(&rhs.integer, lhs) != 0
+        return __gmpz_cmp_si(&rhs.integer_impl.integer, lhs) != 0
     }
     
     public static func !=(lhs: BigInt, rhs: UInt) -> Bool {
-        return __gmpz_cmp_ui(&lhs.integer, rhs) != 0
+        return __gmpz_cmp_ui(&lhs.integer_impl.integer, rhs) != 0
     }
     
     public static func !=(lhs: UInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_ui(&rhs.integer, lhs) != 0
+        return __gmpz_cmp_ui(&rhs.integer_impl.integer, lhs) != 0
     }
     
     //
     // isLessThan
     //
     public static func <(lhs: BigInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp(&lhs.integer, &rhs.integer) < 0
+        return __gmpz_cmp(&lhs.integer_impl.integer, &rhs.integer_impl.integer) < 0
     }
     
     public static func <(lhs: BigInt, rhs: Double) -> Bool {
-        return __gmpz_cmp_d(&lhs.integer, rhs) < 0
+        return __gmpz_cmp_d(&lhs.integer_impl.integer, rhs) < 0
     }
     
     public static func <(lhs: Double, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_d(&rhs.integer, lhs) > 0
+        return __gmpz_cmp_d(&rhs.integer_impl.integer, lhs) > 0
     }
     
     public static func <(lhs: BigInt, rhs: Int) -> Bool {
-        return __gmpz_cmp_si(&lhs.integer, rhs) < 0
+        return __gmpz_cmp_si(&lhs.integer_impl.integer, rhs) < 0
     }
     
     public static func <(lhs: Int, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_si(&rhs.integer, lhs) > 0
+        return __gmpz_cmp_si(&rhs.integer_impl.integer, lhs) > 0
     }
     
     public static func <(lhs: BigInt, rhs: UInt) -> Bool {
-        return __gmpz_cmp_ui(&lhs.integer, rhs) < 0
+        return __gmpz_cmp_ui(&lhs.integer_impl.integer, rhs) < 0
     }
     
     public static func <(lhs: UInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_ui(&rhs.integer, lhs) > 0
+        return __gmpz_cmp_ui(&rhs.integer_impl.integer, lhs) > 0
     }
     
     //
     // isLessThanOrEqual
     //
     public static func <=(lhs: BigInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp(&lhs.integer, &rhs.integer) <= 0
+        return __gmpz_cmp(&lhs.integer_impl.integer, &rhs.integer_impl.integer) <= 0
     }
     
     public static func <=(lhs: BigInt, rhs: Double) -> Bool {
-        return __gmpz_cmp_d(&lhs.integer, rhs) <= 0
+        return __gmpz_cmp_d(&lhs.integer_impl.integer, rhs) <= 0
     }
     
     public static func <=(lhs: Double, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_d(&rhs.integer, lhs) >= 0
+        return __gmpz_cmp_d(&rhs.integer_impl.integer, lhs) >= 0
     }
     
     public static func <=(lhs: BigInt, rhs: Int) -> Bool {
-        return __gmpz_cmp_si(&lhs.integer, rhs) <= 0
+        return __gmpz_cmp_si(&lhs.integer_impl.integer, rhs) <= 0
     }
     
     public static func <=(lhs: Int, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_si(&rhs.integer, lhs) >= 0
+        return __gmpz_cmp_si(&rhs.integer_impl.integer, lhs) >= 0
     }
     
     public static func <=(lhs: BigInt, rhs: UInt) -> Bool {
-        return __gmpz_cmp_ui(&lhs.integer, rhs) <= 0
+        return __gmpz_cmp_ui(&lhs.integer_impl.integer, rhs) <= 0
     }
     
     public static func <=(lhs: UInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_ui(&rhs.integer, lhs) >= 0
+        return __gmpz_cmp_ui(&rhs.integer_impl.integer, lhs) >= 0
     }
     
     //
     // isGreaterThanOrEqual
     //
     public static func >=(lhs: BigInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp(&lhs.integer, &rhs.integer) >= 0
+        return __gmpz_cmp(&lhs.integer_impl.integer, &rhs.integer_impl.integer) >= 0
     }
     
     public static func >=(lhs: BigInt, rhs: Double) -> Bool {
-        return __gmpz_cmp_d(&lhs.integer, rhs) >= 0
+        return __gmpz_cmp_d(&lhs.integer_impl.integer, rhs) >= 0
     }
     
     public static func >=(lhs: Double, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_d(&rhs.integer, lhs) <= 0
+        return __gmpz_cmp_d(&rhs.integer_impl.integer, lhs) <= 0
     }
     
     public static func >=(lhs: BigInt, rhs: Int) -> Bool {
-        return __gmpz_cmp_si(&lhs.integer, rhs) >= 0
+        return __gmpz_cmp_si(&lhs.integer_impl.integer, rhs) >= 0
     }
     
     public static func >=(lhs: Int, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_si(&rhs.integer, lhs) <= 0
+        return __gmpz_cmp_si(&rhs.integer_impl.integer, lhs) <= 0
     }
     
     public static func >=(lhs: BigInt, rhs: UInt) -> Bool {
-        return __gmpz_cmp_ui(&lhs.integer, rhs) >= 0
+        return __gmpz_cmp_ui(&lhs.integer_impl.integer, rhs) >= 0
     }
     
     public static func >=(lhs: UInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_ui(&rhs.integer, lhs) <= 0
+        return __gmpz_cmp_ui(&rhs.integer_impl.integer, lhs) <= 0
     }
     
     //
     // isGreaterThan
     //
     public static func >(lhs: BigInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp(&lhs.integer, &rhs.integer) > 0
+        return __gmpz_cmp(&lhs.integer_impl.integer, &rhs.integer_impl.integer) > 0
     }
     
     public static func >(lhs: BigInt, rhs: Double) -> Bool {
-        return __gmpz_cmp_d(&lhs.integer, rhs) > 0
+        return __gmpz_cmp_d(&lhs.integer_impl.integer, rhs) > 0
     }
     
     public static func >(lhs: Double, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_d(&rhs.integer, lhs) < 0
+        return __gmpz_cmp_d(&rhs.integer_impl.integer, lhs) < 0
     }
     
     public static func >(lhs: BigInt, rhs: Int) -> Bool {
-        return __gmpz_cmp_si(&lhs.integer, rhs) > 0
+        return __gmpz_cmp_si(&lhs.integer_impl.integer, rhs) > 0
     }
     
     public static func >(lhs: Int, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_si(&rhs.integer, lhs) < 0
+        return __gmpz_cmp_si(&rhs.integer_impl.integer, lhs) < 0
     }
     
     public static func >(lhs: BigInt, rhs: UInt) -> Bool {
-        return __gmpz_cmp_ui(&lhs.integer, rhs) > 0
+        return __gmpz_cmp_ui(&lhs.integer_impl.integer, rhs) > 0
     }
     
     public static func >(lhs: UInt, rhs: BigInt) -> Bool {
-        return __gmpz_cmp_ui(&rhs.integer, lhs) < 0
+        return __gmpz_cmp_ui(&rhs.integer_impl.integer, lhs) < 0
     }
 }
 
@@ -455,7 +506,7 @@ extension BigInt {
     public static func +(lhs: BigInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_add(&result.integer, &lhs.integer, &rhs.integer)
+        __gmpz_add(&result.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
         
         return result
     }
@@ -466,9 +517,9 @@ extension BigInt {
         
         if rhs.signum() == -1 {
             // negative value
-            __gmpz_sub_ui(&result.integer, &lhs.integer, uint)
+            __gmpz_sub_ui(&result.integer_impl.integer, &lhs.integer_impl.integer, uint)
         } else {
-            __gmpz_add_ui(&result.integer, &lhs.integer, uint)
+            __gmpz_add_ui(&result.integer_impl.integer, &lhs.integer_impl.integer, uint)
         }
         
         return result
@@ -480,9 +531,9 @@ extension BigInt {
         
         if lhs.signum() == -1 {
             // negative value
-            __gmpz_sub_ui(&result.integer, &rhs.integer, uint)
+            __gmpz_sub_ui(&result.integer_impl.integer, &rhs.integer_impl.integer, uint)
         } else {
-            __gmpz_add_ui(&result.integer, &rhs.integer, uint)
+            __gmpz_add_ui(&result.integer_impl.integer, &rhs.integer_impl.integer, uint)
         }
         
         return result
@@ -491,7 +542,7 @@ extension BigInt {
     public static func +(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_add_ui(&result.integer, &lhs.integer, rhs)
+        __gmpz_add_ui(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
         
         return result
     }
@@ -499,27 +550,33 @@ extension BigInt {
     public static func +(lhs: UInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_add_ui(&result.integer, &rhs.integer, lhs)
+        __gmpz_add_ui(&result.integer_impl.integer, &rhs.integer_impl.integer, lhs)
         
         return result
     }
     
     public static func +=(lhs: inout BigInt, rhs: BigInt) {
-        __gmpz_add(&lhs.integer, &lhs.integer, &rhs.integer)
+        lhs.ensureUnique()
+        
+        __gmpz_add(&lhs.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
     }
     
     public static func +=(lhs: inout BigInt, rhs: UInt) {
-        __gmpz_add_ui(&lhs.integer, &lhs.integer, rhs)
+        lhs.ensureUnique()
+        
+        __gmpz_add_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     public static func +=(lhs: inout BigInt, rhs: Int) {
+        lhs.ensureUnique()
+        
         let uint = UInt(abs(rhs))
         
         if rhs.signum() == -1 {
             // negative value
-            __gmpz_sub_ui(&lhs.integer, &lhs.integer, uint)
+            __gmpz_sub_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, uint)
         } else {
-            __gmpz_add_ui(&lhs.integer, &lhs.integer, uint)
+            __gmpz_add_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, uint)
         }
     }
     
@@ -529,7 +586,7 @@ extension BigInt {
     public static func -(lhs: BigInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_sub(&result.integer, &lhs.integer, &rhs.integer)
+        __gmpz_sub(&result.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
         
         return result
     }
@@ -540,9 +597,9 @@ extension BigInt {
         
         if rhs.signum() == -1 {
             // negative value
-            __gmpz_add_ui(&result.integer, &lhs.integer, uint)
+            __gmpz_add_ui(&result.integer_impl.integer, &lhs.integer_impl.integer, uint)
         } else {
-            __gmpz_sub_ui(&result.integer, &lhs.integer, uint)
+            __gmpz_sub_ui(&result.integer_impl.integer, &lhs.integer_impl.integer, uint)
         }
         
         return result
@@ -554,10 +611,10 @@ extension BigInt {
         
         if lhs.signum() == -1 {
             // negative value
-            __gmpz_add_ui(&result.integer, &rhs.integer, uint)
-            __gmpz_neg(&result.integer, &result.integer)
+            __gmpz_add_ui(&result.integer_impl.integer, &rhs.integer_impl.integer, uint)
+            __gmpz_neg(&result.integer_impl.integer, &result.integer_impl.integer)
         } else {
-            __gmpz_ui_sub(&result.integer, uint,  &rhs.integer)
+            __gmpz_ui_sub(&result.integer_impl.integer, uint,  &rhs.integer_impl.integer)
         }
         
         return result
@@ -566,7 +623,7 @@ extension BigInt {
     public static func -(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_sub_ui(&result.integer, &lhs.integer, rhs)
+        __gmpz_sub_ui(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
         
         return result
     }
@@ -574,27 +631,33 @@ extension BigInt {
     public static func -(lhs: UInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_ui_sub(&result.integer, lhs,  &rhs.integer)
+        __gmpz_ui_sub(&result.integer_impl.integer, lhs,  &rhs.integer_impl.integer)
         
         return result
     }
     
     public static func -=(lhs: inout BigInt, rhs: BigInt) {
-        __gmpz_sub(&lhs.integer, &lhs.integer, &rhs.integer)
+        lhs.ensureUnique()
+        
+        __gmpz_sub(&lhs.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
     }
     
     public static func -=(lhs: inout BigInt, rhs: UInt) {
-        __gmpz_sub_ui(&lhs.integer, &lhs.integer, rhs)
+        lhs.ensureUnique()
+        
+        __gmpz_sub_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     public static func -=(lhs: inout BigInt, rhs: Int) {
+        lhs.ensureUnique()
+        
         let uint = UInt(abs(rhs))
         
         if rhs.signum() == -1 {
             // negative value
-            __gmpz_add_ui(&lhs.integer, &lhs.integer, uint)
+            __gmpz_add_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, uint)
         } else {
-            __gmpz_sub_ui(&lhs.integer, &lhs.integer, uint)
+            __gmpz_sub_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, uint)
         }
     }
     
@@ -604,7 +667,7 @@ extension BigInt {
     public static func *(lhs: BigInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mul(&result.integer, &lhs.integer, &rhs.integer)
+        __gmpz_mul(&result.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
         
         return result
     }
@@ -612,7 +675,7 @@ extension BigInt {
     public static func *(lhs: BigInt, rhs: Int) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mul_si(&result.integer, &lhs.integer, rhs)
+        __gmpz_mul_si(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
         
         return result
     }
@@ -620,7 +683,7 @@ extension BigInt {
     public static func *(lhs: Int, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mul_si(&result.integer, &rhs.integer, lhs)
+        __gmpz_mul_si(&result.integer_impl.integer, &rhs.integer_impl.integer, lhs)
         
         return result
     }
@@ -628,7 +691,7 @@ extension BigInt {
     public static func *(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mul_ui(&result.integer, &lhs.integer, rhs)
+        __gmpz_mul_ui(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
         
         return result
     }
@@ -636,33 +699,27 @@ extension BigInt {
     public static func *(lhs: UInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mul_ui(&result.integer, &rhs.integer, lhs)
+        __gmpz_mul_ui(&result.integer_impl.integer, &rhs.integer_impl.integer, lhs)
         
         return result
     }
     
     public static func *=(lhs: inout BigInt, rhs: BigInt) {
-        let result = BigInt()
+        lhs.ensureUnique()
         
-        __gmpz_mul(&result.integer, &lhs.integer, &rhs.integer)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_mul(&lhs.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
     }
     
     public static func *=(lhs: inout BigInt, rhs: Int) {
-        let result = BigInt()
+        lhs.ensureUnique()
         
-        __gmpz_mul_si(&result.integer, &lhs.integer, rhs)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_mul_si(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     public static func *=(lhs: inout BigInt, rhs: UInt) {
-        let result = BigInt()
+        lhs.ensureUnique()
         
-        __gmpz_mul_ui(&result.integer, &lhs.integer, rhs)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_mul_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     //
@@ -671,7 +728,7 @@ extension BigInt {
     public static func /(lhs: BigInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-       __gmpz_fdiv_q(&result.integer, &lhs.integer, &rhs.integer)
+       __gmpz_fdiv_q(&result.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
         
         return result
     }
@@ -679,7 +736,7 @@ extension BigInt {
     public static func /(lhs: BigInt, rhs: Int) -> BigInt {
         let result = BigInt(rhs)
         
-        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
+        __gmpz_fdiv_q(&result.integer_impl.integer, &lhs.integer_impl.integer, &result.integer_impl.integer)
         
         return result
     }
@@ -687,7 +744,7 @@ extension BigInt {
     public static func /(lhs: Int, rhs: BigInt) -> BigInt {
         let result = BigInt(lhs)
         
-        __gmpz_fdiv_q(&result.integer, &result.integer, &rhs.integer)
+        __gmpz_fdiv_q(&result.integer_impl.integer, &result.integer_impl.integer, &rhs.integer_impl.integer)
         
         return result
     }
@@ -695,7 +752,7 @@ extension BigInt {
     public static func /(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt(rhs)
         
-        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
+        __gmpz_fdiv_q(&result.integer_impl.integer, &lhs.integer_impl.integer, &result.integer_impl.integer)
         
         return result
     }
@@ -703,33 +760,31 @@ extension BigInt {
     public static func /(lhs: UInt, rhs: BigInt) -> BigInt {
         let result = BigInt(lhs)
         
-        __gmpz_fdiv_q(&result.integer, &result.integer, &rhs.integer)
+        __gmpz_fdiv_q(&result.integer_impl.integer, &result.integer_impl.integer, &rhs.integer_impl.integer)
         
         return result
     }
     
     public static func /=(lhs: inout BigInt, rhs: BigInt) {
-        let result = BigInt()
+        lhs.ensureUnique()
         
-        __gmpz_fdiv_q(&result.integer, &lhs.integer, &rhs.integer)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_fdiv_q(&lhs.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
     }
     
     public static func /=(lhs: inout BigInt, rhs: Int) {
-        let result = BigInt(rhs)
+        lhs.ensureUnique()
         
-        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
+        __gmpz_fdiv_q_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, UInt(rhs))
         
-        __gmpz_set(&lhs.integer, &result.integer)
+        if rhs < 0 {
+            __gmpz_neg(&lhs.integer_impl.integer, &lhs.integer_impl.integer)
+        }
     }
     
     public static func /=(lhs: inout BigInt, rhs: UInt) {
-        let result = BigInt(rhs)
+        lhs.ensureUnique()
         
-        __gmpz_fdiv_q(&result.integer, &lhs.integer, &result.integer)
-        
-        __gmpz_set(&lhs.integer, &result.integer)
+        __gmpz_fdiv_q_ui(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     //
@@ -738,30 +793,32 @@ extension BigInt {
     public static func %(lhs: BigInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mod(&result.integer, &lhs.integer, &rhs.integer)
+        __gmpz_mod(&result.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
         
         return result
     }
     
     public static func %(lhs: BigInt, rhs: UInt) -> BigInt {
-        return BigInt(__gmpz_fdiv_ui(&lhs.integer, rhs))
+        return BigInt(__gmpz_fdiv_ui(&lhs.integer_impl.integer, rhs))
     }
     
     public static func %(lhs: BigInt, rhs: Int) -> BigInt {
-        return BigInt(__gmpz_fdiv_ui(&lhs.integer, UInt(abs(rhs))))
+        return BigInt(__gmpz_fdiv_ui(&lhs.integer_impl.integer, UInt(abs(rhs))))
     }
     
     public static func %(lhs: BigInt, rhs: BigInt) -> (q: BigInt, r: BigInt) {
         let quotient = BigInt()
         let remainder = BigInt()
         
-        __gmpz_fdiv_qr(&quotient.integer, &remainder.integer, &lhs.integer, &rhs.integer)
+        __gmpz_fdiv_qr(&quotient.integer_impl.integer, &remainder.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
         
         return (quotient, remainder)
     }
     
     public static func %=(lhs: inout BigInt, rhs: BigInt) {
-        __gmpz_mod(&lhs.integer, &lhs.integer, &rhs.integer)
+        lhs.ensureUnique()
+        
+        __gmpz_mod(&lhs.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
     }
     
     //
@@ -770,25 +827,29 @@ extension BigInt {
     public static func <<(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_mul_2exp(&result.integer, &lhs.integer, rhs)
+        __gmpz_mul_2exp(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
         
         return result
     }
     
     public static func <<=(lhs: inout BigInt, rhs: UInt) {
-        __gmpz_mul_2exp(&lhs.integer, &lhs.integer, rhs)
+        lhs.ensureUnique()
+        
+        __gmpz_mul_2exp(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     public static func >>(lhs: BigInt, rhs: UInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_tdiv_q_2exp(&result.integer, &lhs.integer, rhs)
+        __gmpz_tdiv_q_2exp(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
         
         return result
     }
     
     public static func >>=(lhs: inout BigInt, rhs: UInt) {
-        __gmpz_tdiv_q_2exp(&lhs.integer, &lhs.integer, rhs)
+        lhs.ensureUnique()
+        
+        __gmpz_tdiv_q_2exp(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     //
@@ -814,19 +875,21 @@ extension BigInt {
     }
     
     public func isPrime(reps: Int32) -> Primality {
-        return Primality(integerLiteral: __gmpz_probab_prime_p(&self.integer, reps))
+        return Primality(integerLiteral: __gmpz_probab_prime_p(&self.integer_impl.integer, reps))
     }
     
     public func nextPrime() -> BigInt {
         let result = BigInt()
         
-        __gmpz_nextprime(&result.integer, &self.integer)
+        __gmpz_nextprime(&result.integer_impl.integer, &self.integer_impl.integer)
         
         return result
     }
     
-    public func moveToNextPrime() {
-        __gmpz_nextprime(&self.integer, &self.integer)
+    public mutating func moveToNextPrime() {
+        self.ensureUnique()
+        
+        __gmpz_nextprime(&self.integer_impl.integer, &self.integer_impl.integer)
     }
     
     //
@@ -839,7 +902,7 @@ extension BigInt {
      - parameter handler: (Stop, Factor, Working_Register)
     */
     public func enumeratePrimeFactors(withHandler handler: ((inout Bool, BigInt, BigInt)->())) {
-        var working = BigInt(self)
+        var working = self
         var stop = false
         
         // check self.isPrime
@@ -868,9 +931,9 @@ extension BigInt {
             // find next factor
             test = test.nextPrime()
             repeat {
-                __gmpz_fdiv_qr(&q, &r, &working.integer, &test.integer)
+                __gmpz_fdiv_qr(&q, &r, &working.integer_impl.integer, &test.integer_impl.integer)
                 if __gmpz_cmp_ui(&r, 0) == 0 {
-                    __gmpz_swap(&working.integer, &q)
+                    __gmpz_swap(&working.integer_impl.integer, &q)
                     handler(&stop, test, working)
                     if stop {
                         return
@@ -888,7 +951,7 @@ extension BigInt {
      - Returns: An array of unique BigInt factors
     */
     public func primeFactorsUnique() -> [BigInt] {
-        let working = BigInt(self)
+        let working = self
         
         // check self.isPrime
         if self.isPrime() != .notPrime {
@@ -914,14 +977,14 @@ extension BigInt {
             
             // find next factor
             test = test.nextPrime()
-            __gmpz_fdiv_qr(&q, &r, &working.integer, &test.integer)
+            __gmpz_fdiv_qr(&q, &r, &working.integer_impl.integer, &test.integer_impl.integer)
             if __gmpz_cmp_ui(&r, 0) == 0 {
-                output.append(BigInt(test))
+                output.append(test)
                 
                 // divide out all factors of test
                 repeat {
-                    __gmpz_fdiv_qr(&working.integer, &r, &q, &test.integer)
-                    __gmpz_swap(&working.integer, &q)
+                    __gmpz_fdiv_qr(&working.integer_impl.integer, &r, &q, &test.integer_impl.integer)
+                    __gmpz_swap(&working.integer_impl.integer, &q)
                 } while __gmpz_cmp_ui(&r, 0) == 0
             }
         } // while working > 1
@@ -996,32 +1059,36 @@ extension BigInt {
     public static func **(radix: BigInt, power: UInt) -> BigInt {
         let output = BigInt()
         
-        __gmpz_pow_ui(&output.integer, &radix.integer, power)
+        __gmpz_pow_ui(&output.integer_impl.integer, &radix.integer_impl.integer, power)
         
         return output
     }
     
     
     public static func **=(radix: inout BigInt, power: UInt) {
-        __gmpz_pow_ui(&radix.integer, &radix.integer, power)
+        radix.ensureUnique()
+        
+        __gmpz_pow_ui(&radix.integer_impl.integer, &radix.integer_impl.integer, power)
     }
     
-    public func raisedTo(_ power: UInt) {
-        __gmpz_pow_ui(&self.integer, &self.integer, power)
+    public mutating func raisedTo(_ power: UInt) {
+        self.ensureUnique()
+        
+        __gmpz_pow_ui(&self.integer_impl.integer, &self.integer_impl.integer, power)
     }
     
     public func isPerfectPower() -> Bool {
-        return __gmpz_perfect_power_p(&self.integer) != 0
+        return __gmpz_perfect_power_p(&self.integer_impl.integer) != 0
     }
     
     public func isPerfectSquare() -> Bool {
-        return __gmpz_perfect_square_p(&self.integer) != 0
+        return __gmpz_perfect_square_p(&self.integer_impl.integer) != 0
     }
     
     public func squareRoot() -> BigInt {
         let result = BigInt()
         
-        __gmpz_sqrt(&result.integer, &self.integer)
+        __gmpz_sqrt(&result.integer_impl.integer, &self.integer_impl.integer)
         
         return result
     }
@@ -1030,7 +1097,7 @@ extension BigInt {
         let root = BigInt()
         let rem = BigInt()
         
-        __gmpz_sqrtrem(&root.integer, &rem.integer, &self.integer)
+        __gmpz_sqrtrem(&root.integer_impl.integer, &rem.integer_impl.integer, &self.integer_impl.integer)
         
         return (root,rem)
     }

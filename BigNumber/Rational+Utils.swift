@@ -11,7 +11,7 @@ import GMP
 public func floor(_ n: Rational) -> BigInt {
     let result = BigInt()
     
-    __gmpz_fdiv_q(&result.integer, &n.numerator.integer, &n.denominator.integer)
+    __gmpz_fdiv_q(&result.integer_impl.integer, &n.numerator.integer_impl.integer, &n.denominator.integer_impl.integer)
     
     return result
 }
@@ -45,8 +45,8 @@ extension Rational {
         __gmpz_init(&quotient)
         __gmpz_init(&result)
         
-        __gmpz_set(&dividend, &self.numerator.integer)
-        __gmpz_set(&divisor, &self.denominator.integer)
+        __gmpz_set(&dividend, &self.numerator.integer_impl.integer)
+        __gmpz_set(&divisor, &self.denominator.integer_impl.integer)
         __gmpz_set_ui(&quotient, 0)
         __gmpz_set_ui(&result, 0)
         

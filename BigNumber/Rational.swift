@@ -71,13 +71,13 @@ public struct Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
         get {
             let result = BigInt()
             
-            __gmpq_get_num(&result.integer, &self.rational_impl.rational)
+            __gmpq_get_num(&result.integer_impl.integer, &self.rational_impl.rational)
             
             return result
         }
         
         set {
-            __gmpz_set(&self.rational_impl.rational._mp_num, &newValue.integer)
+            __gmpz_set(&self.rational_impl.rational._mp_num, &newValue.integer_impl.integer)
             __gmpq_canonicalize(&self.rational_impl.rational)
         }
     }
@@ -86,13 +86,13 @@ public struct Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
         get {
             let result = BigInt()
             
-            __gmpq_get_den(&result.integer, &self.rational_impl.rational)
+            __gmpq_get_den(&result.integer_impl.integer, &self.rational_impl.rational)
             
             return result
         }
         
         set {
-            __gmpz_set(&self.rational_impl.rational._mp_den, &newValue.integer)
+            __gmpz_set(&self.rational_impl.rational._mp_den, &newValue.integer_impl.integer)
             __gmpq_canonicalize(&self.rational_impl.rational)
         }
     }
@@ -124,7 +124,7 @@ public struct Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
     
     public init(_ value: BigInt) {
         self.init()
-        __gmpq_set_z(&self.rational_impl.rational, &value.integer)
+        __gmpq_set_z(&self.rational_impl.rational, &value.integer_impl.integer)
         __gmpq_canonicalize(&self.rational_impl.rational)
     }
     
@@ -142,8 +142,8 @@ public struct Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
     
     public init(_ numerator: BigInt, _ denominator: BigInt) {
         self.init()
-        __gmpq_set_num(&self.rational_impl.rational, &numerator.integer)
-        __gmpq_set_den(&self.rational_impl.rational, &denominator.integer)
+        __gmpq_set_num(&self.rational_impl.rational, &numerator.integer_impl.integer)
+        __gmpq_set_den(&self.rational_impl.rational, &denominator.integer_impl.integer)
         __gmpq_canonicalize(&self.rational_impl.rational)
     }
     
@@ -209,7 +209,7 @@ public struct Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
     public mutating func set(_ value: BigInt) {
         self.ensureUnique()
         
-        __gmpq_set_z(&self.rational_impl.rational, &value.integer)
+        __gmpq_set_z(&self.rational_impl.rational, &value.integer_impl.integer)
         __gmpq_canonicalize(&self.rational_impl.rational)
     }
     
@@ -230,8 +230,8 @@ public struct Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
     public mutating func set(_ numerator: BigInt, _ denominator: BigInt) {
         self.ensureUnique()
         
-        __gmpq_set_num(&self.rational_impl.rational, &numerator.integer)
-        __gmpq_set_den(&self.rational_impl.rational, &denominator.integer)
+        __gmpq_set_num(&self.rational_impl.rational, &numerator.integer_impl.integer)
+        __gmpq_set_den(&self.rational_impl.rational, &denominator.integer_impl.integer)
         __gmpq_canonicalize(&self.rational_impl.rational)
     }
     
@@ -381,7 +381,7 @@ extension Rational: Comparable, Equatable {
     }
     
     public static func ==(lhs: Rational, rhs: BigInt) -> Bool {
-        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer) == 0
+        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer_impl.integer) == 0
     }
     
     public static func ==(lhs: Rational, rhs: Int) -> Bool {
@@ -400,7 +400,7 @@ extension Rational: Comparable, Equatable {
     }
     
     public static func !=(lhs: Rational, rhs: BigInt) -> Bool {
-        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer) != 0
+        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer_impl.integer) != 0
     }
     
     public static func !=(lhs: Rational, rhs: Int) -> Bool {
@@ -419,7 +419,7 @@ extension Rational: Comparable, Equatable {
     }
     
     public static func <(lhs: Rational, rhs: BigInt) -> Bool {
-        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer) < 0
+        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer_impl.integer) < 0
     }
     
     public static func <(lhs: Rational, rhs: Int) -> Bool {
@@ -438,7 +438,7 @@ extension Rational: Comparable, Equatable {
     }
     
     public static func <=(lhs: Rational, rhs: BigInt) -> Bool {
-        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer) <= 0
+        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer_impl.integer) <= 0
     }
     
     public static func <=(lhs: Rational, rhs: Int) -> Bool {
@@ -457,7 +457,7 @@ extension Rational: Comparable, Equatable {
     }
     
     public static func >(lhs: Rational, rhs: BigInt) -> Bool {
-        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer) > 0
+        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer_impl.integer) > 0
     }
     
     public static func >(lhs: Rational, rhs: Int) -> Bool {
@@ -476,7 +476,7 @@ extension Rational: Comparable, Equatable {
     }
     
     public static func >=(lhs: Rational, rhs: BigInt) -> Bool {
-        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer) >= 0
+        return __gmpq_cmp_z(&lhs.rational_impl.rational, &rhs.integer_impl.integer) >= 0
     }
     
     public static func >=(lhs: Rational, rhs: Int) -> Bool {
@@ -628,7 +628,7 @@ extension Rational {
     public static func *(lhs: Rational, rhs: BigInt) -> Rational {
         let result = lhs
         
-        __gmpz_mul(&result.rational_impl.rational._mp_num, &result.rational_impl.rational._mp_num, &rhs.integer)
+        __gmpz_mul(&result.rational_impl.rational._mp_num, &result.rational_impl.rational._mp_num, &rhs.integer_impl.integer)
         __gmpq_canonicalize(&result.rational_impl.rational)
         
         return result
@@ -637,7 +637,7 @@ extension Rational {
     public static func *(lhs: BigInt, rhs: Rational) -> Rational {
         let result = rhs
         
-        __gmpz_mul(&result.rational_impl.rational._mp_num, &lhs.integer, &result.rational_impl.rational._mp_num)
+        __gmpz_mul(&result.rational_impl.rational._mp_num, &lhs.integer_impl.integer, &result.rational_impl.rational._mp_num)
         __gmpq_canonicalize(&result.rational_impl.rational)
         
         return result

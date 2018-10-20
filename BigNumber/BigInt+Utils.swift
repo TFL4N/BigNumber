@@ -12,36 +12,36 @@ import GMP
 extension BigInt {
     public func gcd(_ n: BigInt) -> BigInt {
         let result = BigInt()
-        __gmpz_gcd(&result.integer, &self.integer, &n.integer)
+        __gmpz_gcd(&result.integer_impl.integer, &self.integer_impl.integer, &n.integer_impl.integer)
         return result
     }
     
     public func gcd(_ n: UInt) -> BigInt {
         let result = BigInt()
-        __gmpz_gcd_ui(&result.integer, &self.integer, n)
+        __gmpz_gcd_ui(&result.integer_impl.integer, &self.integer_impl.integer, n)
         return result
     }
     
     public func lcm(_ n: BigInt) -> BigInt {
         let result = BigInt()
-        __gmpz_lcm(&result.integer, &self.integer, &n.integer)
+        __gmpz_lcm(&result.integer_impl.integer, &self.integer_impl.integer, &n.integer_impl.integer)
         return result
     }
     
     public func isMultiple(of: BigInt) -> Bool {
-        return __gmpz_divisible_p(&self.integer, &of.integer) != 0
+        return __gmpz_divisible_p(&self.integer_impl.integer, &of.integer_impl.integer) != 0
     }
     
     public func inverse(modulus: BigInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_invert(&result.integer, &self.integer, &modulus.integer)
+        __gmpz_invert(&result.integer_impl.integer, &self.integer_impl.integer, &modulus.integer_impl.integer)
         
         return result
     }
     
     public func scanBits1(start_bit: UInt) -> UInt? {
-        let result = __gmpz_scan1(&self.integer, start_bit)
+        let result = __gmpz_scan1(&self.integer_impl.integer, start_bit)
         
         if result == UInt.max {
             return nil
@@ -51,7 +51,7 @@ extension BigInt {
     }
     
     public func scanBits0(start_bit: UInt) -> UInt? {
-        let result = __gmpz_scan0(&self.integer, start_bit)
+        let result = __gmpz_scan0(&self.integer_impl.integer, start_bit)
         
         if result == UInt.max {
             return nil
@@ -70,7 +70,7 @@ extension BigInt {
     }
     
     public func makePositive() -> BigInt {
-        __gmpz_abs(&self.integer, &self.integer)
+        __gmpz_abs(&self.integer_impl.integer, &self.integer_impl.integer)
     
         return self
     }
@@ -104,7 +104,7 @@ extension BigInt {
         __gmpz_init_set_ui(&result, 0)
         
         var working = mpz_t()
-        __gmpz_init_set(&working, &self.integer)
+        __gmpz_init_set(&working, &self.integer_impl.integer)
         
         var remainder = mpz_t()
         __gmpz_init_set_ui(&remainder, 0)
@@ -124,7 +124,7 @@ extension BigInt {
         
         // create output
         let output = BigInt()
-        __gmpz_set(&output.integer, &result)
+        __gmpz_set(&output.integer_impl.integer, &result)
         
         return output
     }
@@ -151,7 +151,7 @@ public func exponential(_ n: BigInt, power: UInt) -> BigInt {
 public func modularExponential(base: BigInt, exponent: BigInt, modulus: BigInt) -> BigInt {
     let result = BigInt()
     
-    __gmpz_powm(&result.integer, &base.integer, &exponent.integer, &modulus.integer)
+    __gmpz_powm(&result.integer_impl.integer, &base.integer_impl.integer, &exponent.integer_impl.integer, &modulus.integer_impl.integer)
     
     return result
 }
@@ -161,10 +161,10 @@ extension BigInt {
     public static func gcd(_ n1: BigInt, _ n2: BigInt, _ numbers: BigInt ...) -> BigInt {
         let result = BigInt()
         
-        __gmpz_gcd(&result.integer, &n1.integer, &n2.integer)
+        __gmpz_gcd(&result.integer_impl.integer, &n1.integer_impl.integer, &n2.integer_impl.integer)
         
         for n in numbers {
-            __gmpz_gcd(&result.integer, &result.integer, &n.integer)
+            __gmpz_gcd(&result.integer_impl.integer, &result.integer_impl.integer, &n.integer_impl.integer)
         }
         
         return result
@@ -175,7 +175,7 @@ extension BigInt {
         let output: BigInt = 0
         
         // perform factorial
-        __gmpz_fac_ui(&output.integer, n)
+        __gmpz_fac_ui(&output.integer_impl.integer, n)
         
         return output
     }
@@ -183,7 +183,7 @@ extension BigInt {
     public static func fibonacci(_ n: UInt) -> BigInt {
         let result = BigInt()
         
-        __gmpz_fib_ui(&result.integer, n)
+        __gmpz_fib_ui(&result.integer_impl.integer, n)
         
         return result
     }
@@ -193,7 +193,7 @@ extension BigInt {
         let result = BigInt()
         let result2 = BigInt()
         
-        __gmpz_fib2_ui(&result.integer, &result2.integer, n)
+        __gmpz_fib2_ui(&result.integer_impl.integer, &result2.integer_impl.integer, n)
         
         return (result, result2)
     }
@@ -201,7 +201,7 @@ extension BigInt {
     public static func lucas(_ n: UInt) -> BigInt  {
         let result = BigInt()
         
-        __gmpz_lucnum_ui(&result.integer, n)
+        __gmpz_lucnum_ui(&result.integer_impl.integer, n)
         
         return result
     }
@@ -211,7 +211,7 @@ extension BigInt {
         let result = BigInt()
         let result2 = BigInt()
         
-        __gmpz_lucnum2_ui(&result.integer, &result2.integer, n)
+        __gmpz_lucnum2_ui(&result.integer_impl.integer, &result2.integer_impl.integer, n)
         
         return (result, result2)
     }
