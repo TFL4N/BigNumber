@@ -57,7 +57,7 @@ class PolynomialTests: XCTestCase {
             let foo = Polynomial<T>([0:1,1:-1])
             
             var B: Polynomial<T> = 0
-            B += fastExponentation(foo, 3) * (p0 * 3)
+            B += fastExponentation(foo, 3) * p0
             B += Polynomial<T>(arrayLiteral: 0,1) * fastExponentation(foo, 2) * (3 * p1)
             B += Polynomial<T>(arrayLiteral: 0,0,1) * foo * (3 * p2)
             B += Polynomial<T>(arrayLiteral: 0,0,0,1) * p3
@@ -70,32 +70,57 @@ class PolynomialTests: XCTestCase {
         let y: Polynomial<Constant> =
             getBezierPolynomial(p0: [0], p1: [0,1], p2: [1], p3: [1])
         
-//        let y: Polynomial<Constant> =
-//            getBezierPolynomial(p0: [1], p1: [1], p2: [0,1], p3: [0])
-//        let x: Polynomial<Constant> =
-//            getBezierPolynomial(p0: [0], p1: [0,1], p2: [1], p3: [1])
+        let y_2: Polynomial<Constant> =
+            getBezierPolynomial(p0: [1], p1: [1], p2: [0,1], p3: [0])
+        let x_2: Polynomial<Constant> =
+            getBezierPolynomial(p0: [0], p1: [0,1], p2: [1], p3: [1])
         
         let area_polynomial = y * x.derivative()
+        let area_polynomial_2 = y_2 * x_2.derivative()
     
-        print(x)
-        print(x.derivative())
-        print(y)
-        print("!",area_polynomial)
+        print("x", x)
+        print("dx", x.derivative())
+        print("y", y)
+        print("!",area_polynomial_2)
         print(area_polynomial.integral())
+        print()
+        
+        print("x", x_2)
+        print("dx", x_2.derivative())
+        print("y", y_2)
+        print("!",area_polynomial_2)
+        print(area_polynomial_2.integral())
+        print()
         
         let area = area_polynomial.integral(min: [0], max: [1])
+        let area_2 = area_polynomial_2.integral(min: [0], max: [1])
         print("!",area)
+        print("!",area_2)
         print()
 
         let a = BigFloat(area.coefficients[2]!)
         let b = BigFloat(area.coefficients[1]!)
         let c = BigFloat(area.coefficients[0]!) - (BigFloat.pi / 4)
+//        let c = BigFloat(area.coefficients[0]!)
 
+        print(a,b,c)
         let roots = quadraticRoots(ax2: a, bx: b, c: c)!
-        print(roots)
+        print("roots", roots)
+        
+        
+        let a_2 = BigFloat(area_2.coefficients[2]!)
+        let b_2 = BigFloat(area_2.coefficients[1]!)
+        let c_2 = BigFloat(area_2.coefficients[0]!) - (BigFloat.pi / 4)
+//        let c_2 = BigFloat(area.coefficients[0]!)
+        
+        print(a_2,b_2,c_2)
+        let roots_2 = quadraticRoots(ax2: a_2, bx: b_2, c: c_2)!
+        print("roots_2",roots_2)
+        print("", BigFloat.pi/4)
 
 //        let v = roots.0
-        let v = roots.1
+//        let v = roots.1
+        let v = roots_2.0
 
         //////////////////
 //        let foo:[Rational] = [Rational(-9,10), Rational(-6,5), Rational(3/20)]
@@ -111,6 +136,10 @@ class PolynomialTests: XCTestCase {
 //        print(4.0 + sqrt(22.0))
 //        print(4.0 - sqrt(22.0))
         ////////////////////
+        
+        
+        
+        
         
 //        let new_x: Polynomial<BigFloat> =
 //            getBezierPolynomial(p0: 1, p1: 1, p2: BigFloat(v), p3: 0)
@@ -134,6 +163,10 @@ class PolynomialTests: XCTestCase {
         print(length)
         print(BigFloat.pi/2)
         
+        let const = BigFloat.pi/2
+        print()
+        print(100 * ((length - const)/const))
+
         print("\n\n\n")
     }
 }

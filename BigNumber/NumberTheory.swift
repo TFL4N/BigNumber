@@ -81,8 +81,8 @@ public func quadraticRoots(ax2 a: BigFloat, bx b: BigFloat, c: BigFloat) -> (Big
     d = sqrt(d)
     
     let a_2 = 2*a
-    let ans_1 = -b + d
-    let ans_2 = -b - d
+    let ans_1 = (-b) + d
+    let ans_2 = (-b) - d
     
     return (ans_1/a_2, ans_2/a_2)
 }

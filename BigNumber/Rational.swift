@@ -188,7 +188,7 @@ public struct Rational: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
     //
     // Memory Management
     //
-    private mutating func ensureUnique() {
+    internal mutating func ensureUnique() {
         if !isKnownUniquelyReferenced(&self.rational_impl) {
             self.rational_impl = self.rational_impl.copy()
         }
@@ -304,7 +304,8 @@ extension Rational: Hashable {
 extension Rational: SignedNumeric {
     // Sign Numeric
     prefix public static func -(operand: Rational) -> Rational {
-        let result = operand
+        var result = operand
+        result.ensureUnique()
         
         __gmpq_neg(&result.rational_impl.rational, &result.rational_impl.rational)
         
@@ -336,7 +337,8 @@ extension Rational: SignedNumeric {
     }
     
     public var magnitude: Rational {
-        let result = self
+        var result = self
+        result.ensureUnique()
         
         __gmpq_abs(&result.rational_impl.rational, &result.rational_impl.rational)
         

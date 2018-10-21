@@ -43,4 +43,57 @@ class BigFloatTests: XCTestCase {
             print()
         }
     }
+    
+    func testBigFloatCopyOnWrite() {
+        let a = BigFloat(10)
+        var b = a
+        
+        b += 1
+        
+        XCTAssertNotEqual(a, b, "BigFloat CopyOnWrite fail")
+        
+        
+        let c = BigFloat(10)
+        let d = -c
+        
+        XCTAssertNotEqual(c, d, "BigFloat CopyOnWrite fail")
+    }
+    
+    func testBigFloatNegate() {
+        typealias CaseType = (BigFloat,solution: BigFloat)
+        
+        let cases: [CaseType] = [
+            (0.12345, -0.12345),
+            (-0.12345, 0.12345),
+        ]
+        
+        for var c in cases {
+            let sol = -c.0
+            c.0.negate()
+            
+            XCTAssertEqual(c.0, c.solution, "BigFloat(\(c.0)).negate() fail")
+            XCTAssertEqual(sol, c.solution, "BigFloat.-(\(c.0)) fail")
+        }
+    }
+    
+    func testBigFloatSubtraction() {
+        typealias CaseType_FF = (BigFloat,BigFloat,solution: BigFloat)
+        
+        let cases: [CaseType_FF] = [
+            (0.7, -0.12345, solution: 0.7+0.12345),
+            (50.0, 0.12345, solution: 50.0-0.12345),
+            ]
+        
+        let all = [
+            (cases, "Two BigFloats")
+        ]
+        
+        for type in all {
+            for c in type.0 {
+                let sol = c.0 - c.1
+                
+                XCTAssertEqual(sol, c.solution, "BigFloat.-(\(c.0),\(c.1)) failed <\(type.1)>")
+            }
+        }
+    }
 }

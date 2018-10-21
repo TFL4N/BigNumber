@@ -209,7 +209,8 @@ public struct BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
 extension BigInt: SignedNumeric {
     // Sign Numeric
     prefix public static func -(operand: BigInt) -> BigInt {
-        let result = operand
+        var result = operand
+        result.ensureUnique()
         
         __gmpz_neg(&result.integer_impl.integer, &result.integer_impl.integer)
         
@@ -238,7 +239,8 @@ extension BigInt: SignedNumeric {
     }
     
     public var magnitude: BigInt {
-        let result = self
+        var result = self
+        result.ensureUnique()
         
         __gmpz_abs(&result.integer_impl.integer, &result.integer_impl.integer)
         
@@ -908,6 +910,7 @@ extension BigInt {
     */
     public func enumeratePrimeFactors(withHandler handler: ((inout Bool, BigInt, BigInt)->())) {
         var working = self
+        working.ensureUnique()
         var stop = false
         
         // check self.isPrime
@@ -956,7 +959,8 @@ extension BigInt {
      - Returns: An array of unique BigInt factors
     */
     public func primeFactorsUnique() -> [BigInt] {
-        let working = self
+        var working = self
+        working.ensureUnique()
         
         // check self.isPrime
         if self.isPrime() != .notPrime {

@@ -215,7 +215,8 @@ public struct BigFloat: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, 
 extension BigFloat: SignedNumeric {
     // Sign Numeric
     prefix public static func -(operand: BigFloat) -> BigFloat {
-        let result = operand
+        var result = operand
+        result.ensureUnique()
         
         mpfr_neg(&result.float_impl.float, &result.float_impl.float, BigFloat.defaultRounding)
         
@@ -244,7 +245,8 @@ extension BigFloat: SignedNumeric {
     }
     
     public var magnitude: BigFloat {
-        let result = self
+        var result = self
+        result.ensureUnique()
         
         mpfr_abs(&result.float_impl.float, &result.float_impl.float, BigFloat.defaultRounding)
         

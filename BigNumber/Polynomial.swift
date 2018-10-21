@@ -477,11 +477,7 @@ public extension Polynomial where Coefficient : UnsignedIntegerArithmetic {
     public func integral() -> Polynomial {
         var output = Polynomial()
         
-        for (k,v) in self.coefficients {
-            if k == 0 {
-                continue
-            }
-            
+        for (k,v) in self.coefficients {            
             let new_k = k+1
             output.coefficients[new_k] = v / new_k
         }

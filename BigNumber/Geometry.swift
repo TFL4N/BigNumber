@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Point<T : NumericExtended>: CustomStringConvertible, Equatable  {
+public struct Point<T : Numeric>: CustomStringConvertible, Equatable  {
     public var x: T
     public var y: T
     
