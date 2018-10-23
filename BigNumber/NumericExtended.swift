@@ -62,6 +62,39 @@ extension Rational: UnsignedIntegerArithmetic {}
 extension BigInt: UnsignedIntegerArithmetic {}
 extension BigFloat: UnsignedIntegerArithmetic {}
 extension Polynomial: UnsignedIntegerArithmetic where Coefficient : UnsignedIntegerArithmetic {}
+extension Double: UnsignedIntegerArithmetic {
+    public static func + (lhs: Double, rhs: UInt) -> Double {
+        return lhs + Double(rhs)
+    }
+    
+    public static func += (lhs: inout Double, rhs: UInt) {
+        lhs += Double(rhs)
+    }
+    
+    public static func - (lhs: Double, rhs: UInt) -> Double {
+        return lhs + Double(rhs)
+    }
+    
+    public static func -= (lhs: inout Double, rhs: UInt) {
+        lhs += Double(rhs)
+    }
+    
+    public static func * (lhs: Double, rhs: UInt) -> Double {
+        return lhs * Double(rhs)
+    }
+    
+    public static func *= (lhs: inout Double, rhs: UInt) {
+        lhs *= Double(rhs)
+    }
+    
+    public static func / (lhs: Double, rhs: UInt) -> Double {
+        return lhs / Double(rhs)
+    }
+    
+    public static func /= (lhs: inout Double, rhs: UInt) {
+        lhs /= Double(rhs)
+    }
+}
 
 //
 //

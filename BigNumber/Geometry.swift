@@ -22,6 +22,19 @@ public struct Point<T : Numeric>: CustomStringConvertible, Equatable  {
     }
 }
 
+public extension Point where T == Double {
+    var cgPoint: CGPoint {
+        get {
+            return CGPoint(x: self.x, y: self.y)
+        }
+        
+        set {
+            self.x = Double(newValue.x)
+            self.y = Double(newValue.y)
+        }
+    }
+}
+
 public struct Line<T : NumericExtended>: CustomStringConvertible {
     //
     // ivars
