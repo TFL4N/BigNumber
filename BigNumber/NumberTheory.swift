@@ -10,6 +10,103 @@ import Foundation
 import GMP
 
 
+/**
+ 
+ */
+public func createPrimeSieve(min: BigInt, count: Int) -> [BigInt] {
+    var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
+    
+    var output = [BigInt](repeating: 0, count: count)
+    for i in 0..<count {
+        output[i] = prime
+        
+        prime.moveToNextPrime()
+    }
+    
+    return output
+}
+
+public func createPrimeSieve(min: BigInt, limit: UInt) -> [BigInt] {
+    var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
+    
+    let estimate = estimateNumberOfPrimes(lessThan: limit)
+    var output = [BigInt](repeating: 0, count: Int(estimate))
+    
+    var i = 0
+    while prime < limit  {
+        if i < estimate {
+            output[i] = prime
+        } else {
+            output.append(prime)
+        }
+        
+        i += 1
+        prime.moveToNextPrime()
+    }
+    
+    return output
+}
+
+public func createPrimeSieve(min: BigInt, limit: UInt) -> [Int] {
+    var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
+    
+    let estimate = estimateNumberOfPrimes(lessThan: limit)
+    var output = [Int](repeating: 0, count: Int(estimate))
+    
+    var i = 0
+    while prime < limit  {
+        if i < estimate {
+            output[i] = prime.toInt()!
+        } else {
+            output.append(prime.toInt()!)
+        }
+        
+        i += 1
+        prime.moveToNextPrime()
+    }
+    
+    return output
+}
+
+/**
+ This function enumerates all values `1 < n <= limit`, and returns the prime factorization
+ */
+public func enumerateNumbersByPrimeFactors(limit: UInt, handler: (Int, [Int:UInt])->()) {
+    
+    func permutate(fromList: ArraySlice<Int>, toList: [Int:UInt], toListTotal: Int, handlePermutation: (Int, [Int:UInt])->()) {
+        // create next permutation
+        if toList.count > 0 {
+            handlePermutation(toListTotal, toList)
+        }
+        
+        if !fromList.isEmpty {
+            for (i, e) in fromList.enumerated() {
+                // create new from list
+                let idx = fromList.index(fromList.startIndex, offsetBy: i)
+                let new_arr = fromList[idx...]
+                
+                let new_total = toListTotal * e
+                if new_total > limit {
+                    return
+                }
+                
+                // permutate
+                var new_list = toList
+                new_list[e, default: 0] += 1
+                
+                permutate(fromList: new_arr, toList: new_list, toListTotal: new_total, handlePermutation: handlePermutation)
+            }
+        }
+    }
+
+    /// begin
+    let primes: [Int] = createPrimeSieve(min: 2, limit: limit).map {$0.toInt()!}
+    permutate(fromList: primes[primes.startIndex..<primes.endIndex], toList: [:], toListTotal: 1, handlePermutation: handler)
+}
+
+/**
+ 
+ */
 public func approximateIntegral(min: BigFloat, max: BigFloat, n: UInt, function: (BigFloat)->BigFloat) -> BigFloat {
     let intervals = n % 2 == 0 ? n : n + 1
     

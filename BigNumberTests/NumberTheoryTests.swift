@@ -25,6 +25,22 @@ class NumberTheoryTests: XCTestCase {
 //        var cache = [Int:Int]()
 //        partitions(317, cache: &cache)
     }
+    
+    func testCreatePrimeSieve() {
+        typealias CaseType = (limit: Int, solution: [Int])
+        
+    }
+    
+    func testEnumerateNumbersByPrimeFactors() {
+        
+        
+        var count = 0
+        enumerateNumbersByPrimeFactors(limit: 20) { (n, factors) in
+            print(factors)
+            count += 1
+        }
+        print(count)
+    }
 
     func testQuadraticRoots() {
         struct Solution: Equatable, CustomStringConvertible {
