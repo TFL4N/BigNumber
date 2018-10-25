@@ -903,6 +903,9 @@ extension BigInt {
     // MARK: Factorization
     //
     
+    ///// consider using
+    ////// Function: mp_bitcnt_t mpz_remove (mpz_t rop, const mpz_t op, const mpz_t f)
+    
     /**
      Loops through all the prime factors of Self. Set the Bool in `handler` to stop the enumeration.
      

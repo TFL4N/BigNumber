@@ -9,6 +9,26 @@
 import Foundation
 import GMP
 
+/**
+ // https://www.geeksforgeeks.org/multiplicative-order/
+ */
+public func multiplicativeOrder(base: Int, modulus: Int) -> UInt? {
+    var result = 1
+    
+    var k: UInt = 1
+    while k < modulus {
+        result = (result * base) % modulus
+        
+        if result == 1 {
+            return k
+        }
+        
+        // increment power
+        k += 1
+    }
+    
+    return nil
+}
 
 /**
  
@@ -71,8 +91,12 @@ public func createPrimeSieve(min: BigInt, limit: UInt) -> [Int] {
 /**
  This function enumerates all values `1 < n <= limit`, and returns the prime factorization
  */
-public func enumerateNumbersByPrimeFactors(limit: UInt, handler: (Int, [Int:UInt])->()) {
-    
+public func enumerateNumbersByPrimeFactors(min: UInt = 2, limit: UInt, handler: (Int, [Int:UInt])->()) {
+    let primes: [Int] = createPrimeSieve(min: BigInt(min), limit: limit).map {$0.toInt()!}
+    enumerateNumbersByPrimeFactors(primes: primes, limit: limit, handler: handler)
+}
+
+public func enumerateNumbersByPrimeFactors(primes: [Int], limit: UInt, handler: (Int, [Int:UInt])->()) {
     func permutate(fromList: ArraySlice<Int>, toList: [Int:UInt], toListTotal: Int, handlePermutation: (Int, [Int:UInt])->()) {
         // create next permutation
         if toList.count > 0 {
@@ -100,7 +124,6 @@ public func enumerateNumbersByPrimeFactors(limit: UInt, handler: (Int, [Int:UInt
     }
 
     /// begin
-    let primes: [Int] = createPrimeSieve(min: 2, limit: limit).map {$0.toInt()!}
     permutate(fromList: primes[primes.startIndex..<primes.endIndex], toList: [:], toListTotal: 1, handlePermutation: handler)
 }
 
