@@ -156,6 +156,21 @@ public func modularExponential(base: BigInt, exponent: BigInt, modulus: BigInt) 
     return result
 }
 
+/**
+ The modular exponential is (base^exponent) % modulus
+ 
+ Negative exp is supported if an inverse base^-1 mod modulus exists (see mpz_invert in Number Theoretic Functions). If an inverse doesn’t exist then a divide by zero is raised.
+ 
+ - Returns: (base^exponent) % modulus
+ */
+public func modularExponential(base: BigInt, exponent: UInt, modulus: BigInt) -> BigInt {
+    let result = BigInt()
+    
+    __gmpz_powm_ui(&result.integer_impl.integer, &base.integer_impl.integer, exponent, &modulus.integer_impl.integer)
+    
+    return result
+}
+
 // MARK: Static functions
 extension BigInt {
     public static func gcd(_ n1: BigInt, _ n2: BigInt, _ numbers: BigInt ...) -> BigInt {
