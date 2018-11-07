@@ -134,7 +134,7 @@ public struct BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
     //
     // Memory Management
     //
-    private mutating func ensureUnique() {
+    internal mutating func ensureUnique() {
         if !isKnownUniquelyReferenced(&self.integer_impl) {
             self.integer_impl = self.integer_impl.copy()
         }
@@ -797,6 +797,10 @@ extension BigInt {
     //
     // Modulus
     //
+    public func mod(_ modulus: BigInt) -> BigInt {
+        return self % modulus
+    }
+    
     public static func %(lhs: BigInt, rhs: BigInt) -> BigInt {
         let result = BigInt()
         
@@ -911,10 +915,11 @@ extension BigInt {
      
      - parameter handler: (Stop, Factor, Working_Register)
     */
-    public func enumeratePrimeFactors(withHandler handler: ((inout Bool, BigInt, BigInt)->())) {
+    public func enumeratePrimeFactors(testLimit: UInt? = nil, withHandler handler: ((inout Bool, BigInt, BigInt)->())) {
         var working = self
         working.ensureUnique()
         var stop = false
+        let limit = testLimit ?? 0
         
         // check self.isPrime
         if self.isPrime() != .notPrime {
@@ -923,7 +928,53 @@ extension BigInt {
         }
         
         // find prime factors
-        var test: BigInt = 1
+        var test = mpz_t()
+        __gmpz_init_set_si(&test, 1)
+        
+        var q = mpz_t()
+        var r = mpz_t()
+        defer {
+            __gmpz_clear(&q)
+            __gmpz_clear(&r)
+            __gmpz_clear(&test)
+        }
+        
+        while working > 1 && (limit == 0 || __gmpz_cmp_ui(&test, limit) <= 0) {
+            // check if prime
+            if working.isPrime() != .notPrime {
+                handler(&stop, working, 1)
+                return
+            }
+            
+            // find next factor
+            __gmpz_nextprime(&test, &test)
+            repeat {
+                __gmpz_fdiv_qr(&q, &r, &working.integer_impl.integer, &test)
+                if __gmpz_cmp_ui(&r, 0) == 0 {
+                    __gmpz_swap(&working.integer_impl.integer, &q)
+                    handler(&stop, BigInt(&test), working)
+                    if stop {
+                        return
+                    }
+                } else {
+                    break
+                }
+            } while __gmpz_cmp(&test, &working.integer_impl.integer) < 0
+        }
+    }
+    
+    public func primeFactorization(withPrimeSieve sieve: [BigInt]) -> [BigInt] {
+        // check self.isPrime
+        guard self.isPrime() == .notPrime else {
+            return [self]
+        }
+        
+        var working = self
+        working.ensureUnique()
+        var output = [BigInt]()
+        var index = 0
+        
+        // find prime factors
         var q = mpz_t()
         var r = mpz_t()
         defer {
@@ -931,29 +982,32 @@ extension BigInt {
             __gmpz_clear(&r)
         }
         
-        while working > 1 {
-            // check if prime
-            if working.isPrime() != .notPrime {
-                handler(&stop, working, 1)
-                working = 1
-                continue
-            }
-            
+        main_loop: while working > 1 && index < sieve.count {
             // find next factor
-            test = test.nextPrime()
+            let test = sieve[index]
+            
             repeat {
                 __gmpz_fdiv_qr(&q, &r, &working.integer_impl.integer, &test.integer_impl.integer)
+
                 if __gmpz_cmp_ui(&r, 0) == 0 {
                     __gmpz_swap(&working.integer_impl.integer, &q)
-                    handler(&stop, test, working)
-                    if stop {
-                        return
-                    }
+                    output.append(test)
                 } else {
                     break
                 }
-            } while test < working
+            } while __gmpz_cmp(&test.integer_impl.integer, &working.integer_impl.integer) < 0
+            
+            // check if prime
+            if working.isPrime() != .notPrime {
+                output.append(working)
+                break main_loop
+            }
+            
+            /// loop
+            index += 1
         }
+        
+        return output
     }
     
     /**
@@ -1056,9 +1110,9 @@ extension BigInt {
         return output
     }
     
-    public func primeFactorization() -> [BigInt] {
+    public func primeFactorization(testLimit: UInt? = nil) -> [BigInt] {
         var output: [BigInt] = []
-        self.enumeratePrimeFactors() { (_, factor, _) in
+        self.enumeratePrimeFactors(testLimit: testLimit) { (_, factor, _) in
             output.append(factor)
         }
         

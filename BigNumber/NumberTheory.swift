@@ -10,7 +10,42 @@ import Foundation
 import GMP
 
 /**
- // https://www.geeksforgeeks.org/multiplicative-order/
+ Returns a repunit of length n in base base
+ */
+public func createRepunit(_ n: UInt, base: Int = 10) -> BigInt {
+    let base = BigInt(base)
+    return ((base ** n) - 1) / (base - 1)
+}
+
+/**
+ Finds the length of the smallest repunit of which *n* is a factor
+ */
+func smallestRepunit(_ n: Int) -> Int {
+    var count = 1
+    var repunit = 1
+    
+    while repunit > 0 {
+        repunit = ((repunit*10) + 1) % n
+        count += 1
+    }
+    
+    return count
+}
+
+/**
+ This function finds *k* such that:
+ ```
+ base^k ≡ 1 (mod x)
+ ```
+ 
+ References:
+ 
+ [Algorithm Implementation](https://www.geeksforgeeks.org/multiplicative-order/)
+ 
+ - Parameters:
+    - base: The base 
+    - modulus:
+ - Returns: The multiplicative order if it exists
  */
 public func multiplicativeOrder(base: Int, modulus: Int) -> UInt? {
     var result = 1
@@ -53,7 +88,7 @@ public func createPrimeSieve(min: BigInt, limit: UInt) -> [BigInt] {
     var output = [BigInt](repeating: 0, count: Int(estimate))
     
     var i = 0
-    while prime < limit  {
+    while prime <= limit  {
         if i < estimate {
             output[i] = prime
         } else {
@@ -74,7 +109,7 @@ public func createPrimeSieve(min: BigInt, limit: UInt) -> [Int] {
     var output = [Int](repeating: 0, count: Int(estimate))
     
     var i = 0
-    while prime < limit  {
+    while prime <= limit  {
         if i < estimate {
             output[i] = prime.toInt()!
         } else {
@@ -254,6 +289,9 @@ public func findRootBisection(a a_0: BigFloat, b b_0: BigFloat, maxIterations: I
     return nil
 }
 
+/**
+ This function enumerates all the divisors of *n*
+ */
 public func divisors(_ n: Int, includeN: Bool = false, handler: ((inout Bool, Int)->Void)) {
     var div = 1
     var upper_bound = n
@@ -279,6 +317,9 @@ public func divisors(_ n: Int, includeN: Bool = false, handler: ((inout Bool, In
     }
 }
 
+/**
+ This function returns an array of the divisors of *n*
+ */
 public func divisors(_ n: Int, sorted: Bool = false, includeSelf: Bool = false) -> [Int] {
     var output: [Int] = []
     
@@ -294,6 +335,7 @@ public func divisors(_ n: Int, sorted: Bool = false, includeSelf: Bool = false) 
     if sorted {
         output.sort()
     }
+    
     return output
 }
 
@@ -442,7 +484,7 @@ public func lagrangePolynomial(y_values: [Int]) -> Polynomial<Rational> {
 }
 
 /**
- Euler's Totient function is the number of relatively prime numbers less than or equal to *N*.  It other words, the number of integers *k* in the range 1 ≤ *k* ≤ *N*. It uses the formula:
+ Euler's Totient function is the number of relatively prime numbers less than or equal to *N*.  It other words, the number of integers `k` in the range 1 ≤ *k* ≤ *N*. It uses the formula:
     ````
     φ(n^k) = n^(k-1) * φ(n)
     ````

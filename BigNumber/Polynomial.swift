@@ -55,6 +55,10 @@ public struct Polynomial<Coefficient:SignedNumeric>: SignedNumeric, ExpressibleB
         self.coefficients = [0:Coefficient(exactly: 0)!]
     }
     
+    public init(_ coefficient: Coefficient, _ exponent: UInt) {
+        self.coefficients = [exponent: coefficient]
+    }
+    
     public init(_ values: ElementsType) {
         self.coefficients = values
     }
@@ -95,6 +99,15 @@ public struct Polynomial<Coefficient:SignedNumeric>: SignedNumeric, ExpressibleB
         self.init([0:n])
     }
 
+    //
+    ///////////
+    /**
+     */
+    public mutating func normalize() {
+        self.coefficients = self.coefficients.filter({ (pair) -> Bool in
+            return pair.value != 0
+        })
+    }
     
     // Subscript
     //////////////
@@ -112,7 +125,7 @@ public struct Polynomial<Coefficient:SignedNumeric>: SignedNumeric, ExpressibleB
     // MARK : Arthimetic
     //
     public var magnitude: Polynomial.Magnitude {
-        return 1
+        return Int(self.coefficients.keys.max() ?? 0)
     }
     
     // Negate

@@ -32,6 +32,25 @@ extension BigInt {
         return __gmpz_divisible_p(&self.integer_impl.integer, &of.integer_impl.integer) != 0
     }
     
+    public mutating func remove(_ factor: BigInt) -> UInt {
+        self.ensureUnique()
+        
+        let count = __gmpz_remove(&self.integer_impl.integer,
+                                  &self.integer_impl.integer,
+                                  &factor.integer_impl.integer)
+        
+        return count
+    }
+    
+    public static func remove(_ factor: BigInt, from: BigInt) -> (UInt, BigInt) {
+        let result = BigInt()
+        let count = __gmpz_remove(&result.integer_impl.integer,
+                                  &from.integer_impl.integer,
+                                  &factor.integer_impl.integer)
+        
+        return (count, result)
+    }
+    
     public func inverse(modulus: BigInt) -> BigInt {
         let result = BigInt()
         

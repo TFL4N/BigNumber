@@ -17,6 +17,13 @@ public func floor(_ n: Rational) -> BigInt {
 }
 
 extension Rational {
+    public mutating func add(toDenominator d: UInt) {
+        self.ensureUnique()
+        
+        __gmpz_add_ui(&self.rational_impl.rational._mp_den, &self.rational_impl.rational._mp_den, d)
+        __gmpq_canonicalize(&self.rational_impl.rational)
+    }
+    
     public mutating func add(toNumerator n: UInt, subtractFromDenominator d: UInt ) {
         self.ensureUnique()
         
