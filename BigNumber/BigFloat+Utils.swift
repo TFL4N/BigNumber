@@ -17,6 +17,14 @@ public func floor(_ n: BigFloat) -> BigFloat {
     return result
 }
 
+public func ceil(_ n: BigFloat) -> BigFloat {
+    let result = BigFloat()
+    
+    mpfr_ceil(&result.float_impl.float, &n.float_impl.float)
+    
+    return result
+}
+
 public func sqrt(_ n: BigFloat) -> BigFloat {
     let result = BigFloat()
     

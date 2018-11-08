@@ -144,8 +144,8 @@ public func enumerateNumbersByPrimeFactors(primes: [Int], limit: UInt, handler: 
                 let idx = fromList.index(fromList.startIndex, offsetBy: i)
                 let new_arr = fromList[idx...]
                 
-                let new_total = toListTotal * e
-                if new_total > limit {
+                let (new_total, overflow) = toListTotal.multipliedReportingOverflow(by: e)
+                if overflow || new_total > limit {
                     return
                 }
                 

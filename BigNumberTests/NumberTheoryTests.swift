@@ -32,14 +32,44 @@ class NumberTheoryTests: XCTestCase {
     }
     
     func testEnumerateNumbersByPrimeFactors() {
-        
-        
         var count = 0
         enumerateNumbersByPrimeFactors(limit: 20) { (n, factors) in
             print(factors)
             count += 1
         }
         print(count)
+        
+        
+        let limit: UInt = fastExponentation(10, 12)//100
+        var total: BigInt = 1
+        
+        var primes: [Int] = [2]
+        enumerateNumbersByPrimeFactors(primes: [2,3,5], limit: limit) { (n, factors) in
+            if BigInt(n+1).isPrime() != .notPrime {
+                primes.append(n+1)
+            }
+        }
+        
+        primes.sort()
+        print(primes)
+        
+        let blah: Set<Int> = [2,3,5]
+        enumerateNumbersByPrimeFactors(primes: primes, limit: limit) { (n, factors) in
+            if factors.contains(where: { (pair) -> Bool in
+                if !blah.contains(pair.key) {
+                    return pair.value > 1
+                }
+                
+                return false
+            }) {
+                return
+            }
+            
+            total += n
+        }
+        
+        print(total)
+        
     }
 
     func testQuadraticRoots() {
