@@ -13,21 +13,19 @@ import GMP
  Represents the congruence `x ≡ a (mod m)`
  */
 public struct Congruence: Equatable {
-    var a: BigInt
-    var modulus: BigInt
+    public var a: BigInt
+    public var modulus: BigInt
     
-    init() {
+    public init() {
         self.a = 0
         self.modulus = 0
     }
     
-    init(_ a: BigInt, modulus: BigInt) {
+    public init(_ a: BigInt, modulus: BigInt) {
         self.a = a
         self.modulus = modulus
     }
 }
-
-internal typealias MPZ_Pointer = UnsafeMutablePointer<mpz_t>
 
 /**
  QuadraticCongruenceSolution is used to store a solution to a quadratic congruence.
@@ -967,7 +965,7 @@ public func chineseRemainderTheorem(withCoprimeCongruences congruences: [Congrue
  - Parmeters: Two congruences
  - Returns: A BigInt solution, if solvable
  */
-func chineseRemainderTheorem(_ c1: Congruence, _ c2: Congruence) -> Congruence? {
+public func chineseRemainderTheorem(_ c1: Congruence, _ c2: Congruence) -> Congruence? {
     let a_1 = MPZ_Pointer.allocate(capacity: 1)
     let a_2 = MPZ_Pointer.allocate(capacity: 1)
     let m_1 = MPZ_Pointer.allocate(capacity: 1)

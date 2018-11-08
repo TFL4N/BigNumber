@@ -9,6 +9,8 @@
 import Foundation
 import GMP
 
+public typealias MPZ_Pointer = UnsafeMutablePointer<mpz_t>
+
 extension UnsafeMutablePointer: CustomStringConvertible where Pointee == mpz_t {
     public var description: String {
         return self.pointee.description

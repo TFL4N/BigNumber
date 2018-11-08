@@ -20,7 +20,7 @@ public func createRepunit(_ n: UInt, base: Int = 10) -> BigInt {
 /**
  Finds the length of the smallest repunit of which *n* is a factor
  */
-func smallestRepunit(_ n: Int) -> Int {
+public func smallestRepunit(_ n: Int) -> Int {
     var count = 1
     var repunit = 1
     
