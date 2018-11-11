@@ -1114,7 +1114,7 @@ func quadraticSolver(Ax2: BigInt, Bxy: BigInt, Cy2: BigInt, Dx: BigInt, Ey: BigI
     // find GCD of A,B,C,D,E == GCD_A_E
     // if F is not multiple of GCD(A, B, C, D, E) so there are no solutions.
     //
-    let GCD_A_E = BigInt.gcd(A, B, C, D, E)
+    let GCD_A_E = gcd(A, B, C, D, E)
     if !F.isMultiple(of: GCD_A_E) {
         return
     }
@@ -1147,7 +1147,7 @@ func quadraticSolver(Ax2: BigInt, Bxy: BigInt, Cy2: BigInt, Dx: BigInt, Ey: BigI
     // compute GCD of A, B, C = GCD_ABC
     // if k is not a mutiple of GCD_ABC, there are no solutions
     //
-    let GCD_ABC = BigInt.gcd(A, B, C)
+    let GCD_ABC = gcd(A, B, C)
     if !k.isMultiple(of: GCD_ABC) {
         return
     }

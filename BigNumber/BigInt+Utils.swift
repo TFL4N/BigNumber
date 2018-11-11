@@ -191,19 +191,68 @@ public func modularExponential(base: BigInt, exponent: UInt, modulus: BigInt) ->
 }
 
 // MARK: Static functions
-extension BigInt {
-    public static func gcd(_ n1: BigInt, _ n2: BigInt, _ numbers: BigInt ...) -> BigInt {
-        let result = BigInt()
+public func gcd(_ n1: BigInt, _ n2: BigInt) -> BigInt {
+    let result = BigInt()
+    
+    __gmpz_gcd(&result.integer_impl.integer, &n1.integer_impl.integer, &n2.integer_impl.integer)
+    
+    return result
+}
+
+public func gcd(_ n1: BigInt, _ n2: BigInt, _ numbers: BigInt ...) -> BigInt {
+    let result = BigInt()
+    
+    __gmpz_gcd(&result.integer_impl.integer, &n1.integer_impl.integer, &n2.integer_impl.integer)
+    
+    for n in numbers {
+        __gmpz_gcd(&result.integer_impl.integer, &result.integer_impl.integer, &n.integer_impl.integer)
+    }
+    
+    return result
+}
+
+public func gcd(_ numbers: [BigInt]) -> BigInt {
+    let count = numbers.count
+    switch count {
+    case 1:
+        return numbers[0]
+    case 2:
+        return numbers[0].gcd(numbers[1])
+    case 3...:
+        let result = numbers[0].gcd(numbers[1])
         
-        __gmpz_gcd(&result.integer_impl.integer, &n1.integer_impl.integer, &n2.integer_impl.integer)
-        
-        for n in numbers {
-            __gmpz_gcd(&result.integer_impl.integer, &result.integer_impl.integer, &n.integer_impl.integer)
+        for i in 2..<count {
+            __gmpz_gcd(&result.integer_impl.integer, &result.integer_impl.integer, &numbers[i].integer_impl.integer)
         }
         
         return result
+        
+    default:
+        return 0
     }
+}
+
+public func sqrt(_ n: BigInt) -> BigInt {
+    let result = BigInt()
     
+    __gmpz_sqrt(&result.integer_impl.integer,
+                &n.integer_impl.integer)
+    
+    return result
+}
+
+public func sqrt(_ n: BigInt) -> (root:BigInt, remainder: BigInt) {
+    let root = BigInt()
+    let remainder = BigInt()
+    
+    __gmpz_sqrtrem(&root.integer_impl.integer,
+                   &remainder.integer_impl.integer,
+                &n.integer_impl.integer)
+    
+    return (root,remainder)
+}
+
+extension BigInt {
     public static func factorial(_ n: UInt) -> BigInt {
         // alloc vars
         let output: BigInt = 0

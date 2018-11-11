@@ -272,6 +272,22 @@ extension BigInt: Hashable {
 }
 
 //
+// MARK: Stridable
+//
+extension BigInt: Strideable {
+    public typealias Stride = BigInt
+    
+    public func distance(to other: BigInt) -> BigInt {
+        return self - other
+    }
+    
+    public func advanced(by n: BigInt) -> BigInt {
+        return self + n
+    }
+}
+
+
+//
 // MARK: Convertibles
 //
 extension BigInt {
