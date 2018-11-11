@@ -1095,7 +1095,9 @@ internal func chineseRemainderTheorem(a_1: MPZ_Pointer, a_2: MPZ_Pointer, m_1: M
     return (result,lcm)
 }
 
-// Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+/**
+    Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0
+ */
 func quadraticSolver(Ax2: BigInt, Bxy: BigInt, Cy2: BigInt, Dx: BigInt, Ey: BigInt, F: BigInt) {
     var A = Ax2
     var B = Bxy

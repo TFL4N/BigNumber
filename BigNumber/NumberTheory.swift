@@ -549,6 +549,103 @@ public func continuedFractionExpansionOfQuadraticSurd(_ n: UInt) -> ContinuedFra
 }
 
 /**
+ This function computes the continued fraction expansion of a quadratic irrational of the form:
+ ```
+ (a + sqrt(b)) / c
+ ```
+ 
+ TODO: Make this capable of handling all fraction.  Currently it only handles irrationals.  If fraction simplies to a rational or just a quadratic surd, handle these cases separately
+ 
+ References:
+ 
+ [Alpertron](https://www.alpertron.com.ar/CONTFRAC.HTM)
+ 
+ - Parameters:
+    - a: Integer part of the numerator
+    - b: Quadratic surd
+    - c: Denominator
+ 
+ - Returns: A tuple containing the integer part, leading non-repeating fractional parts, and repeating fractional parts
+ */
+public func continueFractionExpansion(a: BigInt, b: BigInt, c: BigInt) -> (BigInt,[BigInt],[BigInt]) {
+    /*
+     PQa algorithm for (P+G)/Q where G = sqrt(discriminant):
+     If D - U^2 is not multiple of V then
+       U = U*V
+       V = V*V
+       G = G*V
+     U1 <- 1, U2 <- 0
+     V1 <- 0, V2 <- 1
+     
+     Perform loop:
+     a = floor((U + G)/V)
+     U3 <- U2, U2 <- U1, U1 <- a*U2 + U3
+     V3 <- V2, V2 <- V1, V1 <- a*V2 + V3
+     U <- a*V - U
+     V <- (D - U^2)/V
+     */
+    
+    
+    var a: BigInt = a
+    var b: BigInt = b
+    var c: BigInt = c
+    
+    if !(b - a*a).isMultiple(of: c) {
+        a *= c
+        b *= c*c
+        c *= c
+    }
+    
+    var a1: BigInt = 1
+    var a2: BigInt = 0
+    var a3: BigInt = 0
+    var c1: BigInt = 0
+    var c2: BigInt = 1
+    var c3: BigInt = 1
+    
+    var repeat_index = 0
+    var output = [BigInt]()
+    var previous = [(a:BigInt,c:BigInt)]()
+    main_loop: while true {
+        let x = (a + sqrt(b)) / c
+        
+        a3 = a2
+        a2 = a1
+        a1 = x*a2 + a3
+        
+        c3 = c2
+        c2 = c1
+        c1 = x*c2 + c3
+        
+        a = x*c - a
+        c = (b - a*a) / c
+        
+        /// check if repeats
+        let pair = (a,c)
+        loop: for (i,e) in previous.enumerated() {
+            if i == 0 {
+                continue
+            }
+            
+            if e == pair {
+                repeat_index = i
+                break loop
+            }
+        }
+        
+        if repeat_index > 0 {
+            break main_loop
+        }
+        
+        /// add new coefficient
+        output.append(x)
+        previous.append(pair)
+    }
+    
+    return (output[0], Array(output[1..<repeat_index]), Array(output[repeat_index...]))
+}
+
+/**
  This function calculations the Nth convergent of a Continued Fraction Expansion.
  
  - Parameters:
