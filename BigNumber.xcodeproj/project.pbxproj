@@ -41,6 +41,7 @@
 		65C09DB12193B19600D5EEA8 /* QuadraticSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65013233215FFCDD00A29C00 /* QuadraticSolver.swift */; };
 		65C0F7552198B0E10004F74E /* ContinuedFractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0F7542198B0E10004F74E /* ContinuedFractions.swift */; };
 		65C0F7562198B0E10004F74E /* ContinuedFractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0F7542198B0E10004F74E /* ContinuedFractions.swift */; };
+		65C0F7582198B8190004F74E /* ContinuedFractionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0F7572198B8190004F74E /* ContinuedFractionsTests.swift */; };
 		65C5AAAC2166990100EF154F /* GMP+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C5AAAB2166990100EF154F /* GMP+Utils.swift */; };
 		65CEB6042067F5110053B727 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CEB6032067F5110053B727 /* Geometry.swift */; };
 		65CEB6052067F5110053B727 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CEB6032067F5110053B727 /* Geometry.swift */; };
@@ -94,6 +95,7 @@
 		65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rational+Utils.swift"; sourceTree = "<group>"; };
 		65B70FD8204DE0F9005EA455 /* RationalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RationalTests.swift; sourceTree = "<group>"; };
 		65C0F7542198B0E10004F74E /* ContinuedFractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinuedFractions.swift; sourceTree = "<group>"; };
+		65C0F7572198B8190004F74E /* ContinuedFractionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinuedFractionsTests.swift; sourceTree = "<group>"; };
 		65C5AAAB2166990100EF154F /* GMP+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GMP+Utils.swift"; sourceTree = "<group>"; };
 		65CEB6032067F5110053B727 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
 		65ED06D1206186B1002F5FFD /* BigFloat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigFloat.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				658CE5EB215BF34F00847AD5 /* NumberTheoryTests.swift */,
 				653E0B6B2164154400546273 /* QuadraticSolver.swift */,
 				659BBB88217A4F5B001F02F7 /* PolynomialTests.swift */,
+				65C0F7572198B8190004F74E /* ContinuedFractionsTests.swift */,
 			);
 			path = BigNumberTests;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 				653E0B6C2164154400546273 /* QuadraticSolver.swift in Sources */,
 				658CE5EC215BF34F00847AD5 /* NumberTheoryTests.swift in Sources */,
 				659BBB8B217BA771001F02F7 /* BigFloatTests.swift in Sources */,
+				65C0F7582198B8190004F74E /* ContinuedFractionsTests.swift in Sources */,
 				65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */,
 				659BBB89217A4F5B001F02F7 /* PolynomialTests.swift in Sources */,
 			);

@@ -528,7 +528,7 @@ public func eulersTotient(_ n: BigInt) -> BigInt {
  - Returns: A tuple of the smallest solution (x,y)
  */
 public func findSmallestSolutionOfPellsEquation(D: UInt) -> (x: BigInt, y: BigInt) {
-    let (root, expansion) = continuedFractionExpansionOfQuadraticSurd(D)
+    let (root, expansion) = continuedFractionOfQuadraticSurd(D)
     
     var a0 = BigInt(root)
     var p0 = BigInt(root)

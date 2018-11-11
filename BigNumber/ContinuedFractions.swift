@@ -8,7 +8,17 @@
 
 import Foundation
 
-public typealias ContinuedFractionExpansion = (UInt, [UInt])
+public struct ContinuedFraction: Equatable {
+    let integral: BigInt
+    let nonrepeating: [BigInt]
+    let repeating: [BigInt]
+    
+    init(integral: BigInt, nonrepeating: [BigInt], repeating: [BigInt]) {
+        self.integral = integral
+        self.nonrepeating = nonrepeating
+        self.repeating = repeating
+    }
+}
 
 /**
  The square root of very positive squarefree integer can be expressed as continued fraction with a repeating period.
@@ -19,7 +29,7 @@ public typealias ContinuedFractionExpansion = (UInt, [UInt])
  - Parameter n: A positive integer
  - Returns: A tuple with the whole root, and an array of the repeating period
  */
-public func continuedFractionExpansionOfQuadraticSurd(_ n: UInt) -> ContinuedFractionExpansion {
+public func continuedFractionOfQuadraticSurd(_ n: UInt) -> (UInt,[UInt]) {
     // check if perfect square
     let root = sqrt(Double(n))
     let sq_floor_n = floor(root)
@@ -68,7 +78,7 @@ public func continuedFractionExpansionOfQuadraticSurd(_ n: UInt) -> ContinuedFra
  
  - Returns: A tuple containing the integer part, leading non-repeating fractional parts, and repeating fractional parts
  */
-public func continueFractionExpansion(a: BigInt, b: BigInt, c: BigInt) -> (BigInt,[BigInt],[BigInt]) {
+public func createContinuedFraction(a: BigInt, b: BigInt, c: BigInt) -> ContinuedFraction {
     /*
      PQa algorithm for (P+G)/Q where G = sqrt(discriminant):
      If D - U^2 is not multiple of V then
@@ -143,32 +153,29 @@ public func continueFractionExpansion(a: BigInt, b: BigInt, c: BigInt) -> (BigIn
         previous.append(pair)
     }
     
-    return (output[0], Array(output[1..<repeat_index]), Array(output[repeat_index...]))
+    return ContinuedFraction(integral: output[0],
+                             nonrepeating: Array(output[1..<repeat_index]),
+                             repeating: Array(output[repeat_index...]))
 }
 
 /**
- This function calculations the Nth convergent of a Continued Fraction Expansion.
+ This function calculations the Nth convergent of a Continued Fraction.
  
  - Parameters:
  - n: Zero indexed Nth convergent to be found
- - continuedFraction: The ContinuedFractionExpansion describing the convergence
+ - continuedFraction: The ContinuedFraction describing the convergence
  - Returns: A Rational of the Nth convergent
  */
-public func getConvergent(n: UInt, continuedFraction expansion: ContinuedFractionExpansion ) -> Rational {
-    if n == 0 || expansion.1.isEmpty {
-        return Rational(expansion.0)
+public func getConvergent(n: UInt, continuedFraction fraction: ContinuedFraction ) -> Rational {
+    var output: Rational = 0
+    enumerateConvergents(continuedFraction: fraction) { (stop, r, depth) in
+        if n == depth {
+            output = r
+            stop = true
+        }
     }
     
-    let period = expansion.1.count
-    var depth = Int(n) - 1
-    var num = Rational(expansion.1[depth % period])
-    while depth > 0 {
-        depth -= 1
-        
-        num = Rational(expansion.1[depth % period]) + num.inverse()
-    }
-    
-    return expansion.0 + num.inverse()
+    return output
 }
 
 /**
@@ -177,19 +184,17 @@ public func getConvergent(n: UInt, continuedFraction expansion: ContinuedFractio
  - Precondition: The continued fraction's expansion period must be nonzero
  - Parameter handler: A closure of the form, (Stop, Convergent, Depth)
  */
-public func enumerateConvergents(continuedFraction: ContinuedFractionExpansion, handler: ((inout Bool,Rational,Int)->Void)) {
-    let expanse = continuedFraction.1
-    let period = expanse.count
+public func enumerateConvergents(continuedFraction fraction: ContinuedFraction, handler: ((inout Bool,Rational,UInt)->Void)) {
     var stop = false
     
-    var depth: Int = 0
-    var p: UInt = continuedFraction.0
-    var p_1: UInt = p
-    var p_2: UInt = 0
+    var depth: UInt = 0
+    var p: BigInt = fraction.integral
+    var p_1: BigInt = p
+    var p_2: BigInt = 0
     
-    var q: UInt = 1
-    var q_1: UInt = q
-    var q_2: UInt = 0
+    var q: BigInt = 1
+    var q_1: BigInt = q
+    var q_2: BigInt = 0
     
     
     // 0
@@ -198,34 +203,79 @@ public func enumerateConvergents(continuedFraction: ContinuedFractionExpansion, 
         return
     }
     
-    // 1
-    depth = 1
-    q = expanse[1%period]
-    p = p*q + 1
-    
-    handler(&stop,Rational(p,q),depth)
-    
-    while !stop {
+    // nonrepeating
+    if !fraction.nonrepeating.isEmpty {
         depth += 1
         
-        p_2 = p_1
-        q_2 = q_1
-        
-        p_1 = p
-        q_1 = q
-        
-        let a_k = expanse[(depth-1)%period]
-        p = a_k*p_1 + p_2
-        q = a_k*q_1 + q_2
-        
-        //        print("--------")
-        //        print("k: ", depth)
-        //        print("a_k: ", a_k)
-        //        print("p: ", p, " : ", p_1, " : ", p_2)
-        //        print("q: ", q, " : ", q_1, " : ", q_2)
-        //        print(Rational(p,q))
-        //        print("--------")
+        q = fraction.nonrepeating[0]
+        p = p*q + 1
         
         handler(&stop,Rational(p,q),depth)
+        
+        if stop {
+            return
+        }
+        
+        if fraction.nonrepeating.count > 1 {
+            for a_k in fraction.nonrepeating[1...] {
+                depth += 1
+                
+                p_2 = p_1
+                q_2 = q_1
+                
+                p_1 = p
+                q_1 = q
+                
+                p = a_k*p_1 + p_2
+                q = a_k*q_1 + q_2
+                
+                handler(&stop,Rational(p,q),depth)
+                
+                if stop {
+                    return
+                }
+            }
+        }
+    }
+    
+    // repeating
+    if !fraction.repeating.isEmpty {
+        let expanse = fraction.repeating
+        let period = expanse.count
+        
+        var repeating_depth: UInt = 0
+        
+        if fraction.nonrepeating.isEmpty {
+            q = fraction.repeating[0]
+            p = p*q + 1
+            
+            repeating_depth += 1
+            
+            handler(&stop,Rational(p,q),repeating_depth+depth)
+        }
+        
+        while !stop {
+            repeating_depth += 1
+            
+            p_2 = p_1
+            q_2 = q_1
+            
+            p_1 = p
+            q_1 = q
+            
+            let a_k = expanse[Int(repeating_depth-1)%period]
+            p = a_k*p_1 + p_2
+            q = a_k*q_1 + q_2
+            
+//                    print("--------")
+//                    print("k: ", depth)
+//                    print("a_k: ", a_k)
+//                    print("p: ", p, " : ", p_1, " : ", p_2)
+//                    print("q: ", q, " : ", q_1, " : ", q_2)
+//                    print(Rational(p,q))
+//                    print("--------")
+            
+            handler(&stop,Rational(p,q),depth+repeating_depth)
+        }
     }
 }
