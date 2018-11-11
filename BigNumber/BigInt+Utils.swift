@@ -154,8 +154,6 @@ extension BigInt {
     }
 }
 
-
-
 public func exponential(_ n: BigInt, power: UInt) -> BigInt {
     return n ** power
 }

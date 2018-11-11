@@ -66,18 +66,36 @@ internal final class BigIntImpl {
 }
 
 
-public struct BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
+public struct BigInt: SignedInteger, ExpressibleByIntegerLiteral, LosslessStringConvertible {    
     //
     // constants
     //
     public typealias IntegerLiteralType = Int
-
+    public typealias Words = [UInt]
+    
+    public static var isSigned: Bool = true
+    
     //
     // ivars
     //
     internal var integer_impl: BigIntImpl
     public var integer_ptr: UnsafeMutablePointer<mpz_t> {
         return self.integer_impl.integer_ptr
+    }
+    
+    // Binary Integer
+    public var words: [UInt] {
+        let buffer = UnsafeBufferPointer(start: self.integer_impl.integer._mp_d,
+                                         count: Int(self.integer_impl.integer._mp_size));
+        return Array(buffer)
+    }
+    
+    public var bitWidth: Int {
+        return __gmpz_sizeinbase(&self.integer_impl.integer, 2)
+    }
+    
+    public var trailingZeroBitCount: Int {
+        return Int(__gmpz_scan1(&self.integer_impl.integer, 0))
     }
     
     //
@@ -95,6 +113,46 @@ public struct BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
     public init(integerLiteral value: BigInt.IntegerLiteralType) {
         self.integer_impl = BigIntImpl()
         __gmpz_init_set_si(&self.integer_impl.integer, value)
+    }
+    
+    public init?<T>(exactly source: T) where T : BinaryFloatingPoint {
+        self.init(Int(source))
+    }
+    
+    public init<T>(_ source: T) where T : BinaryFloatingPoint {
+        self.init(Int(source))
+    }
+    
+    public init?<T>(exactly source: T) where T : BinaryInteger {
+        if let s = source as? Int {
+            self.init(s)
+            return
+        } else if let s = source as? UInt {
+            self.init(s)
+            return
+        }
+        
+        return nil
+    }
+    
+    public init<T>(_ source: T) where T : BinaryInteger {
+        self.init(Int(source))
+    }
+    
+    public init<T>(clamping source: T) where T : BinaryInteger {
+        self.init(source)
+    }
+    
+    public init<T>(truncatingIfNeeded source: T) where T : BinaryInteger {
+        if let s = source as? Int {
+            self.init(s)
+            return
+        } else if let s = source as? UInt {
+            self.init(s)
+            return
+        } else {
+            self.init()
+        }
     }
     
     public init(_ integer: UInt) {
@@ -204,7 +262,7 @@ public struct BigInt: ExpressibleByIntegerLiteral, LosslessStringConvertible {
 }
 
 //
-// MARK: SignNumeric
+// MARK: SignInteger
 //
 extension BigInt: SignedNumeric {
     // Sign Numeric
@@ -225,18 +283,6 @@ extension BigInt: SignedNumeric {
     
     // Numeric
     public typealias Magnitude = BigInt
-    
-    public init?<T>(exactly source: T) where T : BinaryInteger {
-        if let s = source as? Int {
-            self.init(s)
-            return
-        } else if let s = source as? UInt {
-            self.init(s)
-            return
-        }
-        
-        return nil
-    }
     
     public var magnitude: BigInt {
         var result = self
@@ -516,6 +562,102 @@ extension BigInt: Comparable, Equatable {
     
     public static func >(lhs: UInt, rhs: BigInt) -> Bool {
         return __gmpz_cmp_ui(&rhs.integer_impl.integer, lhs) < 0
+    }
+}
+
+//
+// MARK: Bitwise Operations
+//
+extension BigInt {
+    public static prefix func ~(x: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_com(&result.integer_impl.integer,
+                   &x.integer_impl.integer)
+        
+        return result
+    }
+    
+    public static func &(lhs: BigInt, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_and(&result.integer_impl.integer,
+                   &lhs.integer_impl.integer,
+                   &rhs.integer_impl.integer)
+        
+        return result
+    }
+    
+    public static func &=(lhs: inout BigInt, rhs: BigInt) {
+        lhs.ensureUnique()
+        
+        __gmpz_and(&lhs.integer_impl.integer,
+                   &lhs.integer_impl.integer,
+                   &rhs.integer_impl.integer)
+    }
+    
+    public static func |(lhs: BigInt, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_ior(&result.integer_impl.integer,
+                   &lhs.integer_impl.integer,
+                   &rhs.integer_impl.integer)
+        
+        return result
+    }
+    
+    public static func |=(lhs: inout BigInt, rhs: BigInt) {
+        lhs.ensureUnique()
+        
+        __gmpz_ior(&lhs.integer_impl.integer,
+                   &lhs.integer_impl.integer,
+                   &rhs.integer_impl.integer)
+    }
+    
+    public static func ^(lhs: BigInt, rhs: BigInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_xor(&result.integer_impl.integer,
+                   &lhs.integer_impl.integer,
+                   &rhs.integer_impl.integer)
+        
+        return result
+    }
+    
+    public static func ^=(lhs: inout BigInt, rhs: BigInt) {
+        lhs.ensureUnique()
+        
+        __gmpz_xor(&lhs.integer_impl.integer,
+                   &lhs.integer_impl.integer,
+                   &rhs.integer_impl.integer)
+    }
+    
+    public static func <<(lhs: BigInt, rhs: UInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_mul_2exp(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
+        
+        return result
+    }
+    
+    public static func <<= <RHS>(lhs: inout BigInt, rhs: RHS) where RHS : BinaryInteger {
+        lhs.ensureUnique()
+        
+        __gmpz_mul_2exp(&lhs.integer_impl.integer, &lhs.integer_impl.integer, UInt(rhs))
+    }
+    
+    public static func >>(lhs: BigInt, rhs: UInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_tdiv_q_2exp(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
+        
+        return result
+    }
+    
+    public static func >>= <RHS>(lhs: inout BigInt, rhs: RHS) where RHS : BinaryInteger {
+        lhs.ensureUnique()
+        
+        __gmpz_tdiv_q_2exp(&lhs.integer_impl.integer, &lhs.integer_impl.integer, UInt(rhs))
     }
 }
 
@@ -846,37 +988,6 @@ extension BigInt {
         lhs.ensureUnique()
         
         __gmpz_mod(&lhs.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
-    }
-    
-    //
-    // Bitwise
-    //
-    public static func <<(lhs: BigInt, rhs: UInt) -> BigInt {
-        let result = BigInt()
-        
-        __gmpz_mul_2exp(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
-        
-        return result
-    }
-    
-    public static func <<=(lhs: inout BigInt, rhs: UInt) {
-        lhs.ensureUnique()
-        
-        __gmpz_mul_2exp(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
-    }
-    
-    public static func >>(lhs: BigInt, rhs: UInt) -> BigInt {
-        let result = BigInt()
-        
-        __gmpz_tdiv_q_2exp(&result.integer_impl.integer, &lhs.integer_impl.integer, rhs)
-        
-        return result
-    }
-    
-    public static func >>=(lhs: inout BigInt, rhs: UInt) {
-        lhs.ensureUnique()
-        
-        __gmpz_tdiv_q_2exp(&lhs.integer_impl.integer, &lhs.integer_impl.integer, rhs)
     }
     
     //
