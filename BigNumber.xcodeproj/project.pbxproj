@@ -39,6 +39,8 @@
 		65B70FD9204DE0F9005EA455 /* RationalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B70FD8204DE0F9005EA455 /* RationalTests.swift */; };
 		65C09DB02193B19600D5EEA8 /* GMP+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C5AAAB2166990100EF154F /* GMP+Utils.swift */; };
 		65C09DB12193B19600D5EEA8 /* QuadraticSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65013233215FFCDD00A29C00 /* QuadraticSolver.swift */; };
+		65C0F7552198B0E10004F74E /* ContinuedFractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0F7542198B0E10004F74E /* ContinuedFractions.swift */; };
+		65C0F7562198B0E10004F74E /* ContinuedFractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C0F7542198B0E10004F74E /* ContinuedFractions.swift */; };
 		65C5AAAC2166990100EF154F /* GMP+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C5AAAB2166990100EF154F /* GMP+Utils.swift */; };
 		65CEB6042067F5110053B727 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CEB6032067F5110053B727 /* Geometry.swift */; };
 		65CEB6052067F5110053B727 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CEB6032067F5110053B727 /* Geometry.swift */; };
@@ -91,6 +93,7 @@
 		659BBB8A217BA771001F02F7 /* BigFloatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigFloatTests.swift; sourceTree = "<group>"; };
 		65B70FD6204DBA6D005EA455 /* Rational+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rational+Utils.swift"; sourceTree = "<group>"; };
 		65B70FD8204DE0F9005EA455 /* RationalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RationalTests.swift; sourceTree = "<group>"; };
+		65C0F7542198B0E10004F74E /* ContinuedFractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinuedFractions.swift; sourceTree = "<group>"; };
 		65C5AAAB2166990100EF154F /* GMP+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GMP+Utils.swift"; sourceTree = "<group>"; };
 		65CEB6032067F5110053B727 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
 		65ED06D1206186B1002F5FFD /* BigFloat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigFloat.swift; sourceTree = "<group>"; };
@@ -168,6 +171,7 @@
 				65013233215FFCDD00A29C00 /* QuadraticSolver.swift */,
 				65951827205B974600E86D9F /* NumericExtended.swift */,
 				654C484E205A564800E0FE10 /* NumberTheory.swift */,
+				65C0F7542198B0E10004F74E /* ContinuedFractions.swift */,
 				65951829205BB52A00E86D9F /* Polynomial.swift */,
 				65F0A6B42192DA0B00BC5591 /* BinomialNumber.swift */,
 				65CEB6032067F5110053B727 /* Geometry.swift */,
@@ -389,6 +393,7 @@
 				6595182A205BB52A00E86D9F /* Polynomial.swift in Sources */,
 				65C5AAAC2166990100EF154F /* GMP+Utils.swift in Sources */,
 				6501AFAD1F534E530052F040 /* Rational.swift in Sources */,
+				65C0F7552198B0E10004F74E /* ContinuedFractions.swift in Sources */,
 				65951828205B974600E86D9F /* NumericExtended.swift in Sources */,
 				65B70FD7204DBA6D005EA455 /* Rational+Utils.swift in Sources */,
 				65F817142064C78800462A88 /* BigFloat+Utils.swift in Sources */,
@@ -423,6 +428,7 @@
 				654C4850205A564800E0FE10 /* NumberTheory.swift in Sources */,
 				6533EF8D2058529A00BC586F /* BigInt.swift in Sources */,
 				6533EF8E2058529A00BC586F /* Rational.swift in Sources */,
+				65C0F7562198B0E10004F74E /* ContinuedFractions.swift in Sources */,
 				6533EF8F2058529A00BC586F /* Rational+Utils.swift in Sources */,
 				6554BDAE217E5136007C5F5E /* BezierCurve.swift in Sources */,
 				65F817152064C78800462A88 /* BigFloat+Utils.swift in Sources */,
