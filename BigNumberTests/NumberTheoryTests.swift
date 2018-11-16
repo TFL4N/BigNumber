@@ -73,6 +73,24 @@ class NumberTheoryTests: XCTestCase {
     }
 
     func testQuadraticRoots() {
+        /*
+         /// int root rounded
+         let bar: [(BigInt,BigInt,BigInt)] = [
+         (1,-1,-1),
+         (1,-2,-1),
+         (1,-3,-1), // one negative, one positive
+         (1,-5,1),  // both positive
+         (1,5,1),  // both negative
+         ]
+         for b in bar {
+         print(b)
+         print(quadraticRoots(ax2: b.0, bx: b.1, c: b.2))
+         print(quadraticRoots(ax2: BigFloat(b.0), bx: BigFloat(b.1), c: BigFloat(b.2)))
+         print()
+         }
+ */
+        
+        
         struct Solution: Equatable, CustomStringConvertible {
             let ans_1: BigFloat
             let ans_2: BigFloat

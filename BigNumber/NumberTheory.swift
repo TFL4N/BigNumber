@@ -84,7 +84,7 @@ public func createPrimeSieve(min: BigInt, count: Int) -> [BigInt] {
 public func createPrimeSieve(min: BigInt, limit: UInt) -> [BigInt] {
     var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
     
-    let estimate = estimateNumberOfPrimes(lessThan: limit)
+    let estimate = estimateNumberOfPrimes(lessThan: limit) - estimateNumberOfPrimes(lessThan: min.toUInt()!)
     var output = [BigInt](repeating: 0, count: Int(estimate))
     
     var i = 0
@@ -105,7 +105,7 @@ public func createPrimeSieve(min: BigInt, limit: UInt) -> [BigInt] {
 public func createPrimeSieve(min: BigInt, limit: UInt) -> [Int] {
     var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
     
-    let estimate = estimateNumberOfPrimes(lessThan: limit)
+    let estimate = estimateNumberOfPrimes(lessThan: limit) - estimateNumberOfPrimes(lessThan: min.toUInt()!)
     var output = [Int](repeating: 0, count: Int(estimate))
     
     var i = 0
@@ -240,6 +240,31 @@ public func quadraticRoots(ax2 a: BigFloat, bx b: BigFloat, c: BigFloat) -> (Big
     let ans_2 = (-b) - d
     
     return (ans_1/a_2, ans_2/a_2)
+}
+
+/**
+ TODO: make sure roots are rounded toward zero
+ */
+public func quadraticRoots(ax2 a: BigInt, bx b: BigInt, c: BigInt) -> (BigInt,BigInt)? {
+    var d = b*b - 4*a*c
+    
+    guard d >= 0 else {
+        return nil
+    }
+    
+    d = sqrt(d)
+    
+//    print("===== BigInt =====")
+//    print("-b:", -b)
+//    print("d:", d)
+//    print((-b) + d, (-b) - d)
+//    print("==================")
+    
+    let a_2 = 2*a
+    let ans_1 = (-b) + d
+    let ans_2 = b + d
+    
+    return (ans_1/a_2, -ans_2/a_2)
 }
 
 /**
@@ -570,6 +595,7 @@ public func findSmallestSolutionOfPellsEquation(D: UInt) -> (x: BigInt, y: BigIn
 }
 
 // n! / r!(n-r)!
+// with repetition = (r + n - 1)! / r!(n-1)!
 public func combinations(from n: UInt, choose r: UInt) -> BigInt {
     if n == 0 {
         return 0

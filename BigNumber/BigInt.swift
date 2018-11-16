@@ -63,6 +63,14 @@ internal final class BigIntImpl {
         
         return new_copy
     }
+    
+    //
+    // Memory
+    //
+    internal func reallocateToSize() {
+        let bit_count = __gmpz_sizeinbase(&self.integer, 2)
+        __gmpz_realloc2(&self.integer, mp_bitcnt_t(bit_count))
+    }
 }
 
 
@@ -124,10 +132,7 @@ public struct BigInt: SignedInteger, ExpressibleByIntegerLiteral, LosslessString
     }
     
     public init?<T>(exactly source: T) where T : BinaryInteger {
-        if let s = source as? Int {
-            self.init(s)
-            return
-        } else if let s = source as? UInt {
+        if let s = UInt(exactly: source) {
             self.init(s)
             return
         }
@@ -136,7 +141,7 @@ public struct BigInt: SignedInteger, ExpressibleByIntegerLiteral, LosslessString
     }
     
     public init<T>(_ source: T) where T : BinaryInteger {
-        self.init(Int(source))
+        self.init(UInt(source))
     }
     
     public init<T>(clamping source: T) where T : BinaryInteger {
@@ -144,15 +149,7 @@ public struct BigInt: SignedInteger, ExpressibleByIntegerLiteral, LosslessString
     }
     
     public init<T>(truncatingIfNeeded source: T) where T : BinaryInteger {
-        if let s = source as? Int {
-            self.init(s)
-            return
-        } else if let s = source as? UInt {
-            self.init(s)
-            return
-        } else {
-            self.init()
-        }
+        self.init(UInt(truncatingIfNeeded: source))
     }
     
     public init(_ integer: UInt) {
@@ -202,7 +199,7 @@ public struct BigInt: SignedInteger, ExpressibleByIntegerLiteral, LosslessString
     // CustomStringConvertible
     //
     public var description: String {
-        return self.toString(base: 10) ?? ""
+        return self.toString()
     }
     
     //
@@ -241,6 +238,10 @@ public struct BigInt: SignedInteger, ExpressibleByIntegerLiteral, LosslessString
     //
     // Misc
     //
+    public func reallocateToSize() {
+        self.integer_impl.reallocateToSize()
+    }
+    
     public func signum() -> Int {
         let x = __gmpz_cmp_ui(&self.integer_impl.integer, 0)
         if x < 0 {
@@ -299,21 +300,14 @@ extension BigInt: SignedNumeric {
 }
 
 // Hashable
-extension BigInt: Hashable {
-    public var hashValue: Int {
+extension BigInt: Hashable {    
+    public func hash(into hasher: inout Hasher) {
         let size = __gmpz_size(&self.integer_impl.integer)
         let limb_pointer = __gmpz_limbs_read(&self.integer_impl.integer)!
         
-        var hash = 0
-        
         for i in 0..<size {
-            hash  = hash.addingReportingOverflow(limb_pointer.advanced(by: i).pointee.hashValue).partialValue
-            
-            // http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/tip/src/share/classes/java/math/BigInteger.java
-//            hash = 31.unsafeMultiplied(by: hash).unsafeAdding(Int(limb_pointer.advanced(by: i).pointee))
+            hasher.combine(limb_pointer.advanced(by: i).pointee)
         }
-        
-        return hash //Int(__gmpz_getlimbn(&self.integer_impl.integer, 0))
     }
 }
 
@@ -347,6 +341,31 @@ extension BigInt {
     
     public func toString() -> String {
         return self.toString(base: 10)!
+    }
+    
+    public func toPrettyString() -> String {
+        var str = self.toString(base: 10)!
+        
+        var count = str.count
+        if self < 0 {
+            count -= 1
+        }
+        var (q,r) = count.quotientAndRemainder(dividingBy: 3)
+        
+        if q == 0 {
+            return str
+        }
+        
+        if r == 0 {
+            q -= 1
+        }
+        
+        for x in (1...q).reversed() {
+            let index = str.index(str.endIndex, offsetBy: -x*3)
+            str.insert("_", at: index)
+        }
+        
+        return  str
     }
     
     public func toInt() -> Int? {
@@ -955,8 +974,13 @@ extension BigInt {
     //
     // Modulus
     //
-    public func mod(_ modulus: BigInt) -> BigInt {
-        return self % modulus
+    public func quotientAndRemainder(dividingBy rhs: BigInt) -> (quotient: BigInt, remainder: BigInt) {
+        let quotient = BigInt()
+        let remainder = BigInt()
+        
+        __gmpz_fdiv_qr(&quotient.integer_impl.integer, &remainder.integer_impl.integer, &self.integer_impl.integer, &rhs.integer_impl.integer)
+        
+        return (quotient, remainder)
     }
     
     public static func %(lhs: BigInt, rhs: BigInt) -> BigInt {
@@ -973,15 +997,6 @@ extension BigInt {
     
     public static func %(lhs: BigInt, rhs: Int) -> BigInt {
         return BigInt(__gmpz_fdiv_ui(&lhs.integer_impl.integer, UInt(abs(rhs))))
-    }
-    
-    public static func %(lhs: BigInt, rhs: BigInt) -> (q: BigInt, r: BigInt) {
-        let quotient = BigInt()
-        let remainder = BigInt()
-        
-        __gmpz_fdiv_qr(&quotient.integer_impl.integer, &remainder.integer_impl.integer, &lhs.integer_impl.integer, &rhs.integer_impl.integer)
-        
-        return (quotient, remainder)
     }
     
     public static func %=(lhs: inout BigInt, rhs: BigInt) {

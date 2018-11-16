@@ -154,7 +154,7 @@ extension BigInt {
     }
 }
 
-public func exponential(_ n: BigInt, power: UInt) -> BigInt {
+public func pow(_ n: BigInt, _ power: UInt) -> BigInt {
     return n ** power
 }
 
@@ -295,6 +295,26 @@ extension BigInt {
         __gmpz_lucnum2_ui(&result.integer_impl.integer, &result2.integer_impl.integer, n)
         
         return (result, result2)
+    }
+    
+    public static func binaryCoefficients(n: BigInt, r: UInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_bin_ui(&result.integer_impl.integer,
+                      &n.integer_impl.integer,
+                      r)
+        
+        return result
+    }
+    
+    public static func binaryCoefficients(n: UInt, r: UInt) -> BigInt {
+        let result = BigInt()
+        
+        __gmpz_bin_uiui(&result.integer_impl.integer,
+                        n,
+                        r)
+        
+        return result
     }
     
     public static func getString(_ n: inout mpz_t, base: Int32) -> String? {

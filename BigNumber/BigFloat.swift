@@ -338,6 +338,14 @@ extension BigFloat {
         return nil
     }
     
+    public func getIntegralPart() -> BigInt {
+        let result = BigFloat()
+        
+        mpfr_trunc(&result.float_impl.float, &self.float_impl.float)
+        
+        return result.toBigInt()
+    }
+    
     public func isIntegral() -> Bool {
         return mpfr_integer_p(&self.float_impl.float) != 0
     }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Point<T : Numeric>: CustomStringConvertible, Equatable  {
+public struct Point<T : Numeric & Hashable>: Hashable, CustomStringConvertible, Equatable  {
     public var x: T
     public var y: T
     
@@ -19,6 +19,17 @@ public struct Point<T : Numeric>: CustomStringConvertible, Equatable  {
     public init(x: T, y: T) {
         self.x = x
         self.y = y
+    }
+    
+    // TODO: Reflect about an arbitrary line
+    public mutating func reflect() {
+        let temp = self.x
+        self.x = self.y
+        self.y = temp
+    }
+    
+    public func reflected() -> Point<T> {
+        return Point(x: self.y, y: self.x)
     }
 }
 
@@ -35,7 +46,7 @@ public extension Point where T == Double {
     }
 }
 
-public struct Line<T : NumericExtended>: CustomStringConvertible {
+public struct Line<T : NumericExtended & Hashable>: CustomStringConvertible {
     //
     // ivars
     //
@@ -126,7 +137,7 @@ public struct Line<T : NumericExtended>: CustomStringConvertible {
     }
 }
 
-public struct Triangle<T : NumericExtended> {
+public struct Triangle<T : NumericExtended & Hashable> {
     public var line_1: Line<T>
     public var line_2: Line<T>
     public var line_3: Line<T>

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class BezierCurve<T: SignedNumeric & UnsignedIntegerArithmetic>: CustomStringConvertible {
+public class BezierCurve<T: SignedNumeric & UnsignedIntegerArithmetic & Hashable>: CustomStringConvertible {
     public typealias PolyType = Polynomial<T>
     public typealias GeneratorType = (T)->Point<T>
     

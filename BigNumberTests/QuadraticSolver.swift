@@ -307,7 +307,7 @@ class QuadraticSolver: XCTestCase {
 //            (composite_reduced_modulus_cases, "Composite Modulus -- All Reduced Modulo"),
 //            (composite_1_modulus_cases, "Composite Modulus -- One Non Reduced Modulus"),
 //            (composite_2_modulus_cases, "Composite Modulus -- Multiple Non Reduced Moduli"),
-            (composite_even_1_modulus_cases, "Composite Modulus -- Even Nonreduced Moduli 2^1"),
+//            (composite_even_1_modulus_cases, "Composite Modulus -- Even Nonreduced Moduli 2^1"),
 //            (composite_even_2_modulus_cases, "Composite Modulus -- Even Nonreduced Moduli 2^2"),
             (composite_even_3_modulus_cases, "Composite Modulus -- Even Nonreduced Moduli 2^3 or greater"),
         ]
