@@ -111,16 +111,17 @@ public struct BigInt: SignedInteger, ExpressibleByIntegerLiteral, LosslessString
     //
     public init() {
        self.integer_impl = BigIntImpl()
+        __gmpz_set_si(&self.integer_impl.integer, 0)
     }
     
     public init(_ n: UnsafeMutablePointer<mpz_t>) {
         self.integer_impl = BigIntImpl()
-        __gmpz_init_set(&self.integer_impl.integer, n)
+        __gmpz_set(&self.integer_impl.integer, n)
     }
     
     public init(integerLiteral value: BigInt.IntegerLiteralType) {
         self.integer_impl = BigIntImpl()
-        __gmpz_init_set_si(&self.integer_impl.integer, value)
+        __gmpz_set_si(&self.integer_impl.integer, value)
     }
     
     public init?<T>(exactly source: T) where T : BinaryFloatingPoint {
