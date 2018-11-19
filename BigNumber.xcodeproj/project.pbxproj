@@ -34,6 +34,9 @@
 		6500E27921A2E77F0092B6A0 /* gmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1C51F48FC3100831742 /* gmp.h */; };
 		6500E27A21A2E77F0092B6A0 /* mpf2mpfr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F8170C2064BBF800462A88 /* mpf2mpfr.h */; };
 		6500E27B21A2E77F0092B6A0 /* mpfr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F8170A2064BBF800462A88 /* mpfr.h */; };
+		6500E28421A2EB7C0092B6A0 /* prime_numbers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */; };
+		6500E28521A2ED420092B6A0 /* prime_numbers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */; };
+		6500E28721A2EF220092B6A0 /* SequenceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500E28621A2EF220092B6A0 /* SequenceGeneratorTests.swift */; };
 		65013234215FFCDD00A29C00 /* QuadraticSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65013233215FFCDD00A29C00 /* QuadraticSolver.swift */; };
 		6501AFAB1F493E5D0052F040 /* BigInt+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */; };
 		6501AFAD1F534E530052F040 /* Rational.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6501AFAC1F534E530052F040 /* Rational.swift */; };
@@ -80,8 +83,10 @@
 /* Begin PBXFileReference section */
 		6500E25821A2E5130092B6A0 /* Stream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
 		6500E25921A2E5130092B6A0 /* SequenceGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceGenerator.swift; sourceTree = "<group>"; };
-		6500E28121A2E77F0092B6A0 /* BigNumber Install.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "BigNumber Install.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6500E28121A2E77F0092B6A0 /* BigNumber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BigNumber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6500E28221A2E7800092B6A0 /* BigNumber Install-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BigNumber Install-Info.plist"; path = "/Users/SpaiceMaine/GoodKarmaCoding/project_euler/utils/big_int/BigNumber/BigNumber Install-Info.plist"; sourceTree = "<absolute>"; };
+		6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = prime_numbers.txt; sourceTree = "<group>"; };
+		6500E28621A2EF220092B6A0 /* SequenceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceGeneratorTests.swift; sourceTree = "<group>"; };
 		65013233215FFCDD00A29C00 /* QuadraticSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuadraticSolver.swift; sourceTree = "<group>"; };
 		6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BigInt+Utils.swift"; sourceTree = "<group>"; };
 		6501AFAC1F534E530052F040 /* Rational.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rational.swift; sourceTree = "<group>"; };
@@ -163,6 +168,7 @@
 		6500E25721A2E4FC0092B6A0 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -181,7 +187,7 @@
 			children = (
 				6533D1A81F48FADD00831742 /* BigNumber.framework */,
 				6533D1B11F48FADD00831742 /* BigNumberTests.xctest */,
-				6500E28121A2E77F0092B6A0 /* BigNumber Install.framework */,
+				6500E28121A2E77F0092B6A0 /* BigNumber.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -225,6 +231,7 @@
 				653E0B6B2164154400546273 /* QuadraticSolver.swift */,
 				659BBB88217A4F5B001F02F7 /* PolynomialTests.swift */,
 				65C0F7572198B8190004F74E /* ContinuedFractionsTests.swift */,
+				6500E28621A2EF220092B6A0 /* SequenceGeneratorTests.swift */,
 			);
 			path = BigNumberTests;
 			sourceTree = "<group>";
@@ -304,7 +311,7 @@
 			);
 			name = "BigNumber Install";
 			productName = BigNumber;
-			productReference = 6500E28121A2E77F0092B6A0 /* BigNumber Install.framework */;
+			productReference = 6500E28121A2E77F0092B6A0 /* BigNumber.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		6533D1A71F48FADD00831742 /* BigNumber */ = {
@@ -389,6 +396,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6500E28521A2ED420092B6A0 /* prime_numbers.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +404,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6500E28421A2EB7C0092B6A0 /* prime_numbers.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,6 +496,7 @@
 			files = (
 				6533D1B71F48FADD00831742 /* BigIntTests.swift in Sources */,
 				653E0B6C2164154400546273 /* QuadraticSolver.swift in Sources */,
+				6500E28721A2EF220092B6A0 /* SequenceGeneratorTests.swift in Sources */,
 				658CE5EC215BF34F00847AD5 /* NumberTheoryTests.swift in Sources */,
 				659BBB8B217BA771001F02F7 /* BigFloatTests.swift in Sources */,
 				65C0F7582198B8190004F74E /* ContinuedFractionsTests.swift in Sources */,
@@ -526,7 +536,8 @@
 					"$(PROJECT_DIR)/BigNumber/mpfr",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = spaice.BigNumber;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = BigNumber;
+				PRODUCT_NAME = BigNumber;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/BigNumber/GMP/** ${SRCROOT}/BigNumber/mpfr/**";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -555,7 +566,8 @@
 					"$(PROJECT_DIR)/BigNumber/mpfr",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = spaice.BigNumber;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = BigNumber;
+				PRODUCT_NAME = BigNumber;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/BigNumber/GMP/** ${SRCROOT}/BigNumber/mpfr/**";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;

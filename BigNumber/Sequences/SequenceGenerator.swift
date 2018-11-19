@@ -16,7 +16,7 @@ import Foundation
 public class PrimeNumberSequence<T: BinaryInteger & SequenceGeneratorEncodable>: SequenceGenerator<T> {
     public init() {
         super.init(name: "Prime Numbers",
-                   url: URL(fileURLWithPath: "/Users/SpaiceMaine/GoodKarmaCoding/project_euler/utils/number_generator/sequences/prime_numbers.txt"))
+                   file_name: "prime_numbers")
     }
 }
 
@@ -73,8 +73,14 @@ public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
      */
     
     public let name: String
-    private(set) public var file_url: URL
+    public let file_name: String
+    public let file_extension: String
     private(set) public var data: [DataType] = []
+    public var file_url: URL {
+        let bundle = Bundle(identifier: "spaice.BigNumber")!
+        
+        return bundle.url(forResource: self.file_name, withExtension: self.file_extension)!
+    }
     
     private var stream_writer_store: StreamWriter?
     public var stream_writer: StreamWriter? {
@@ -98,9 +104,10 @@ public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
         return self.stream_reader_store
     }
     
-    public init(name: String, url: URL) {
+    public init(name: String, file_name: String, extension: String = "txt") {
         self.name = name
-        self.file_url = url
+        self.file_name = file_name
+        self.file_extension = `extension`
     }
     
     deinit {
