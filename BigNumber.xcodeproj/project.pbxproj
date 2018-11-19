@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6500E25A21A2E5130092B6A0 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500E25821A2E5130092B6A0 /* Stream.swift */; };
+		6500E25B21A2E5130092B6A0 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500E25821A2E5130092B6A0 /* Stream.swift */; };
+		6500E25C21A2E5130092B6A0 /* SequenceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500E25921A2E5130092B6A0 /* SequenceGenerator.swift */; };
+		6500E25D21A2E5130092B6A0 /* SequenceGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500E25921A2E5130092B6A0 /* SequenceGenerator.swift */; };
 		65013234215FFCDD00A29C00 /* QuadraticSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65013233215FFCDD00A29C00 /* QuadraticSolver.swift */; };
 		6501AFAB1F493E5D0052F040 /* BigInt+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */; };
 		6501AFAD1F534E530052F040 /* Rational.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6501AFAC1F534E530052F040 /* Rational.swift */; };
@@ -74,6 +78,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6500E25821A2E5130092B6A0 /* Stream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
+		6500E25921A2E5130092B6A0 /* SequenceGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceGenerator.swift; sourceTree = "<group>"; };
 		65013233215FFCDD00A29C00 /* QuadraticSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuadraticSolver.swift; sourceTree = "<group>"; };
 		6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BigInt+Utils.swift"; sourceTree = "<group>"; };
 		6501AFAC1F534E530052F040 /* Rational.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rational.swift; sourceTree = "<group>"; };
@@ -143,6 +149,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6500E25621A2E4EA0092B6A0 /* Sequences */ = {
+			isa = PBXGroup;
+			children = (
+				6500E25821A2E5130092B6A0 /* Stream.swift */,
+				6500E25921A2E5130092B6A0 /* SequenceGenerator.swift */,
+				6500E25721A2E4FC0092B6A0 /* Data */,
+			);
+			path = Sequences;
+			sourceTree = "<group>";
+		};
+		6500E25721A2E4FC0092B6A0 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		6533D19E1F48FADD00831742 = {
 			isa = PBXGroup;
 			children = (
@@ -165,6 +188,7 @@
 		6533D1AA1F48FADD00831742 /* BigNumber */ = {
 			isa = PBXGroup;
 			children = (
+				6500E25621A2E4EA0092B6A0 /* Sequences */,
 				6533D1C21F48FB3500831742 /* BigInt.swift */,
 				6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */,
 				65C52F8121A005D600D0D9A1 /* BigInt+Primes.swift */,
@@ -410,6 +434,8 @@
 				654C484F205A564800E0FE10 /* NumberTheory.swift in Sources */,
 				6533D1C31F48FB3500831742 /* BigInt.swift in Sources */,
 				65C52F8221A005D600D0D9A1 /* BigInt+Primes.swift in Sources */,
+				6500E25C21A2E5130092B6A0 /* SequenceGenerator.swift in Sources */,
+				6500E25A21A2E5130092B6A0 /* Stream.swift in Sources */,
 				6595182A205BB52A00E86D9F /* Polynomial.swift in Sources */,
 				65C5AAAC2166990100EF154F /* GMP+Utils.swift in Sources */,
 				6501AFAD1F534E530052F040 /* Rational.swift in Sources */,
@@ -448,6 +474,8 @@
 				6533EF8C2058529A00BC586F /* BigInt+Utils.swift in Sources */,
 				6595182B205BB52A00E86D9F /* Polynomial.swift in Sources */,
 				65C52F8321A005D600D0D9A1 /* BigInt+Primes.swift in Sources */,
+				6500E25D21A2E5130092B6A0 /* SequenceGenerator.swift in Sources */,
+				6500E25B21A2E5130092B6A0 /* Stream.swift in Sources */,
 				654C4850205A564800E0FE10 /* NumberTheory.swift in Sources */,
 				6533EF8D2058529A00BC586F /* BigInt.swift in Sources */,
 				6533EF8E2058529A00BC586F /* Rational.swift in Sources */,
