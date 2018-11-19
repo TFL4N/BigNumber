@@ -24,6 +24,7 @@ internal final class BigIntImpl {
     //
     public var integer: mpz_t
     
+    // TODO: Don't store pointer, just return one
     private var integer_ptr_store: UnsafeMutablePointer<mpz_t>? = nil
     public var integer_ptr: UnsafeMutablePointer<mpz_t> {
         if self.integer_ptr_store == nil {

@@ -10,6 +10,52 @@ import Foundation
 import GMP
 
 /**
+ The Farey sequence of order *n* is the sequence of reduced fractions between 1 and 0, where the denominator is less than other equal to *n*.
+ ````
+ F[5] = [(0, 1), (1, 5), (1, 4), (1, 3), (2, 5), (1, 2), (3, 5), (2, 3), (3, 4), (4, 5), (1, 1)]
+ ````
+ 
+ References:
+ 
+ [Algorithm](https://en.wikipedia.org/wiki/Farey_sequence#Next_term)
+ */
+func createFareySequence(limit: Int, descendingOrder descending: Bool = false) -> [(Int,Int)] {
+    var a: Int = 0
+    var b: Int = 1
+    var c: Int = 1
+    var d: Int = limit
+    
+    if descending  {
+        a = 1
+        c = limit - 1
+    }
+    
+    var output = [(a,b)]
+    /*
+     while (c <= n and not descending) or (a > 0 and descending):
+     k = int((n + b) / d)
+     a, b, c, d = c, d, (k*c-a), (k*d-b)
+     print "%d/%d" % (a,b)
+     */
+    while (!descending && c <= limit) || (descending && a > 0) {
+        let k = (limit + b) / d
+        
+        let new_c = k*c - a
+        let new_d = k*d - b
+        
+        a = c
+        b = d
+        c = new_c
+        d = new_d
+        
+        output.append((a,b))
+    }
+    
+    
+    return output
+}
+
+/**
  Returns a repunit of length n in base base
  */
 public func createRepunit(_ n: UInt, base: Int = 10) -> BigInt {
