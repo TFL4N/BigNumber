@@ -13,10 +13,16 @@ import Foundation
 // MARK: Sequences
 //
 //
-public class PrimeNumberSequence<T: BinaryInteger & SequenceGeneratorEncodable>: SequenceGenerator<T> {
+public class PrimeNumberSequence<T>: SequenceGenerator<T> where T : BinaryInteger & SequenceGeneratorEncodable {
     public init() {
         super.init(name: "Prime Numbers",
-                   file_name: "prime_numbers")
+                   file_name: "prime_numbers.txt")
+    }
+}
+
+public class PrimeFactorsSequence<Number,Factor>: SequenceGenerator<Pair<Number,[UInt:Factor]>> where Number : BinaryInteger & SequenceGeneratorEncodable, Factor : BinaryInteger & SequenceGeneratorEncodable {
+    public init() {
+        super.init(name: "Prime Factorizations", file_name: "prime_factorizations.txt")
     }
 }
 
@@ -25,6 +31,39 @@ public class PrimeNumberSequence<T: BinaryInteger & SequenceGeneratorEncodable>:
 // MARK: Sequence Encodable
 //
 //
+public class Pair<Key,Value>: SequenceGeneratorEncodable, CustomStringConvertible where Key : SequenceGeneratorEncodable, Value : SequenceGeneratorEncodable {
+    public let key: Key
+    public let value: Value
+    
+    private let separator: String = " "
+    
+    public var description: String {
+        return "{\(self.key), \(self.value)}"
+    }
+    
+    public init(_ key: Key, _ value: Value) {
+        self.key = key
+        self.value = value
+    }
+    
+    public required init?(encodedString: String) {
+        let comps = encodedString.components(separatedBy: self.separator)
+        
+        guard comps.count == 2,
+            let key = Key.init(encodedString: comps[0]),
+            let value = Value.init(encodedString: comps[1]) else {
+                return nil
+        }
+        
+        self.key = key
+        self.value = value
+    }
+    
+    public func encode() -> String {
+        return self.key.encode() + self.separator + self.value.encode()
+    }
+}
+
 extension BigInt: SequenceGeneratorEncodable {
     public init?(encodedString: String) {
         self.init(encodedString)
@@ -55,6 +94,48 @@ extension Int: SequenceGeneratorEncodable {
     }
 }
 
+extension Dictionary: SequenceGeneratorEncodable where Dictionary.Key : SequenceGeneratorEncodable, Dictionary.Value : SequenceGeneratorEncodable {
+    
+    public init?(encodedString: String) {
+        let comps = encodedString.components(separatedBy: ",")
+        
+        guard comps.count > 0 else {
+            self.init()
+            return
+        }
+        
+        self.init()
+        self.reserveCapacity(comps.count)
+        for str in comps {
+            let elements = str.components(separatedBy: ":")
+            guard elements.count == 2,
+                let key = Key.init(encodedString: elements[0]),
+                let value = Value.init(encodedString: elements[1]) else {
+                    return nil
+            }
+            
+            self[key] = value
+        }
+    }
+    
+    public func encode() -> String {
+        var output = ""
+        
+        for (k,v) in self {
+            output += "\(k.encode()):\(v.encode()),"
+        }
+        
+        // remove trailing comma
+        if !output.isEmpty {
+            output.remove(at: output.index(before: output.endIndex))
+        }
+        
+        return output
+    }
+    
+    
+}
+
 //
 //
 // MARK: Sequence Generator
@@ -72,14 +153,13 @@ public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
      This way a sequence can be read and written at the same time
      */
     
+    public let sequences_directory: String = "/Users/SpaiceMaine/lib/sequences/"
+    
     public let name: String
     public let file_name: String
-    public let file_extension: String
     private(set) public var data: [DataType] = []
     public var file_url: URL {
-        let bundle = Bundle(identifier: "spaice.BigNumber")!
-        
-        return bundle.url(forResource: self.file_name, withExtension: self.file_extension)!
+        return URL(fileURLWithPath: self.sequences_directory + self.file_name)
     }
     
     private var stream_writer_store: StreamWriter?
@@ -104,10 +184,9 @@ public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
         return self.stream_reader_store
     }
     
-    public init(name: String, file_name: String, extension: String = "txt") {
+    public init(name: String, file_name: String) {
         self.name = name
         self.file_name = file_name
-        self.file_extension = `extension`
     }
     
     deinit {
@@ -141,6 +220,10 @@ public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
         }
         
         return count
+    }
+    
+    public func loadItems(block: (String)->Bool) {
+    
     }
     
     public func loadItems(min: Int, max: Int?) {

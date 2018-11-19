@@ -32,9 +32,15 @@ class SequenceGeneratorTests: XCTestCase {
     }
 
     func testPrimeNumberSequence() {
-        let sequence = PrimeNumberSequence<BigInt>()
-        let file_manager = FileManager.default
-        print("????")
-        let output_path = sequence.file_url.path
+//        let sequence = PrimeFactorsSequence<UInt,UInt>()
+//        sequence.loadItems(min: 0, max: 10)
+//
+//        print(sequence.data)
+        
+        let str = "2 2:1"
+        let pair = Pair<UInt,[UInt:UInt]>(encodedString: str)
+        
+        print(pair)
+        print([UInt:UInt](encodedString: "2:1"))
     }
 }

@@ -34,8 +34,6 @@
 		6500E27921A2E77F0092B6A0 /* gmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6533D1C51F48FC3100831742 /* gmp.h */; };
 		6500E27A21A2E77F0092B6A0 /* mpf2mpfr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F8170C2064BBF800462A88 /* mpf2mpfr.h */; };
 		6500E27B21A2E77F0092B6A0 /* mpfr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F8170A2064BBF800462A88 /* mpfr.h */; };
-		6500E28421A2EB7C0092B6A0 /* prime_numbers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */; };
-		6500E28521A2ED420092B6A0 /* prime_numbers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */; };
 		6500E28721A2EF220092B6A0 /* SequenceGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6500E28621A2EF220092B6A0 /* SequenceGeneratorTests.swift */; };
 		65013234215FFCDD00A29C00 /* QuadraticSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65013233215FFCDD00A29C00 /* QuadraticSolver.swift */; };
 		6501AFAB1F493E5D0052F040 /* BigInt+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */; };
@@ -85,7 +83,6 @@
 		6500E25921A2E5130092B6A0 /* SequenceGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceGenerator.swift; sourceTree = "<group>"; };
 		6500E28121A2E77F0092B6A0 /* BigNumber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BigNumber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6500E28221A2E7800092B6A0 /* BigNumber Install-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "BigNumber Install-Info.plist"; path = "/Users/SpaiceMaine/GoodKarmaCoding/project_euler/utils/big_int/BigNumber/BigNumber Install-Info.plist"; sourceTree = "<absolute>"; };
-		6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = prime_numbers.txt; sourceTree = "<group>"; };
 		6500E28621A2EF220092B6A0 /* SequenceGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceGeneratorTests.swift; sourceTree = "<group>"; };
 		65013233215FFCDD00A29C00 /* QuadraticSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuadraticSolver.swift; sourceTree = "<group>"; };
 		6501AFAA1F493E5D0052F040 /* BigInt+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BigInt+Utils.swift"; sourceTree = "<group>"; };
@@ -160,17 +157,8 @@
 			children = (
 				6500E25821A2E5130092B6A0 /* Stream.swift */,
 				6500E25921A2E5130092B6A0 /* SequenceGenerator.swift */,
-				6500E25721A2E4FC0092B6A0 /* Data */,
 			);
 			path = Sequences;
-			sourceTree = "<group>";
-		};
-		6500E25721A2E4FC0092B6A0 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				6500E28321A2EB7C0092B6A0 /* prime_numbers.txt */,
-			);
-			path = Data;
 			sourceTree = "<group>";
 		};
 		6533D19E1F48FADD00831742 = {
@@ -396,7 +384,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6500E28521A2ED420092B6A0 /* prime_numbers.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,7 +391,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6500E28421A2EB7C0092B6A0 /* prime_numbers.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
