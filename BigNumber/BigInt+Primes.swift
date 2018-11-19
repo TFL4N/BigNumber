@@ -266,3 +266,119 @@ public extension BigInt {
         return output
     }
 }
+
+public func numberOfPrimes(min: UInt, max: UInt) -> UInt {
+    var num = BigInt(min)
+    var count: UInt = num.isPrime() != .notPrime ? 1 : 0
+    while num <= max {
+        count += 1
+        
+        num.moveToNextPrime()
+    }
+    
+    return count
+}
+
+public func estimateNumberOfPrimes(lessThan: UInt) -> UInt {
+    let n = Float(lessThan)
+    let ln_n = log(n)
+    
+    return UInt(n/ln_n)
+}
+
+/**
+ 
+ */
+public func createPrimeSieve(min: BigInt, count: Int) -> [BigInt] {
+    var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
+    
+    var output = [BigInt](repeating: 0, count: count)
+    for i in 0..<count {
+        output[i] = prime
+        
+        prime.moveToNextPrime()
+    }
+    
+    return output
+}
+
+public func createPrimeSieve(min: BigInt, limit: UInt) -> [BigInt] {
+    var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
+    
+    let estimate = estimateNumberOfPrimes(lessThan: limit) - estimateNumberOfPrimes(lessThan: min.toUInt()!)
+    var output = [BigInt](repeating: 0, count: Int(estimate))
+    
+    var i = 0
+    while prime <= limit  {
+        if i < estimate {
+            output[i] = prime
+        } else {
+            output.append(prime)
+        }
+        
+        i += 1
+        prime.moveToNextPrime()
+    }
+    
+    return output
+}
+
+public func createPrimeSieve(min: BigInt, limit: UInt) -> [Int] {
+    var prime = min.isPrime() != .notPrime ? min : min.nextPrime()
+    
+    let estimate = estimateNumberOfPrimes(lessThan: limit) - estimateNumberOfPrimes(lessThan: min.toUInt()!)
+    var output = [Int](repeating: 0, count: Int(estimate))
+    
+    var i = 0
+    while prime <= limit  {
+        if i < estimate {
+            output[i] = prime.toInt()!
+        } else {
+            output.append(prime.toInt()!)
+        }
+        
+        i += 1
+        prime.moveToNextPrime()
+    }
+    
+    return output
+}
+
+/**
+ This function enumerates all values `1 < n <= limit`, and returns the prime factorization
+ */
+public func enumerateNumbersByPrimeFactors(min: UInt = 2, limit: UInt, handler: (Int, [Int:UInt])->()) {
+    let primes: [Int] = createPrimeSieve(min: BigInt(min), limit: limit).map {$0.toInt()!}
+    enumerateNumbersByPrimeFactors(primes: primes, limit: limit, handler: handler)
+}
+
+public func enumerateNumbersByPrimeFactors(primes: [Int], limit: UInt, handler: (Int, [Int:UInt])->()) {
+    func permutate(fromList: ArraySlice<Int>, toList: [Int:UInt], toListTotal: Int, handlePermutation: (Int, [Int:UInt])->()) {
+        // create next permutation
+        if toList.count > 0 {
+            handlePermutation(toListTotal, toList)
+        }
+        
+        if !fromList.isEmpty {
+            for (i, e) in fromList.enumerated() {
+                // create new from list
+                let idx = fromList.index(fromList.startIndex, offsetBy: i)
+                let new_arr = fromList[idx...]
+                
+                let (new_total, overflow) = toListTotal.multipliedReportingOverflow(by: e)
+                if overflow || new_total > limit {
+                    return
+                }
+                
+                // permutate
+                var new_list = toList
+                new_list[e, default: 0] += 1
+                
+                permutate(fromList: new_arr, toList: new_list, toListTotal: new_total, handlePermutation: handlePermutation)
+            }
+        }
+    }
+    
+    /// begin
+    permutate(fromList: primes[primes.startIndex..<primes.endIndex], toList: [:], toListTotal: 1, handlePermutation: handler)
+}
