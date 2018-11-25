@@ -24,15 +24,12 @@ internal final class BigIntImpl {
     //
     public var integer: mpz_t
     
-    // TODO: Don't store pointer, just return one
-    private var integer_ptr_store: UnsafeMutablePointer<mpz_t>? = nil
+    // User is responsible for releasing the pointer
     public var integer_ptr: UnsafeMutablePointer<mpz_t> {
-        if self.integer_ptr_store == nil {
-            self.integer_ptr_store = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
-            self.integer_ptr_store!.initialize(to: self.integer)
-        }
+        let pointer = UnsafeMutablePointer<mpz_t>.allocate(capacity: 1)
+        pointer.initialize(to: self.integer)
         
-        return self.integer_ptr_store!
+        return pointer
     }
     
     //
@@ -47,11 +44,6 @@ internal final class BigIntImpl {
     // deinit
     //
     deinit {
-        if let pointer = self.integer_ptr_store {
-            pointer.deinitialize(count: 1)
-            pointer.deallocate()
-        }
-        
         __gmpz_clear(&self.integer)
     }
     

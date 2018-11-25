@@ -20,14 +20,11 @@ internal final class BigFloatImpl {
     //
     public var float: mpfr_t
     
-    private var float_ptr_store: UnsafeMutablePointer<mpfr_t>? = nil
     public var float_ptr: UnsafeMutablePointer<mpfr_t> {
-        if self.float_ptr_store == nil {
-            self.float_ptr_store = UnsafeMutablePointer<mpfr_t>.allocate(capacity: 1)
-            self.float_ptr_store!.initialize(to: self.float)
-        }
+        let output = UnsafeMutablePointer<mpfr_t>.allocate(capacity: 1)
+        output.initialize(to: self.float)
         
-        return self.float_ptr_store!
+        return output
     }
     
     //
@@ -42,11 +39,6 @@ internal final class BigFloatImpl {
     // deinit
     //
     deinit {
-        if let pointer = self.float_ptr_store {
-            pointer.deinitialize(count: 1)
-            pointer.deallocate()
-        }
-        
         mpfr_clear(&self.float)
     }
     

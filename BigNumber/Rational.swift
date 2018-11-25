@@ -14,14 +14,11 @@ internal final class RationalImpl {
     //
     public var rational: mpq_t
     
-    private var rational_ptr_store: UnsafeMutablePointer<mpq_t>? = nil
     public var rational_ptr: UnsafeMutablePointer<mpq_t> {
-        if self.rational_ptr_store == nil {
-            self.rational_ptr_store = UnsafeMutablePointer<mpq_t>.allocate(capacity: 1)
-            self.rational_ptr_store!.initialize(to: self.rational)
-        }
+        let output = UnsafeMutablePointer<mpq_t>.allocate(capacity: 1)
+        output.initialize(to: self.rational)
         
-        return self.rational_ptr_store!
+        return output
     }
     
     //
@@ -36,11 +33,6 @@ internal final class RationalImpl {
     // deinit
     //
     deinit {
-        if let pointer = self.rational_ptr_store {
-            pointer.deinitialize(count: 1)
-            pointer.deallocate()
-        }
-        
         __gmpq_clear(&self.rational)
     }
     
@@ -633,7 +625,8 @@ extension Rational {
     }
     
     public static func *(lhs: Rational, rhs: BigInt) -> Rational {
-        let result = lhs
+        var result = lhs
+        result.ensureUnique()
         
         __gmpz_mul(&result.rational_impl.rational._mp_num, &result.rational_impl.rational._mp_num, &rhs.integer_impl.integer)
         __gmpq_canonicalize(&result.rational_impl.rational)
@@ -642,7 +635,8 @@ extension Rational {
     }
     
     public static func *(lhs: BigInt, rhs: Rational) -> Rational {
-        let result = rhs
+        var result = rhs
+        result.ensureUnique()
         
         __gmpz_mul(&result.rational_impl.rational._mp_num, &lhs.integer_impl.integer, &result.rational_impl.rational._mp_num)
         __gmpq_canonicalize(&result.rational_impl.rational)
@@ -751,10 +745,21 @@ extension Rational {
         __gmpq_div(&lhs.rational_impl.rational, &lhs.rational_impl.rational, &rhs.rational_impl.rational)
     }
     
+    public static func /=(lhs: inout Rational, rhs: BigInt) {
+        lhs.ensureUnique()
+        
+        __gmpz_mul(&lhs.rational_impl.rational._mp_den,
+                   &lhs.rational_impl.rational._mp_den,
+                   &rhs.integer_impl.integer)
+        __gmpq_canonicalize(&lhs.rational_impl.rational)
+    }
+    
     public static func /=(lhs: inout Rational, rhs: Int) {
         lhs.ensureUnique()
         
-        __gmpz_mul_si(&lhs.rational_impl.rational._mp_den, &lhs.rational_impl.rational._mp_den, rhs)
+        __gmpz_mul_si(&lhs.rational_impl.rational._mp_den,
+                      &lhs.rational_impl.rational._mp_den,
+                      rhs)
         __gmpq_canonicalize(&lhs.rational_impl.rational)
     }
     

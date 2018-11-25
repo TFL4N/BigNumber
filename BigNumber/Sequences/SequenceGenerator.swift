@@ -26,6 +26,12 @@ public class PrimeFactorsSequence<Number,Factor>: SequenceGenerator<Pair<Number,
     }
 }
 
+public class CoprimeSequence<Number,Coprime>: SequenceGenerator<Pair<Number,[Coprime]>> where Number : BinaryInteger & SequenceGeneratorEncodable, Coprime : BinaryInteger & SequenceGeneratorEncodable {
+    public init() {
+        super.init(name: "Coprime Numbers", file_name: "coprime_numbers.txt")
+    }
+}
+
 //
 //
 // MARK: Sequence Encodable
@@ -94,6 +100,42 @@ extension Int: SequenceGeneratorEncodable {
     }
 }
 
+extension Array: SequenceGeneratorEncodable where Array.Element : SequenceGeneratorEncodable {
+    public init?(encodedString: String) {
+        let comps = encodedString.components(separatedBy: ",")
+        
+        guard comps.count > 0 else {
+            self.init()
+            return
+        }
+        
+        self.init()
+        self.reserveCapacity(comps.count)
+        for str in comps {
+            guard let value = Element.init(encodedString: str) else {
+                    return nil
+            }
+            
+            self.append(value)
+        }
+    }
+    
+    public func encode() -> String {
+        var output = ""
+        
+        for v in self {
+            output += "\(v.encode()),"
+        }
+        
+        // remove trailing comma
+        if !output.isEmpty {
+            output.remove(at: output.index(before: output.endIndex))
+        }
+        
+        return output
+    }
+}
+
 extension Dictionary: SequenceGeneratorEncodable where Dictionary.Key : SequenceGeneratorEncodable, Dictionary.Value : SequenceGeneratorEncodable {
     
     public init?(encodedString: String) {
@@ -132,8 +174,6 @@ extension Dictionary: SequenceGeneratorEncodable where Dictionary.Key : Sequence
         
         return output
     }
-    
-    
 }
 
 //
@@ -151,6 +191,12 @@ public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
     /*
      Only open one FileHande in update mode, then keep track of read index
      This way a sequence can be read and written at the same time
+     
+     
+     Use a binary data format
+     assume all numbers will fit into a Int/UInt
+     for a simple list of numbers, such as, all primes, each 8-byte block is a number
+     for a list of numbers with an attached array or dictionary, the first block is the number, the second block is a count of the number of elements in the collection.  Then read/write that many blocks
      */
     
     public let sequences_directory: String = "/Users/SpaiceMaine/lib/sequences/"
