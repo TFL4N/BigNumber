@@ -13,20 +13,20 @@ import Foundation
 // MARK: Sequences
 //
 //
-public class PrimeNumberSequence<T>: SequenceGenerator<T> where T : BinaryInteger & SequenceGeneratorEncodable {
+public class PrimeNumberSequence<T>: StringSequenceGenerator<T> where T : BinaryInteger & StringSequenceGeneratorEncodable {
     public init() {
         super.init(name: "Prime Numbers",
                    file_name: "prime_numbers.txt")
     }
 }
 
-public class PrimeFactorsSequence<Number,Factor>: SequenceGenerator<Pair<Number,[UInt:Factor]>> where Number : BinaryInteger & SequenceGeneratorEncodable, Factor : BinaryInteger & SequenceGeneratorEncodable {
+public class PrimeFactorsSequence<Number,Factor>: StringSequenceGenerator<StringSequencePair<Number,[UInt:Factor]>> where Number : BinaryInteger & StringSequenceGeneratorEncodable, Factor : BinaryInteger & StringSequenceGeneratorEncodable {
     public init() {
         super.init(name: "Prime Factorizations", file_name: "prime_factorizations.txt")
     }
 }
 
-public class CoprimeSequence<Number,Coprime>: SequenceGenerator<Pair<Number,[Coprime]>> where Number : BinaryInteger & SequenceGeneratorEncodable, Coprime : BinaryInteger & SequenceGeneratorEncodable {
+public class CoprimeSequence<Number,Coprime>: StringSequenceGenerator<StringSequencePair<Number,[Coprime]>> where Number : BinaryInteger & StringSequenceGeneratorEncodable, Coprime : BinaryInteger & StringSequenceGeneratorEncodable {
     public init() {
         super.init(name: "Coprime Numbers", file_name: "coprime_numbers.txt")
     }
@@ -37,7 +37,7 @@ public class CoprimeSequence<Number,Coprime>: SequenceGenerator<Pair<Number,[Cop
 // MARK: Sequence Encodable
 //
 //
-public class Pair<Key,Value>: SequenceGeneratorEncodable, CustomStringConvertible where Key : SequenceGeneratorEncodable, Value : SequenceGeneratorEncodable {
+public class StringSequencePair<Key,Value>: StringSequenceGeneratorEncodable, CustomStringConvertible where Key : StringSequenceGeneratorEncodable, Value : StringSequenceGeneratorEncodable {
     public let key: Key
     public let value: Value
     
@@ -70,7 +70,7 @@ public class Pair<Key,Value>: SequenceGeneratorEncodable, CustomStringConvertibl
     }
 }
 
-extension BigInt: SequenceGeneratorEncodable {
+extension BigInt: StringSequenceGeneratorEncodable {
     public init?(encodedString: String) {
         self.init(encodedString)
     }
@@ -80,7 +80,7 @@ extension BigInt: SequenceGeneratorEncodable {
     }
 }
 
-extension UInt: SequenceGeneratorEncodable {
+extension UInt: StringSequenceGeneratorEncodable {
     public init?(encodedString: String) {
         self.init(encodedString)
     }
@@ -90,7 +90,7 @@ extension UInt: SequenceGeneratorEncodable {
     }
 }
 
-extension Int: SequenceGeneratorEncodable {
+extension Int: StringSequenceGeneratorEncodable {
     public init?(encodedString: String) {
         self.init(encodedString)
     }
@@ -100,7 +100,7 @@ extension Int: SequenceGeneratorEncodable {
     }
 }
 
-extension Array: SequenceGeneratorEncodable where Array.Element : SequenceGeneratorEncodable {
+extension Array: StringSequenceGeneratorEncodable where Array.Element : StringSequenceGeneratorEncodable {
     public init?(encodedString: String) {
         let comps = encodedString.components(separatedBy: ",")
         
@@ -136,7 +136,7 @@ extension Array: SequenceGeneratorEncodable where Array.Element : SequenceGenera
     }
 }
 
-extension Dictionary: SequenceGeneratorEncodable where Dictionary.Key : SequenceGeneratorEncodable, Dictionary.Value : SequenceGeneratorEncodable {
+extension Dictionary: StringSequenceGeneratorEncodable where Dictionary.Key : StringSequenceGeneratorEncodable, Dictionary.Value : StringSequenceGeneratorEncodable {
     
     public init?(encodedString: String) {
         let comps = encodedString.components(separatedBy: ",")
@@ -181,12 +181,12 @@ extension Dictionary: SequenceGeneratorEncodable where Dictionary.Key : Sequence
 // MARK: Sequence Generator
 //
 //
-public protocol SequenceGeneratorEncodable {
+public protocol StringSequenceGeneratorEncodable {
     init?(encodedString: String)
     func encode() -> String
 }
 
-public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
+public class StringSequenceGenerator<DataType: StringSequenceGeneratorEncodable> {
     // TODO: Make Awesomer
     /*
      Only open one FileHande in update mode, then keep track of read index
@@ -208,23 +208,23 @@ public class SequenceGenerator<DataType: SequenceGeneratorEncodable> {
         return URL(fileURLWithPath: self.sequences_directory + self.file_name)
     }
     
-    private var stream_writer_store: StreamWriter?
-    public var stream_writer: StreamWriter? {
+    private var stream_writer_store: StringStreamWriter?
+    public var stream_writer: StringStreamWriter? {
         if self.stream_writer_store == nil {
             self.closeReader()
             
-            self.stream_writer_store = StreamWriter(url: self.file_url)
+            self.stream_writer_store = StringStreamWriter(url: self.file_url)
         }
         
         return self.stream_writer_store
     }
     
-    private var stream_reader_store: StreamReader?
-    public var stream_reader: StreamReader? {
+    private var stream_reader_store: StringStreamReader?
+    public var stream_reader: StringStreamReader? {
         if self.stream_reader_store == nil {
             self.closeWriter()
             
-            self.stream_reader_store = StreamReader(url: self.file_url)
+            self.stream_reader_store = StringStreamReader(url: self.file_url)
         }
         
         return self.stream_reader_store

@@ -38,7 +38,7 @@ class SequenceGeneratorTests: XCTestCase {
 //        print(sequence.data)
         
         let str = "2 2:1"
-        let pair = Pair<UInt,[UInt:UInt]>(encodedString: str)
+        let pair = StringSequencePair<UInt,[UInt:UInt]>(encodedString: str)
         
         print(pair)
         print([UInt:UInt](encodedString: "2:1"))
