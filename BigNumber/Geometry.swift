@@ -237,9 +237,9 @@ public func intersection<T : NumericExtended>(line_1: Line<T>, line_2: Line<T>) 
         var denom = (x2 - x1) * (y4 - y3)
         denom -= (x4 - x3) * (y2 - y1)
         
-        let x = (temp1*(x4 - x3) - temp2*(x2 - x1)) / denom
-        let y = (temp1*(y4 - y3) - temp2*(y2 - y1)) / denom
+        let x = temp1*(x4 - x3) - temp2*(x2 - x1)
+        let y = temp1*(y4 - y3) - temp2*(y2 - y1)
         
-        return Point(x: x, y: y)
+        return Point(x: x / denom, y: y / denom)
     }
 }
